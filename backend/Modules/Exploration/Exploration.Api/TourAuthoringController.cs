@@ -42,6 +42,20 @@ public sealed class TourAuthoringController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("{id:guid}/archive")]
+    public async Task<ActionResult> Archive(Guid id)
+    {
+        await _authoringService.ArchiveAsync(id, User.GetUserId());
+        return NoContent();
+    }
+
+    [HttpPost("{id:guid}/reactivate")]
+    public async Task<ActionResult> Reactivate(Guid id)
+    {
+        await _authoringService.ReactivateAsync(id, User.GetUserId());
+        return NoContent();
+    }
+
     [HttpPut("{id:guid}/recommended-group-size")]
     public async Task<ActionResult> ChangeRecommendedGroupSize(Guid id, GroupSizeDto dto)
     {
