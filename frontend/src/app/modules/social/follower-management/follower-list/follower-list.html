@@ -1,0 +1,65 @@
+<div class="stack">
+  <h1>Followers</h1>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (followers.isLoading()) {
+    <p>Loading...</p>
+  } @else if (followers.error()) {
+    <p class="error">Followers could not be loaded. Sign in and try again.</p>
+  } @else {
+    <section class="stack">
+      <h2>Pending requests</h2>
+      <ul class="users">
+        @for (request of followers.value()?.pendingRequests ?? []; track request.userId) {
+          <li>
+            <span>{{ request.username ?? 'unknown user' }}</span>
+            <span class="actions">
+              <button
+                class="button button--primary"
+                type="button"
+                [disabled]="pending()"
+                (click)="accept(request.userId)"
+              >
+                Accept
+              </button>
+              <button
+                class="button"
+                type="button"
+                [disabled]="pending()"
+                (click)="reject(request.userId)"
+              >
+                Reject
+              </button>
+            </span>
+          </li>
+        } @empty {
+          <li>No pending requests.</li>
+        }
+      </ul>
+    </section>
+
+    <section class="stack">
+      <h2>My followers</h2>
+      <ul class="users">
+        @for (follower of followers.value()?.followers ?? []; track follower.userId) {
+          <li>
+            <span>{{ follower.username ?? 'unknown user' }}</span>
+            <button
+              class="button"
+              type="button"
+              [disabled]="pending()"
+              (click)="remove(follower.userId)"
+            >
+              Remove
+            </button>
+          </li>
+        } @empty {
+          <li>No one is following you yet.</li>
+        }
+      </ul>
+    </section>
+  }
+</div>
