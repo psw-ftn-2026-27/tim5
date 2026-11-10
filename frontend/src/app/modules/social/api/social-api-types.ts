@@ -31,3 +31,16 @@ export interface CreateCommentDto {
 export interface UpdateCommentDto {
   text: string;
 }
+
+export type FollowRequestStatus = 'Pending' | 'Accepted' | 'Rejected';
+
+export interface FollowingDto {
+  userId: string;
+  username: string | null;
+  status: FollowRequestStatus;
+}
+
+export interface UserDto {
+  userId: string;
+  username: string;
+}
