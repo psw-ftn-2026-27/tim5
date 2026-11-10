@@ -18,8 +18,8 @@ internal static class UserSeed
     public static readonly ApplicationUser Explorer = new()
     {
         Id = WellKnownUsers.Explorer,
-        UserName = "explorer@test.com",
-        NormalizedUserName = "EXPLORER@TEST.COM",
+        UserName = "explorer",
+        NormalizedUserName = "EXPLORER",
         Email = "explorer@test.com",
         NormalizedEmail = "EXPLORER@TEST.COM",
         PasswordHash = Hasher.HashPassword(null!, Password),

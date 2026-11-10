@@ -17,7 +17,7 @@ public sealed class IdentityEndpointTests : BaseIntegrationTest
     public async Task New_user_registers_as_an_explorer()
     {
         var client = Factory.CreateClient();
-        var request = new RegisterDto("new-explorer@test.com", "BrandNewSecret1!");
+        var request = new RegisterDto("new-explorer@test.com", "new-explorer", "BrandNewSecret1!");
 
         var response = await client.PostAsJsonAsync("/api/identity/register", request);
 
@@ -32,7 +32,18 @@ public sealed class IdentityEndpointTests : BaseIntegrationTest
     public async Task Email_can_be_registered_only_once()
     {
         var client = Factory.CreateClient();
-        var request = new RegisterDto(UserSeed.Explorer.Email!, "BrandNewSecret1!");
+        var request = new RegisterDto(UserSeed.Explorer.Email!, "another-explorer", "BrandNewSecret1!");
+
+        var response = await client.PostAsJsonAsync("/api/identity/register", request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Username_can_be_registered_only_once()
+    {
+        var client = Factory.CreateClient();
+        var request = new RegisterDto("another-explorer@test.com", UserSeed.Explorer.UserName!, "BrandNewSecret1!");
 
         var response = await client.PostAsJsonAsync("/api/identity/register", request);
 
