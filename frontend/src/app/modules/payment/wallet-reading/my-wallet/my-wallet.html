@@ -1,0 +1,34 @@
+<div class="stack">
+  <h1>My wallet</h1>
+
+  @if (wallet.isLoading()) {
+    <p>Loading your wallet...</p>
+  } @else if (wallet.error()) {
+    <p class="error">Could not load your wallet. Log in and try again.</p>
+  } @else if (wallet.value(); as current) {
+    <p class="balance">Balance: {{ current.balance }} EC</p>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Type</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (transaction of current.transactions; track $index) {
+          <tr>
+            <td>{{ transaction.type }}</td>
+            <td>{{ transaction.amount }} EC</td>
+            <td>{{ transaction.occurredAt }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3">You have no transactions yet.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
