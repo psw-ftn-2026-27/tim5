@@ -20,7 +20,8 @@ public sealed class TourAuthoringService
 
     public async Task<TourDto> CreateAsync(Guid authorId, CreateTourDto dto)
     {
-        var tour = new Tour(authorId, dto.Name, dto.Description, dto.Difficulty, dto.Tags);
+        var groupSize = new GroupSize(dto.RecommendedGroupSize.Min, dto.RecommendedGroupSize.Max);
+        var tour = new Tour(authorId, dto.Name, dto.Description, dto.Difficulty, dto.Tags, groupSize);
 
         _tourRepository.Add(tour);
         await _unitOfWork.SaveChangesAsync();
@@ -41,6 +42,14 @@ public sealed class TourAuthoringService
         var tour = await GetOwnedTourAsync(tourId, authorId);
 
         tour.Publish();
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task ChangeRecommendedGroupSizeAsync(Guid tourId, Guid authorId, GroupSizeDto dto)
+    {
+        var tour = await GetOwnedTourAsync(tourId, authorId);
+
+        tour.ChangeRecommendedGroupSize(new GroupSize(dto.Min, dto.Max));
         await _unitOfWork.SaveChangesAsync();
     }
 

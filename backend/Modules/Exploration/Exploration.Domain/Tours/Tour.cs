@@ -16,6 +16,7 @@ public sealed class Tour : AggregateRoot
     public List<string> Tags { get; private set; }
     public TourStatus Status { get; private set; }
     public DateTime? PublishedAt { get; private set; }
+    public GroupSize? RecommendedGroupSize { get; private set; }
     public IReadOnlyList<TransportTime> TransportTimes => _transportTimes;
 
     private Tour()
@@ -25,7 +26,7 @@ public sealed class Tour : AggregateRoot
         Tags = null!;
     }
 
-    public Tour(Guid authorId, string name, string description, TourDifficulty difficulty, List<string> tags)
+    public Tour(Guid authorId, string name, string description, TourDifficulty difficulty, List<string> tags, GroupSize groupSize)
         : base(Guid.NewGuid())
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -40,13 +41,23 @@ public sealed class Tour : AggregateRoot
         {
             throw new DomainException("A tour requires at least one tag.");
         }
+        if (groupSize is null)
+        {
+            throw new DomainException("A tour requires a recommended group size.");
+        }
 
         AuthorId = authorId;
         Name = name;
         Description = description;
         Difficulty = difficulty;
         Tags = tags;
+        RecommendedGroupSize = groupSize;
         Status = TourStatus.Draft;
+    }
+
+    public void ChangeRecommendedGroupSize(GroupSize groupSize)
+    {
+        RecommendedGroupSize = groupSize;
     }
 
     public void AddTransportTime(TransportMode transport, int minutes)

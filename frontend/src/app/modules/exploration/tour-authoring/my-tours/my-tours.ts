@@ -28,6 +28,52 @@ export class MyTours {
     min(path.minutes, 1, { message: 'Minutes must be at least 1.' });
   });
 
+  protected readonly groupSizeTourId = signal<string | null>(null);
+
+  private readonly groupSizeModel = signal({
+    min: null as number | null,
+    max: null as number | null,
+  });
+
+  protected readonly groupSizeForm = form(this.groupSizeModel, (path) => {
+    required(path.min, { message: 'Min is required.' });
+    min(path.min, 1, { message: 'Min must be at least 1.' });
+    required(path.max, { message: 'Max is required.' });
+  });
+
+  protected selectGroupSize(tour: TourDto): void {
+    this.error.set(null);
+    this.groupSizeTourId.set(tour.id);
+    this.groupSizeForm().reset({
+      min: tour.recommendedGroupSize?.min ?? null,
+      max: tour.recommendedGroupSize?.max ?? null,
+    });
+  }
+
+  protected async changeRecommendedGroupSize(event: Event): Promise<void> {
+    event.preventDefault();
+    const tourId = this.groupSizeTourId();
+    const groupSizeMin = this.groupSizeForm.min().value();
+    const groupSizeMax = this.groupSizeForm.max().value();
+    if (tourId === null || groupSizeMin === null || groupSizeMax === null) {
+      return;
+    }
+    this.pending.set(true);
+    this.error.set(null);
+    try {
+      await this.tourAuthoring.changeRecommendedGroupSize(tourId, {
+        min: groupSizeMin,
+        max: groupSizeMax,
+      });
+      this.tours.reload();
+      this.groupSizeTourId.set(null);
+    } catch (failure) {
+      this.error.set(serverMessage(failure, 'Could not change the recommended group size.'));
+    } finally {
+      this.pending.set(false);
+    }
+  }
+
   protected select(tourId: string): void {
     this.error.set(null);
     this.selectedTourId.set(tourId);

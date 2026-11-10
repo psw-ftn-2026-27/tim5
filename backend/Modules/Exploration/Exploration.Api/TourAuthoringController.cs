@@ -42,6 +42,13 @@ public sealed class TourAuthoringController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("{id:guid}/recommended-group-size")]
+    public async Task<ActionResult> ChangeRecommendedGroupSize(Guid id, GroupSizeDto dto)
+    {
+        await _authoringService.ChangeRecommendedGroupSizeAsync(id, User.GetUserId(), dto);
+        return NoContent();
+    }
+
     [HttpGet("mine")]
     public async Task<ActionResult<List<TourDto>>> GetMine()
     {
