@@ -7,6 +7,7 @@ using Social.Application.BlogCommenting;
 using Social.Application.BlogReading;
 using Social.Application.Blogs;
 using Social.Application.Connections;
+using Social.Application.FollowerManagement;
 using Social.Application.Following;
 using Social.Infrastructure.Persistence;
 using Social.Infrastructure.Persistence.Blogs;
@@ -34,6 +35,8 @@ public static class SocialModuleExtensions
         services.AddScoped<BlogCommentingService>();
         services.AddScoped<FollowingService>();
         services.AddScoped<FollowingQueries>();
+        services.AddScoped<FollowerManagementService>();
+        services.AddScoped<FollowerManagementQueries>();
 
         return services;
     }

@@ -18,6 +18,13 @@ public class ConnectionTests
         return connection;
     }
 
+    private static Connection CreateRejectedRequest()
+    {
+        var connection = CreatePendingRequest();
+        connection.Reject(WellKnownUsers.SecondExplorer);
+        return connection;
+    }
+
     [Fact]
     public void Request_to_a_user_who_already_follows_the_sender_is_accepted_immediately()
     {
@@ -101,5 +108,52 @@ public class ConnectionTests
         var acceptance = () => connection.Accept(WellKnownUsers.Explorer);
 
         acceptance.Should().Throw<NotFoundException>();
+    }
+
+    [Fact]
+    public void Rejected_request_cannot_be_accepted_later()
+    {
+        var connection = CreateRejectedRequest();
+
+        var acceptance = () => connection.Accept(WellKnownUsers.SecondExplorer);
+
+        acceptance.Should().Throw<DomainException>();
+    }
+
+    [Fact]
+    public void Rejected_request_stays_in_the_connection_and_no_follow_is_created()
+    {
+        var connection = CreatePendingRequest();
+
+        connection.Reject(WellKnownUsers.SecondExplorer);
+
+        connection.FollowRequests.Should().ContainSingle(request =>
+            request.FollowerId == WellKnownUsers.Explorer &&
+            request.FolloweeId == WellKnownUsers.SecondExplorer &&
+            request.Status == FollowRequestStatus.Rejected);
+        connection.FollowRequests.Should().NotContain(request => request.Status == FollowRequestStatus.Accepted);
+    }
+
+    [Fact]
+    public void Removed_follower_no_longer_follows_the_user()
+    {
+        var connection = CreateAcceptedFollow();
+
+        connection.RemoveFollower(WellKnownUsers.SecondExplorer);
+
+        connection.FollowRequests.Should().NotContain(request => request.FollowerId == WellKnownUsers.Explorer);
+    }
+
+    [Fact]
+    public void Sender_can_send_a_new_request_after_their_request_was_rejected()
+    {
+        var connection = CreateRejectedRequest();
+
+        connection.RequestFollow(WellKnownUsers.Explorer);
+
+        connection.FollowRequests.Should().ContainSingle(request =>
+            request.FollowerId == WellKnownUsers.Explorer &&
+            request.FolloweeId == WellKnownUsers.SecondExplorer &&
+            request.Status == FollowRequestStatus.Pending);
     }
 }

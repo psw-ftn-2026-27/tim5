@@ -1,7 +1,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Payment.Application;
+using Payment.Application.WalletReading;
+using Payment.Application.Wallets;
 using Payment.Infrastructure.Persistence;
+using Payment.Infrastructure.Persistence.Wallets;
 using Shared.Infrastructure;
 
 namespace Payment.Infrastructure;
@@ -15,6 +18,9 @@ public static class PaymentModuleExtensions
         services.AddAutoMapper(mapper => mapper.AddProfile<PaymentMapperProfile>());
 
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<PaymentDbContext>());
+        services.AddScoped<IWalletReadRepository, WalletReadRepository>();
+
+        services.AddScoped<WalletReadingQueries>();
 
         return services;
     }

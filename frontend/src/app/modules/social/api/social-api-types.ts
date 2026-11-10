@@ -44,3 +44,13 @@ export interface UserDto {
   userId: string;
   username: string;
 }
+
+export interface FollowerDto {
+  userId: string;
+  username: string | null;
+}
+
+export interface FollowersDto {
+  pendingRequests: FollowerDto[];
+  followers: FollowerDto[];
+}

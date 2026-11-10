@@ -27,4 +27,14 @@ public sealed class FollowRequest : Entity
 
         Status = FollowRequestStatus.Accepted;
     }
+
+    public void Reject()
+    {
+        if (Status != FollowRequestStatus.Pending)
+        {
+            throw new DomainException("Only a pending follow request can be rejected.");
+        }
+
+        Status = FollowRequestStatus.Rejected;
+    }
 }

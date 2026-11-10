@@ -80,13 +80,27 @@ public sealed class Connection : AggregateRoot
 
     public void Accept(Guid followeeId)
     {
-        var request = _followRequests.FirstOrDefault(request => request.FolloweeId == followeeId);
-        if (request is null)
-        {
-            throw new NotFoundException("Follow request does not exist.");
-        }
+        var request = GetRequestTo(followeeId);
 
         request.Accept();
+    }
+
+    public void Reject(Guid followeeId)
+    {
+        var request = GetRequestTo(followeeId);
+
+        request.Reject();
+    }
+
+    public void RemoveFollower(Guid followeeId)
+    {
+        var request = GetRequestTo(followeeId);
+        if (request.Status != FollowRequestStatus.Accepted)
+        {
+            throw new DomainException("This user does not follow you.");
+        }
+
+        _followRequests.Remove(request);
     }
 
     private Guid GetOtherUserId(Guid userId)
@@ -110,6 +124,16 @@ public sealed class Connection : AggregateRoot
     private FollowRequest GetRequestFrom(Guid followerId)
     {
         var request = FindRequestFrom(followerId);
+        if (request is null)
+        {
+            throw new NotFoundException("Follow request does not exist.");
+        }
+        return request;
+    }
+
+    private FollowRequest GetRequestTo(Guid followeeId)
+    {
+        var request = _followRequests.FirstOrDefault(request => request.FolloweeId == followeeId);
         if (request is null)
         {
             throw new NotFoundException("Follow request does not exist.");
