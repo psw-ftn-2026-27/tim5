@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormField, form, required } from '@angular/forms/signals';
+import { FormField, form, min, required } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { serverMessage } from '../../../../shared/util/server-message';
 import { TourDifficulty } from '../../api/exploration-api-types';
@@ -16,10 +16,20 @@ export class CreateTour {
   private readonly router = inject(Router);
 
   protected readonly form = form(
-    signal({ name: '', description: '', difficulty: 'Easy' as TourDifficulty, tags: '' }),
+    signal({
+      name: '',
+      description: '',
+      difficulty: 'Easy' as TourDifficulty,
+      tags: '',
+      groupSizeMin: null as number | null,
+      groupSizeMax: null as number | null,
+    }),
     (path) => {
       required(path.name, { message: 'Name is required.' });
       required(path.description, { message: 'Description is required.' });
+      required(path.groupSizeMin, { message: 'Min is required.' });
+      min(path.groupSizeMin, 1, { message: 'Min must be at least 1.' });
+      required(path.groupSizeMax, { message: 'Max is required.' });
     },
   );
 
@@ -28,6 +38,11 @@ export class CreateTour {
 
   protected async submit(event: Event): Promise<void> {
     event.preventDefault();
+    const groupSizeMin = this.form.groupSizeMin().value();
+    const groupSizeMax = this.form.groupSizeMax().value();
+    if (groupSizeMin === null || groupSizeMax === null) {
+      return;
+    }
     this.pending.set(true);
     this.error.set(null);
     try {
@@ -41,6 +56,7 @@ export class CreateTour {
           .split(',')
           .map((tag) => tag.trim())
           .filter((tag) => tag !== ''),
+        recommendedGroupSize: { min: groupSizeMin, max: groupSizeMax },
       });
       await this.router.navigate(['/exploration/mine']);
     } catch (failure) {

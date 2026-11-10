@@ -36,4 +36,16 @@ public class TourBrowsingQueryTests : BaseIntegrationTest
         tours!.Items.Should().ContainSingle();
         tours.TotalCount.Should().Be(TourSeed.All.Count(tour => tour.Status == TourStatus.Published));
     }
+
+    [Fact]
+    public async Task Published_tours_are_listed_with_their_recommended_group_size()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.Administrator, "administrator");
+
+        var tours = await client.GetFromJsonAsync<PageResult<TourDto>>("/api/exploration/tours/published", JsonOptions);
+
+        var vineyards = tours!.Items.Single(tour => tour.Id == TourSeed.PublishedVineyards.Id);
+        var seeded = TourSeed.PublishedVineyards.RecommendedGroupSize!;
+        vineyards.RecommendedGroupSize.Should().Be(new GroupSizeDto(seeded.Min, seeded.Max));
+    }
 }
