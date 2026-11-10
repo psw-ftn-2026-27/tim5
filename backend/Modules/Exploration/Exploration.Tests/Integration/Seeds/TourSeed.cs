@@ -11,6 +11,7 @@ internal static class TourSeed
     public static readonly Tour PublishableRiverside;
     public static readonly Tour PublishedVineyards;
     public static readonly Tour PublishedMonasteries;
+    public static readonly Tour ArchivedSalasi;
 
     static TourSeed()
     {
@@ -24,7 +25,12 @@ internal static class TourSeed
         PublishedMonasteries = new(WellKnownUsers.Explorer, "Fruškogorski manastiri", "Tura obilazi tri fruškogorska manastira: Krušedol, Grgeteg i Novo Hopovo, sa pauzom za ručak u podnožju nacionalnog parka.", TourDifficulty.Hard, ["istorija"], new GroupSize(2, 5));
         PublishedMonasteries.AddTransportTime(TransportMode.Car, 45);
         PublishedMonasteries.Publish();
+
+        ArchivedSalasi = new(WellKnownUsers.Explorer, "Bački salaši", "Tura obilazi salaše u okolini Novog Sada, uz upoznavanje sa starim zanatima, domaćom kuhinjom i životom na ravnici kroz prethodna stoleća.", TourDifficulty.Easy, ["tradicija"], new GroupSize(2, 10));
+        ArchivedSalasi.AddTransportTime(TransportMode.Car, 30);
+        ArchivedSalasi.Publish();
+        ArchivedSalasi.Archive();
     }
 
-    public static Tour[] All => [FortressWalk, CityStroll, SecondExplorersTrail, PublishableRiverside, PublishedVineyards, PublishedMonasteries];
+    public static Tour[] All => [FortressWalk, CityStroll, SecondExplorersTrail, PublishableRiverside, PublishedVineyards, PublishedMonasteries, ArchivedSalasi];
 }

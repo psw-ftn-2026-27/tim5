@@ -46,6 +46,7 @@ internal sealed class TourReadRepository : ITourReadRepository
                 tour.Tags,
                 tour.Status,
                 tour.PublishedAt,
+                tour.ArchivedAt,
                 tour.RecommendedGroupSize == null
                     ? null
                     : new GroupSizeDto(tour.RecommendedGroupSize.Min, tour.RecommendedGroupSize.Max),
