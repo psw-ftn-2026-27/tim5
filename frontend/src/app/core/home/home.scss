@@ -1,0 +1,18 @@
+.grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+.featured {
+  border-inline-start: var(--space-1) solid var(--color-accent);
+}
+
+.button {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.account-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
