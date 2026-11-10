@@ -34,6 +34,13 @@ public class ModuleLayerTests : BaseArchitectureTests
             "Shared.Domain", "Shared.Api", "Shared.Infrastructure");
     }
 
+    [Fact]
+    public void Identity_contracts_depend_on_nothing()
+    {
+        AssertNoDependency("Identity.Contracts",
+            "Identity", "Shared.Domain", "Shared.Api", "Shared.Infrastructure");
+    }
+
     [Theory]
     [MemberData(nameof(ModuleNames))]
     public void Api_does_not_depend_on_infrastructure_shared_infrastructure_or_ef(string module)

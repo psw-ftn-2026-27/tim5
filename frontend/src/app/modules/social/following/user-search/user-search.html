@@ -1,0 +1,42 @@
+<div class="stack">
+  <h1>Find users</h1>
+
+  <form class="search" (submit)="search($event)">
+    <div class="field">
+      <label for="username">Username</label>
+      <input id="username" type="search" [formField]="form.username" />
+    </div>
+
+    <button class="button button--primary" type="submit" [disabled]="!form().valid()">
+      Search
+    </button>
+  </form>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (users.isLoading()) {
+    <p>Searching users...</p>
+  } @else if (users.error()) {
+    <p class="error">Search failed. Sign in and try again.</p>
+  } @else if (users.hasValue()) {
+    <ul class="users">
+      @for (user of users.value(); track user.userId) {
+        <li>
+          <span>{{ user.username }}</span>
+          <button
+            class="button button--primary"
+            type="button"
+            [disabled]="pending()"
+            (click)="follow(user.userId)"
+          >
+            Follow
+          </button>
+        </li>
+      } @empty {
+        <li>No users with that username.</li>
+      }
+    </ul>
+  }
+</div>

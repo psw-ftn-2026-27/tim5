@@ -14,9 +14,10 @@ export class Register {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
 
-  protected readonly form = form(signal({ email: '', password: '' }), (path) => {
+  protected readonly form = form(signal({ email: '', username: '', password: '' }), (path) => {
     required(path.email, { message: 'Email is required.' });
     email(path.email, { message: 'Enter a valid email address.' });
+    required(path.username, { message: 'Username is required.' });
     required(path.password, { message: 'Password is required.' });
     minLength(path.password, 6, { message: 'Password must be at least 6 characters.' });
   });
@@ -29,7 +30,11 @@ export class Register {
     this.pending.set(true);
     this.error.set(null);
     try {
-      await this.auth.register(this.form.email().value(), this.form.password().value());
+      await this.auth.register(
+        this.form.email().value(),
+        this.form.username().value(),
+        this.form.password().value(),
+      );
       await this.router.navigate(['/']);
     } catch (failure) {
       this.error.set(serverMessage(failure, 'Registration failed. Please try again.'));

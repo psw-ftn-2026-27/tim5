@@ -1,0 +1,68 @@
+<div class="stack">
+  <h1>Following</h1>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (followings.isLoading()) {
+    <p>Loading...</p>
+  } @else if (followings.error()) {
+    <p class="error">Following list could not be loaded. Sign in and try again.</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of followings.value() ?? []; track item.userId) {
+          <tr>
+            <td>{{ item.username ?? 'unknown user' }}</td>
+            <td>
+              @switch (item.status) {
+                @case ('Accepted') {
+                  following
+                }
+                @case ('Pending') {
+                  pending
+                }
+                @case ('Rejected') {
+                  rejected
+                }
+              }
+            </td>
+            <td>
+              @if (item.status === 'Pending') {
+                <button
+                  class="button"
+                  type="button"
+                  [disabled]="pending()"
+                  (click)="withdraw(item.userId)"
+                >
+                  Withdraw
+                </button>
+              } @else if (item.status === 'Accepted') {
+                <button
+                  class="button"
+                  type="button"
+                  [disabled]="pending()"
+                  (click)="unfollow(item.userId)"
+                >
+                  Unfollow
+                </button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3">You are not following anyone yet.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

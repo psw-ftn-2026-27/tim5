@@ -22,7 +22,7 @@ public sealed class IdentityController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<AccessTokenDto>> Register(RegisterDto dto)
     {
-        var user = new ApplicationUser { UserName = dto.Email, Email = dto.Email };
+        var user = new ApplicationUser { UserName = dto.Username, Email = dto.Email };
 
         var result = await _userManager.CreateAsync(user, dto.Password);
         if (!result.Succeeded)

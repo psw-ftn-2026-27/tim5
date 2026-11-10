@@ -44,11 +44,11 @@ export class Auth {
   readonly isLoggedIn = computed(() => this.user() !== null);
 
   async login(email: string, password: string): Promise<void> {
-    await this.authenticate('/api/identity/login', email, password);
+    await this.authenticate('/api/identity/login', { email, password });
   }
 
-  async register(email: string, password: string): Promise<void> {
-    await this.authenticate('/api/identity/register', email, password);
+  async register(email: string, username: string, password: string): Promise<void> {
+    await this.authenticate('/api/identity/register', { email, username, password });
   }
 
   logout(): void {
@@ -56,8 +56,8 @@ export class Auth {
     localStorage.removeItem(TOKEN_KEY);
   }
 
-  private async authenticate(url: string, email: string, password: string): Promise<void> {
-    const response = await firstValueFrom(this.http.post<TokenResponse>(url, { email, password }));
+  private async authenticate(url: string, body: object): Promise<void> {
+    const response = await firstValueFrom(this.http.post<TokenResponse>(url, body));
     localStorage.setItem(TOKEN_KEY, response.accessToken);
     this.token.set(response.accessToken);
   }

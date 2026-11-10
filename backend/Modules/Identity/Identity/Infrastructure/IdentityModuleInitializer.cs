@@ -12,13 +12,13 @@ internal sealed class IdentityModuleInitializer : IHostedService
 
     private const string DemoPassword = "Password1!";
 
-    private static readonly (Guid Id, string Email, string Role)[] DemoUsers =
+    private static readonly (Guid Id, string Email, string Username, string Role)[] DemoUsers =
     [
-        (Guid.Parse("10000000-0000-0000-0000-000000000001"), "admin1@explorer.dev", "administrator"),
-        (Guid.Parse("10000000-0000-0000-0000-000000000002"), "admin2@explorer.dev", "administrator"),
-        (Guid.Parse("20000000-0000-0000-0000-000000000001"), "explorer1@explorer.dev", "explorer"),
-        (Guid.Parse("20000000-0000-0000-0000-000000000002"), "explorer2@explorer.dev", "explorer"),
-        (Guid.Parse("20000000-0000-0000-0000-000000000003"), "explorer3@explorer.dev", "explorer")
+        (Guid.Parse("10000000-0000-0000-0000-000000000001"), "admin1@explorer.dev", "admin1", "administrator"),
+        (Guid.Parse("10000000-0000-0000-0000-000000000002"), "admin2@explorer.dev", "admin2", "administrator"),
+        (Guid.Parse("20000000-0000-0000-0000-000000000001"), "explorer1@explorer.dev", "explorer1", "explorer"),
+        (Guid.Parse("20000000-0000-0000-0000-000000000002"), "explorer2@explorer.dev", "explorer2", "explorer"),
+        (Guid.Parse("20000000-0000-0000-0000-000000000003"), "explorer3@explorer.dev", "explorer3", "explorer")
     ];
 
     private readonly IServiceProvider _serviceProvider;
@@ -49,9 +49,9 @@ internal sealed class IdentityModuleInitializer : IHostedService
         if (_environment.IsDevelopment() && !await dbContext.Users.AnyAsync())
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            foreach (var (id, email, role) in DemoUsers)
+            foreach (var (id, email, username, role) in DemoUsers)
             {
-                var user = new ApplicationUser { Id = id, UserName = email, Email = email };
+                var user = new ApplicationUser { Id = id, UserName = username, Email = email };
                 await userManager.CreateAsync(user, DemoPassword);
                 await userManager.AddToRoleAsync(user, role);
             }

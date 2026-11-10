@@ -29,6 +29,7 @@ backend/
   Modules/
     Identity/
       Identity/                    single project, platform-owned, see below [platform]
+      Identity.Contracts/          IIdentityApi: usernames for other modules  [platform]
       Identity.Tests/                                                        [platform]
     <Name>/
       <Name>.Api/                  API controllers, speaking Application DTOs
@@ -59,7 +60,9 @@ The compiler enforces the layering instead of a reviewer having to spot it.
   `<FrameworkReference Include="Microsoft.AspNetCore.App" />`.
 - `Infrastructure` references `Application`, `Domain`, and `Shared.Infrastructure`.
 - A module may reference another module's `Contracts` project and nothing else from it.
-- No module references `Identity`. Other modules carry a `UserId` as a plain ID.
+- No module references `Identity`. Other modules carry a `UserId` as a plain ID. A
+  module that needs usernames references `Identity.Contracts` from its `Application`,
+  the same way it would reference another module's `Contracts`.
 - `Host.Api` references every module's `Infrastructure` (for DI) and `Api` (for controller
   discovery), plus the `Identity` project.
 
@@ -83,9 +86,16 @@ platform decision. Do not change the version or add a license key.
 ## Identity
 
 Identity is a deliberate exception to the module structure: one platform-owned project
-that students use but never modify or reference. It holds ASP.NET Core Identity on the
-`identity` schema, register/login endpoints issuing JWTs, and role seeding at startup
-(`administrator`, `explorer`); the details live in the project itself.
+that feature teams use but never modify or reference. It holds ASP.NET Core Identity on
+the `identity` schema, register/login endpoints issuing JWTs (registration takes an
+email, a unique username and a password; login is by email), and role seeding at
+startup (`administrator`, `explorer`); the details live in the project itself.
+
+Its public surface toward other modules is `Identity.Contracts`, which references
+nothing. `IIdentityApi` offers `SearchByUsernameAsync(term, limit)` and
+`GetByIdsAsync(userIds)`, both returning `UserSummaryDto(UserId, Username)` and nothing
+more; the implementation lives in the `Identity` project. Extending it follows the same
+rule as any contract: minimal, and only for a need a module actually has.
 
 What matters outside it: token validation is configured in `Host.Api`; role checks are
 `[Authorize(Roles = ...)]` attributes on controllers or actions. Controllers read the
