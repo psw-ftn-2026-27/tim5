@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Payment.Application.Depositing;
 using Payment.Application.WalletReading;
 using Payment.Application.Wallets;
 
@@ -21,8 +22,16 @@ internal sealed class WalletReadRepository : IWalletReadRepository
                 wallet.Balance,
                 wallet.Transactions
                     .OrderByDescending(transaction => transaction.OccurredAt)
-                    .Select(transaction => new TransactionDto(transaction.Type, transaction.Amount, transaction.OccurredAt))
+                    .Select(transaction => new TransactionDto(transaction.Type, transaction.Amount.Value, transaction.OccurredAt))
                     .ToList()))
             .FirstOrDefaultAsync();
+    }
+
+    public Task<List<WalletBalanceDto>> GetBalancesAsync(List<Guid> touristIds)
+    {
+        return _dbContext.Wallets
+            .Where(wallet => touristIds.Contains(wallet.TouristId))
+            .Select(wallet => new WalletBalanceDto(wallet.TouristId, wallet.Balance))
+            .ToListAsync();
     }
 }

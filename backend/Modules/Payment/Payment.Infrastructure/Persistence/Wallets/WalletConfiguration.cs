@@ -14,6 +14,9 @@ internal static class WalletConfiguration
 
     private static void ConfigureWallet(EntityTypeBuilder<Wallet> builder)
     {
+        builder.HasIndex(wallet => wallet.TouristId).IsUnique();
+        builder.Property<uint>("xmin").IsRowVersion();
+
         builder.HasMany(wallet => wallet.Transactions)
             .WithOne()
             .IsRequired()
@@ -27,5 +30,9 @@ internal static class WalletConfiguration
         builder.ToTable("Transactions");
         builder.Property(transaction => transaction.Id).ValueGeneratedNever();
         builder.Property(transaction => transaction.Type).HasConversion<string>().HasMaxLength(20);
+        builder.ComplexProperty(transaction => transaction.Amount, amount =>
+        {
+            amount.Property(value => value.Value).HasColumnName("Amount");
+        });
     }
 }

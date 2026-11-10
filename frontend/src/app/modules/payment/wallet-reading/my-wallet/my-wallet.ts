@@ -9,4 +9,8 @@ import { WalletDto } from '../../api/payment-api-types';
 })
 export class MyWallet {
   protected readonly wallet = httpResource<WalletDto>(() => '/api/payment/wallets/mine');
+
+  protected localTime(occurredAt: string): string {
+    return new Date(occurredAt).toLocaleString();
+  }
 }

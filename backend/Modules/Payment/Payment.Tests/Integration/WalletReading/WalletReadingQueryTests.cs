@@ -35,6 +35,37 @@ public class WalletReadingQueryTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task Tourist_sees_both_deposits_with_type_amount_and_time_from_newest_to_oldest()
+    {
+        var seeded = WalletSeed.WalletWithTwoDeposits;
+        var client = Factory.CreateClientFor(seeded.TouristId, "explorer");
+        var expected = seeded.Transactions
+            .Select(transaction => new { transaction.Type, Amount = transaction.Amount.Value })
+            .ToList();
+
+        var wallet = await client.GetFromJsonAsync<WalletDto>("/api/payment/wallets/mine", JsonOptions);
+
+        wallet!.Transactions
+            .Select(transaction => new { transaction.Type, transaction.Amount })
+            .Should().BeEquivalentTo(expected);
+        wallet.Transactions.Should().BeInDescendingOrder(transaction => transaction.OccurredAt);
+        wallet.Transactions.Should().OnlyContain(transaction => transaction.OccurredAt != default);
+    }
+
+    [Fact]
+    public async Task Tourist_sees_only_their_own_wallet_while_another_tourist_has_deposits()
+    {
+        var seeded = WalletSeed.WalletWithOneDeposit;
+        var client = Factory.CreateClientFor(seeded.TouristId, "explorer");
+
+        var wallet = await client.GetFromJsonAsync<WalletDto>("/api/payment/wallets/mine", JsonOptions);
+
+        wallet!.Balance.Should().Be(seeded.Balance);
+        wallet.Transactions.Select(transaction => transaction.Amount)
+            .Should().Equal(seeded.Transactions.Select(transaction => transaction.Amount.Value));
+    }
+
+    [Fact]
     public async Task Anonymous_user_cannot_see_a_wallet()
     {
         var client = Factory.CreateClient();
