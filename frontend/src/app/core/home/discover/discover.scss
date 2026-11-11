@@ -29,10 +29,10 @@
   font-size: var(--home-discover-heading-size);
 }
 
-.discovery-grid,
-.upcoming-grid {
+.discovery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--home-discover-card-min-width)), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: var(--space-5);
 }
 
@@ -72,8 +72,7 @@
   font-size: var(--home-discover-card-title-size);
 }
 
-.discover .eyebrow,
-.discover .coming-soon {
+.discover .eyebrow {
   color: var(--home-hero-label);
   font-size: var(--font-size-sm);
 }
@@ -137,30 +136,9 @@
   outline-offset: var(--space-1);
 }
 
-.upcoming-grid {
-  margin-block-start: var(--space-5);
-}
-
-.upcoming-card {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-4);
-  border: 1px solid var(--home-discover-border);
-  border-radius: var(--radius);
-  padding: var(--space-5);
-}
-
-.upcoming-card h3 {
-  margin-block: var(--space-2);
-  font-size: var(--font-size-lg);
-}
-
-.upcoming-card p {
-  font-size: var(--font-size-sm);
-}
-
-.upcoming-icon {
-  color: var(--home-hero-label);
-  font-size: var(--home-discover-card-title-size);
-  line-height: 1;
+@media (width < 48rem) {
+  .discovery-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
 }

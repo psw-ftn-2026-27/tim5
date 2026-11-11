@@ -51,23 +51,47 @@
           </div>
         </div>
       </article>
-    </div>
-
-    <div class="upcoming-grid">
-      <article class="upcoming-card">
-        <span class="upcoming-icon" aria-hidden="true">✦</span>
-        <div>
-          <p class="coming-soon">Coming Soon</p>
-          <h3>Games &amp; Challenges</h3>
-          <p>Map-based challenges are planned for another way to explore.</p>
+      <article class="discovery-card" aria-labelledby="games-title">
+        <img src="/images/home/card-games-biking.webp" alt="Mountain biker riding a rocky trail above distant alpine peaks"
+          width="1600" height="900" loading="lazy" />
+        <div class="card-content">
+          <p class="eyebrow">A work in progress</p>
+          <h3 id="games-title">Games &amp; Challenges</h3>
+          <p>Visit the Games module. Its landing page is still in development; playing challenges
+            is not available yet.</p>
+          <div class="card-access">
+            @if (loggedIn()) {
+              <a class="button discovery-secondary" routerLink="/games">Open Games <span aria-hidden="true">↗</span></a>
+            } @else {
+              <p class="account-note">Log in to continue to the module. Gameplay is still in development.</p>
+              <div class="card-actions">
+                <a class="button discovery-secondary" routerLink="/login">Log in <span aria-hidden="true">↗</span></a>
+                <a class="button discovery-secondary" routerLink="/register">Register</a>
+              </div>
+            }
+          </div>
         </div>
       </article>
-      <article class="upcoming-card">
-        <span class="upcoming-icon" aria-hidden="true">◇</span>
-        <div>
-          <p class="coming-soon">Coming Soon</p>
-          <h3>Tour Purchases</h3>
-          <p>A future way to purchase tours through Explorer.</p>
+
+      <article class="discovery-card" aria-labelledby="payment-title">
+        <img src="/images/home/card-payment-retreat.webp" alt="Warmly illuminated wooden retreat with a fire pit among forested mountains"
+          width="1600" height="900" loading="lazy" />
+        <div class="card-content">
+          <p class="eyebrow">Your account, your access</p>
+          <h3 id="payment-title">Payment &amp; Wallet</h3>
+          <p>Open Payment to find the wallet tools available for your account role.
+            Tour purchases are not available yet.</p>
+          <div class="card-access">
+            @if (loggedIn()) {
+              <a class="button discovery-secondary" routerLink="/payment">Open Payment <span aria-hidden="true">↗</span></a>
+            } @else {
+              <p class="account-note">Wallet tools require an account with the appropriate role.</p>
+              <div class="card-actions">
+                <a class="button discovery-secondary" routerLink="/login">Log in <span aria-hidden="true">↗</span></a>
+                <a class="button discovery-secondary" routerLink="/register">Register</a>
+              </div>
+            }
+          </div>
         </div>
       </article>
     </div>
