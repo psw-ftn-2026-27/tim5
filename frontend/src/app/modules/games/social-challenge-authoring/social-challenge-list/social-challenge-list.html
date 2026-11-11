@@ -16,6 +16,10 @@
     <a class="button button--primary" routerLink="/games/challenges/create">Create challenge</a>
   </div>
 
+  @if (actionError()) {
+    <p class="error">{{ actionError() }}</p>
+  }
+
   @if (challenges.isLoading()) {
     <p>Loading challenges...</p>
   } @else if (challenges.error()) {
@@ -43,9 +47,43 @@
             <td>{{ challenge.xp }}</td>
             <td>{{ challenge.status }}</td>
             <td>
-              @if (challenge.status === 'Draft') {
-                <button class="button" type="button" (click)="selectForEdit(challenge)">Edit</button>
-              }
+              <div class="actions">
+                @switch (challenge.status) {
+                  @case ('Draft') {
+                    <button class="button" type="button" (click)="selectForEdit(challenge)">Edit</button>
+                    <button class="button" type="button" [disabled]="actionPending()" (click)="publish(challenge.id)">
+                      Publish
+                    </button>
+                    <button class="button" type="button" [disabled]="actionPending()" (click)="delete(challenge.id)">
+                      Delete
+                    </button>
+                  }
+                  @case ('Published') {
+                    <button class="button" type="button" [disabled]="actionPending()" (click)="retire(challenge.id)">
+                      Retire
+                    </button>
+                    <button class="button" type="button" [disabled]="actionPending()" (click)="archive(challenge.id)">
+                      Archive
+                    </button>
+                  }
+                  @case ('Retired') {
+                    <button class="button" type="button" [disabled]="actionPending()" (click)="publish(challenge.id)">
+                      Republish
+                    </button>
+                    <button class="button" type="button" [disabled]="actionPending()" (click)="archive(challenge.id)">
+                      Archive
+                    </button>
+                  }
+                  @case ('Archived') {
+                    <button class="button" type="button" [disabled]="actionPending()" (click)="publish(challenge.id)">
+                      Republish
+                    </button>
+                    <button class="button" type="button" [disabled]="actionPending()" (click)="delete(challenge.id)">
+                      Delete
+                    </button>
+                  }
+                }
+              </div>
             </td>
           </tr>
         } @empty {

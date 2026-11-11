@@ -34,7 +34,7 @@ public sealed class SocialChallengeAuthoringService
         var challenge = await _challengeRepository.GetByIdAsync(challengeId);
         if (challenge is null)
         {
-            throw new NotFoundException($"Challenge {challengeId} does not exist.");
+            throw new NotFoundException("The challenge no longer exists.");
         }
 
         var window = new TimeWindow(dto.Window.Start, dto.Window.End);

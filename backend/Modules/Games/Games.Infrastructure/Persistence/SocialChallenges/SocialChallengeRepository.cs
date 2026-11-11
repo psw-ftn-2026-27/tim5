@@ -22,4 +22,9 @@ internal sealed class SocialChallengeRepository : ISocialChallengeRepository
     {
         _dbContext.SocialChallenges.Add(challenge);
     }
+
+    public void Remove(SocialChallenge challenge)
+    {
+        _dbContext.SocialChallenges.Remove(challenge);
+    }
 }
