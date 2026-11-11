@@ -16,4 +16,12 @@ public sealed class Wallet : AggregateRoot
         TouristId = touristId;
         Balance = 0;
     }
+
+    public void Deposit(Amount amount, Guid administratorId)
+    {
+        var transaction = new Transaction(TransactionType.Deposit, amount, administratorId);
+
+        _transactions.Add(transaction);
+        Balance += transaction.Amount.Value;
+    }
 }

@@ -1,0 +1,13 @@
+.deposit {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2);
+}
+
+.deposit input {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font: inherit;
+  padding: var(--space-2);
+  width: 8rem;
+}
