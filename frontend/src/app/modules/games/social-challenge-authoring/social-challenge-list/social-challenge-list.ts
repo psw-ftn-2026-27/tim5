@@ -25,6 +25,8 @@ export class SocialChallengeList {
   protected readonly editedChallengeId = signal<string | null>(null);
   protected readonly pending = signal(false);
   protected readonly error = signal<string | null>(null);
+  protected readonly actionPending = signal(false);
+  protected readonly actionError = signal<string | null>(null);
 
   private readonly editModel = signal({
     name: '',
@@ -98,8 +100,69 @@ export class SocialChallengeList {
       this.challenges.reload();
     } catch (failure) {
       this.error.set(serverMessage(failure, 'Could not change the challenge.'));
+      this.challenges.reload();
     } finally {
       this.pending.set(false);
+    }
+  }
+
+  protected async publish(challengeId: string): Promise<void> {
+    this.actionPending.set(true);
+    this.actionError.set(null);
+    try {
+      await this.socialChallengeAuthoring.publish(challengeId);
+      this.cancelEdit();
+      this.challenges.reload();
+    } catch (failure) {
+      this.actionError.set(serverMessage(failure, 'Could not publish the challenge.'));
+      this.challenges.reload();
+    } finally {
+      this.actionPending.set(false);
+    }
+  }
+
+  protected async retire(challengeId: string): Promise<void> {
+    this.actionPending.set(true);
+    this.actionError.set(null);
+    try {
+      await this.socialChallengeAuthoring.retire(challengeId);
+      this.cancelEdit();
+      this.challenges.reload();
+    } catch (failure) {
+      this.actionError.set(serverMessage(failure, 'Could not retire the challenge.'));
+      this.challenges.reload();
+    } finally {
+      this.actionPending.set(false);
+    }
+  }
+
+  protected async archive(challengeId: string): Promise<void> {
+    this.actionPending.set(true);
+    this.actionError.set(null);
+    try {
+      await this.socialChallengeAuthoring.archive(challengeId);
+      this.cancelEdit();
+      this.challenges.reload();
+    } catch (failure) {
+      this.actionError.set(serverMessage(failure, 'Could not archive the challenge.'));
+      this.challenges.reload();
+    } finally {
+      this.actionPending.set(false);
+    }
+  }
+
+  protected async delete(challengeId: string): Promise<void> {
+    this.actionPending.set(true);
+    this.actionError.set(null);
+    try {
+      await this.socialChallengeAuthoring.delete(challengeId);
+      this.cancelEdit();
+      this.challenges.reload();
+    } catch (failure) {
+      this.actionError.set(serverMessage(failure, 'Could not delete the challenge.'));
+      this.challenges.reload();
+    } finally {
+      this.actionPending.set(false);
     }
   }
 }

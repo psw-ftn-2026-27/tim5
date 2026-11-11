@@ -50,6 +50,44 @@ public sealed class SocialChallenge : AggregateRoot
         Window = window;
     }
 
+    public void Publish()
+    {
+        if (Status == ChallengeStatus.Published)
+        {
+            throw new DomainException("The challenge is already published.");
+        }
+
+        Status = ChallengeStatus.Published;
+    }
+
+    public void Retire()
+    {
+        if (Status != ChallengeStatus.Published)
+        {
+            throw new DomainException("Only a published challenge can be retired.");
+        }
+
+        Status = ChallengeStatus.Retired;
+    }
+
+    public void Archive()
+    {
+        if (Status != ChallengeStatus.Published && Status != ChallengeStatus.Retired)
+        {
+            throw new DomainException("Only a published or retired challenge can be archived.");
+        }
+
+        Status = ChallengeStatus.Archived;
+    }
+
+    public void Delete()
+    {
+        if (Status != ChallengeStatus.Draft && Status != ChallengeStatus.Archived)
+        {
+            throw new DomainException("Only a draft or archived challenge can be deleted.");
+        }
+    }
+
     private bool CanModify()
     {
         return Status == ChallengeStatus.Draft;

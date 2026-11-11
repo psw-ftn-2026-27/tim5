@@ -12,6 +12,26 @@ public class SocialChallengeTests
     private static SocialChallenge CreateChallenge() =>
         new("Okupljanje na zalasku", "Bravo!", 5, 200, 50, CreateWindow());
 
+    private static SocialChallenge CreateChallengeIn(ChallengeStatus status)
+    {
+        var challenge = CreateChallenge();
+        switch (status)
+        {
+            case ChallengeStatus.Published:
+                challenge.Publish();
+                break;
+            case ChallengeStatus.Retired:
+                challenge.Publish();
+                challenge.Retire();
+                break;
+            case ChallengeStatus.Archived:
+                challenge.Publish();
+                challenge.Archive();
+                break;
+        }
+        return challenge;
+    }
+
     [Fact]
     public void New_challenge_starts_as_a_draft()
     {
@@ -88,5 +108,117 @@ public class SocialChallengeTests
         challenge.RequiredPeople.Should().Be(5);
         challenge.RangeInMeters.Should().Be(200);
         challenge.Xp.Should().Be(50);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Published)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Challenge_that_is_not_a_draft_cannot_be_changed(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeIn(status);
+
+        var update = () => challenge.Update("Novo ime", "Nova poruka", 2, 100, 10, CreateWindow());
+
+        update.Should().Throw<DomainException>();
+        challenge.Name.Should().Be("Okupljanje na zalasku");
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Draft)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Draft_retired_or_archived_challenge_becomes_published(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeIn(status);
+
+        challenge.Publish();
+
+        challenge.Status.Should().Be(ChallengeStatus.Published);
+    }
+
+    [Fact]
+    public void Published_challenge_cannot_be_published_again()
+    {
+        var challenge = CreateChallengeIn(ChallengeStatus.Published);
+
+        var publishing = () => challenge.Publish();
+
+        publishing.Should().Throw<DomainException>();
+        challenge.Status.Should().Be(ChallengeStatus.Published);
+    }
+
+    [Fact]
+    public void Published_challenge_becomes_retired()
+    {
+        var challenge = CreateChallengeIn(ChallengeStatus.Published);
+
+        challenge.Retire();
+
+        challenge.Status.Should().Be(ChallengeStatus.Retired);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Draft)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Only_a_published_challenge_can_be_retired(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeIn(status);
+
+        var retiring = () => challenge.Retire();
+
+        retiring.Should().Throw<DomainException>();
+        challenge.Status.Should().Be(status);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Published)]
+    [InlineData(ChallengeStatus.Retired)]
+    public void Published_or_retired_challenge_becomes_archived(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeIn(status);
+
+        challenge.Archive();
+
+        challenge.Status.Should().Be(ChallengeStatus.Archived);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Draft)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Only_a_published_or_retired_challenge_can_be_archived(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeIn(status);
+
+        var archiving = () => challenge.Archive();
+
+        archiving.Should().Throw<DomainException>();
+        challenge.Status.Should().Be(status);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Draft)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Draft_or_archived_challenge_can_be_deleted(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeIn(status);
+
+        var deletion = () => challenge.Delete();
+
+        deletion.Should().NotThrow();
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Published)]
+    [InlineData(ChallengeStatus.Retired)]
+    public void Published_or_retired_challenge_cannot_be_deleted(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeIn(status);
+
+        var deletion = () => challenge.Delete();
+
+        deletion.Should().Throw<DomainException>();
+        challenge.Status.Should().Be(status);
     }
 }
