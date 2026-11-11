@@ -1,0 +1,30 @@
+<footer class="home-footer" aria-label="Explorer footer">
+  <div class="footer-row">
+    <div class="container footer-main">
+      <div class="footer-brand">
+        <p class="brand">Explorer<span>.</span></p>
+        <p class="tagline">Go beyond the familiar.</p>
+        <p>Discover places. Explore more. Share stories.</p>
+        @if (!loggedIn()) {
+          <p class="account-note">An account is required to browse tours and stories.</p>
+        }
+      </div>
+      <nav aria-label="Footer navigation">
+        <h2>Explore</h2>
+        @if (loggedIn()) {
+          <a routerLink="/exploration">Tours</a>
+          <a routerLink="/social">Stories</a>
+        } @else {
+          <a href="#tours">Tours</a>
+          <a href="#blogs">Stories</a>
+        }
+      </nav>
+    </div>
+  </div>
+  <div class="footer-row">
+    <div class="container footer-bottom">
+      <p>© 2026 Explorer</p>
+      <p>Made for the curious.</p>
+    </div>
+  </div>
+</footer>

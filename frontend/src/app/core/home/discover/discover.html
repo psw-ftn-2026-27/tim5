@@ -1,0 +1,75 @@
+<section class="discover" aria-labelledby="explore">
+  <div class="container">
+    <div class="section-heading">
+      <p class="eyebrow">A place to begin</p>
+      <h2 id="explore" tabindex="-1">Discover Your Way</h2>
+      <p>Follow a route into the outdoors, or see a destination through someone else's story.
+        Choose where your next chapter begins.</p>
+    </div>
+
+    <div class="discovery-grid">
+      <article class="discovery-card featured" id="tours" tabindex="-1" aria-labelledby="tours-title">
+        <img src="/images/home/gallery-nature.webp" alt="Turquoise Lake Sorapiss beneath rocky peaks and autumn trees"
+          width="1600" height="1067" loading="lazy" />
+        <div class="card-content">
+          <p class="eyebrow">Take the scenic route</p>
+          <h3 id="tours-title">Explore Tours</h3>
+          <p>Find a route that draws you outside. Browse published tours and discover the places
+            behind each story.</p>
+          <div class="card-access">
+            @if (loggedIn()) {
+              <a class="button discovery-primary" routerLink="/exploration">Browse tours <span aria-hidden="true">↗</span></a>
+            } @else {
+              <p class="account-note">Browsing tours requires an account.</p>
+              <div class="card-actions">
+                <a class="button discovery-primary" routerLink="/login">Log in <span aria-hidden="true">↗</span></a>
+                <a class="button discovery-secondary" routerLink="/register">Register</a>
+              </div>
+            }
+          </div>
+        </div>
+      </article>
+
+      <article class="discovery-card" id="blogs" tabindex="-1" aria-labelledby="blogs-title">
+        <img src="/images/home/gallery-city.webp" alt="Venice's Grand Canal and rooftops in warm evening light"
+          width="1600" height="1067" loading="lazy" />
+        <div class="card-content">
+          <p class="eyebrow">A different point of view</p>
+          <h3 id="blogs-title">Read Stories</h3>
+          <p>See a destination through someone else's eyes. Read experiences and ideas shared
+            by the Explorer community.</p>
+          <div class="card-access">
+            @if (loggedIn()) {
+              <a class="button discovery-secondary" routerLink="/social">Browse blogs <span aria-hidden="true">↗</span></a>
+            } @else {
+              <p class="account-note">Reading blogs requires an account.</p>
+              <div class="card-actions">
+                <a class="button discovery-secondary" routerLink="/login">Log in <span aria-hidden="true">↗</span></a>
+                <a class="button discovery-secondary" routerLink="/register">Register</a>
+              </div>
+            }
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="upcoming-grid">
+      <article class="upcoming-card">
+        <span class="upcoming-icon" aria-hidden="true">✦</span>
+        <div>
+          <p class="coming-soon">Coming Soon</p>
+          <h3>Games &amp; Challenges</h3>
+          <p>Map-based challenges are planned for another way to explore.</p>
+        </div>
+      </article>
+      <article class="upcoming-card">
+        <span class="upcoming-icon" aria-hidden="true">◇</span>
+        <div>
+          <p class="coming-soon">Coming Soon</p>
+          <h3>Tour Purchases</h3>
+          <p>A future way to purchase tours through Explorer.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
