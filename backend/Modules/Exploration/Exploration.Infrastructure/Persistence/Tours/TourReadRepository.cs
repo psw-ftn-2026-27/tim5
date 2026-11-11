@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Exploration.Application.TourBrowsing;
 using Exploration.Application.Tours;
 using Exploration.Domain.Tours;
@@ -63,16 +62,13 @@ internal sealed class TourReadRepository : ITourReadRepository
     private static IQueryable<Tour> Sort(IQueryable<Tour> tours, TourSortOrder sort)
     {
         // Difficulty is stored as text, so the order Easy < Moderate < Hard is spelled out here.
-        Expression<Func<Tour, int>> difficultyRank = tour =>
-            tour.Difficulty == TourDifficulty.Easy ? 0 : tour.Difficulty == TourDifficulty.Moderate ? 1 : 2;
-
         return sort switch
         {
             TourSortOrder.DifficultyAscending => tours
-                .OrderBy(difficultyRank)
+                .OrderBy(tour => tour.Difficulty == TourDifficulty.Easy ? 0 : tour.Difficulty == TourDifficulty.Moderate ? 1 : 2)
                 .ThenByDescending(tour => tour.PublishedAt),
             TourSortOrder.DifficultyDescending => tours
-                .OrderByDescending(difficultyRank)
+                .OrderByDescending(tour => tour.Difficulty == TourDifficulty.Easy ? 0 : tour.Difficulty == TourDifficulty.Moderate ? 1 : 2)
                 .ThenByDescending(tour => tour.PublishedAt),
             _ => tours.OrderByDescending(tour => tour.PublishedAt)
         };
