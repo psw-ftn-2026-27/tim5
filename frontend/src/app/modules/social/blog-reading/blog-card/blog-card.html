@@ -1,4 +1,8 @@
 <article class="card stack">
+  @if (blog().images.length > 0) {
+    <img class="cover" [src]="blog().images[0]" alt="Cover image of {{ blog().title }}" />
+  }
+
   <h3>{{ blog().title }}</h3>
 
   <p>{{ blog().description }}</p>

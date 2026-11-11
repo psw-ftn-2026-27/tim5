@@ -29,4 +29,12 @@ public sealed class BlogReadingController : ControllerBase
     {
         return await _readingQueries.GetByIdAsync(id);
     }
+
+    [HttpGet("/api/social/images/{id:guid}")]
+    [AllowAnonymous]
+    public async Task<ActionResult> GetImageFile(Guid id)
+    {
+        var file = await _readingQueries.GetImageFileAsync(id);
+        return File(file.Content, file.ContentType);
+    }
 }

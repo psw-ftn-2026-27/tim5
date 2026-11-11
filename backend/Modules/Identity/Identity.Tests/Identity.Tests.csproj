@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Identity\Identity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Payment.Tests" />
+  </ItemGroup>
+
 </Project>

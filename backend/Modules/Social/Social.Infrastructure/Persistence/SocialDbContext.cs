@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Shared.Domain.Images;
+using Shared.Infrastructure;
 using Social.Application;
 using Social.Domain.Blogs;
 using Social.Domain.Clubs;
@@ -15,6 +17,7 @@ internal sealed class SocialDbContext : DbContext, IUnitOfWork
 
     public DbSet<Blog> Blogs => Set<Blog>();
     public DbSet<Connection> Connections => Set<Connection>();
+    public DbSet<UploadedImage> UploadedImages => Set<UploadedImage>();
     public DbSet<Club> Clubs => Set<Club>();
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -22,6 +25,7 @@ internal sealed class SocialDbContext : DbContext, IUnitOfWork
         builder.HasDefaultSchema("social");
         builder.ConfigureBlogs();
         builder.ConfigureConnections();
+        builder.ConfigureUploadedImages();
         builder.ConfigureClubs();
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Shared.Domain;
 using Social.Application.Blogs;
+using Social.Application.UploadedImages;
 using Social.Domain.Blogs;
 
 namespace Social.Infrastructure.Persistence.Blogs;
@@ -48,7 +49,7 @@ internal sealed class BlogReadRepository : IBlogReadRepository
                 blog.Title,
                 blog.Description,
                 blog.CreatedAt,
-                blog.Images,
+                blog.ImageIds.Select(imageId => ImageAddress.For(imageId)).ToList(),
                 blog.Status,
                 blog.Comments
                     .Select(comment => new CommentDto(comment.Id, comment.UserId, comment.Text, comment.CreatedAt))

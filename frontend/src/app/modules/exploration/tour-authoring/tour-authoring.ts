@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import {
   CreateTourDto,
   GroupSizeDto,
+  PriceDto,
   TourDto,
   TransportTimeDto,
 } from '../api/exploration-api-types';
@@ -18,8 +19,8 @@ export class TourAuthoring {
     return firstValueFrom(this.http.post<TourDto>(BASE_URL, dto));
   }
 
-  async publish(id: string): Promise<void> {
-    await firstValueFrom(this.http.post<void>(`${BASE_URL}/${id}/publish`, {}));
+  async publish(id: string, dto: PriceDto): Promise<void> {
+    await firstValueFrom(this.http.post<void>(`${BASE_URL}/${id}/publish`, dto));
   }
 
   async archive(id: string): Promise<void> {

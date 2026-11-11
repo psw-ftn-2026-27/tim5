@@ -21,7 +21,12 @@ export interface BlogDto {
 export interface CreateBlogDto {
   title: string;
   description: string;
-  images: string[] | null;
+  imageIds: string[] | null;
+}
+
+export interface UploadedImageDto {
+  id: string;
+  url: string;
 }
 
 export interface CreateCommentDto {

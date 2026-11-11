@@ -3,7 +3,10 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "schematicCollections": ["angular-eslint"]
+    "schematicCollections": [
+      "angular-eslint"
+    ],
+    "analytics": "1a3ba671-82a4-4d39-bcdb-f5be30d6deed"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -28,9 +31,15 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "marker-*.png",
+                "input": "node_modules/leaflet/dist/images",
+                "output": "leaflet"
               }
             ],
-            "styles": ["src/styles.scss"]
+            "styles": ["node_modules/leaflet/dist/leaflet.css", "src/styles.scss"],
+            "allowedCommonJsDependencies": ["leaflet", "leaflet-routing-machine"]
           },
           "configurations": {
             "production": {

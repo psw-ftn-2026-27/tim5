@@ -4,6 +4,7 @@ using FluentAssertions;
 using Shared.Domain;
 using Shared.Tests;
 using Social.Application.Blogs;
+using Social.Application.UploadedImages;
 using Social.Domain.Blogs;
 using Social.Tests.Integration.Seeds;
 using Xunit;
@@ -39,6 +40,30 @@ public class BlogReadingQueryTests : BaseIntegrationTest
         blog.Title.Should().Be(BlogSeed.CommentedMuseumVisit.Title);
         blog.Status.Should().Be(BlogStatus.Published);
         blog.Comments.Should().ContainSingle(comment => comment.UserId == WellKnownUsers.Administrator);
+    }
+
+    [Fact]
+    public async Task Published_blog_is_shown_with_its_image_addresses()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.Administrator, "administrator");
+
+        var blog = await client.GetFromJsonAsync<BlogDto>(
+            $"/api/social/blogs/{BlogSeed.IllustratedBridgeWalk.Id}", JsonOptions);
+
+        blog!.Images.Should().Equal(ImageAddress.For(UploadedImageSeed.ExplorersLinkedBridgePhoto.Id));
+    }
+
+    [Fact]
+    public async Task Uploaded_image_is_read_from_its_address()
+    {
+        var client = Factory.CreateClient();
+
+        var response = await client.GetAsync(ImageAddress.For(UploadedImageSeed.ExplorersLinkedBridgePhoto.Id));
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Content.Headers.ContentType!.MediaType.Should().Be("image/png");
+        var content = await response.Content.ReadAsByteArrayAsync();
+        content.Should().Equal(UploadedImageSeed.OnePixelPng);
     }
 
     [Fact]

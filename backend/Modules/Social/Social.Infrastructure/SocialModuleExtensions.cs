@@ -12,11 +12,13 @@ using Social.Application.Clubs;
 using Social.Application.Connections;
 using Social.Application.FollowerManagement;
 using Social.Application.Following;
+using Social.Application.UploadedImages;
 using Social.Domain.Clubs;
 using Social.Infrastructure.Persistence;
 using Social.Infrastructure.Persistence.Blogs;
 using Social.Infrastructure.Persistence.Clubs;
 using Social.Infrastructure.Persistence.Connections;
+using Social.Infrastructure.Persistence.UploadedImages;
 
 namespace Social.Infrastructure;
 
@@ -33,6 +35,8 @@ public static class SocialModuleExtensions
         services.AddScoped<IBlogReadRepository, BlogReadRepository>();
         services.AddScoped<IConnectionRepository, ConnectionRepository>();
         services.AddScoped<IConnectionReadRepository, ConnectionReadRepository>();
+        services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();
+        services.AddScoped<IUploadedImageReadRepository, UploadedImageReadRepository>();
         services.AddScoped<IClubRepository, ClubRepository>();
         services.AddScoped<IClubReadRepository, ClubReadRepository>();
         services.AddScoped<ClubNameUniqueness>();

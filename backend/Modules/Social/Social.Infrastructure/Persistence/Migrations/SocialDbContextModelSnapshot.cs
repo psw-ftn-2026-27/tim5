@@ -24,6 +24,31 @@ namespace Social.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Shared.Domain.Images.UploadedImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsLinked")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("StoredName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UploadedImages", "social");
+                });
+
             modelBuilder.Entity("Social.Domain.Blogs.Blog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -40,9 +65,11 @@ namespace Social.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.PrimitiveCollection<List<string>>("Images")
+                    b.PrimitiveCollection<List<Guid>>("ImageIds")
                         .IsRequired()
-                        .HasColumnType("text[]");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid[]")
+                        .HasDefaultValueSql("'{}'");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -125,6 +152,37 @@ namespace Social.Infrastructure.Persistence.Migrations
                     b.HasIndex("ConnectionId");
 
                     b.ToTable("FollowRequests", "social");
+                });
+
+            modelBuilder.Entity("Shared.Domain.Images.UploadedImage", b =>
+                {
+                    b.OwnsOne("Shared.Domain.Images.ImageFile", "File", b1 =>
+                        {
+                            b1.Property<Guid>("UploadedImageId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<byte[]>("Content")
+                                .IsRequired()
+                                .HasColumnType("bytea");
+
+                            b1.Property<string>("ContentType")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)");
+
+                            b1.Property<int>("Size")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("UploadedImageId");
+
+                            b1.ToTable("UploadedImages", "social");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UploadedImageId");
+                        });
+
+                    b.Navigation("File")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Social.Domain.Blogs.Comment", b =>
