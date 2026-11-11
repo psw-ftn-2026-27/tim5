@@ -16,6 +16,8 @@ internal static class BlogConfiguration
     {
         builder.Property(blog => blog.Title).HasMaxLength(200);
         builder.Property(blog => blog.Status).HasConversion<string>().HasMaxLength(20);
+        // Blogs created before images were linked by ID get an empty list instead of failing the migration.
+        builder.Property(blog => blog.ImageIds).HasDefaultValueSql("'{}'");
 
         builder.HasMany(blog => blog.Comments)
             .WithOne()
