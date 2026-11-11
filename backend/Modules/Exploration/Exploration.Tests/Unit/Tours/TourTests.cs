@@ -9,6 +9,7 @@ namespace Exploration.Tests.Unit.Tours;
 public class TourTests
 {
     private static readonly string LongDescription = new('o', 100);
+    private static readonly Price FreePrice = new(true, 0);
 
     private static Tour CreateTour(string description) =>
         new(WellKnownUsers.Explorer, "Šetnja tvrđavom", description, TourDifficulty.Easy, ["istorija"], new GroupSize(2, 6));
@@ -17,7 +18,7 @@ public class TourTests
     {
         var tour = CreateTour(LongDescription);
         tour.AddTransportTime(TransportMode.Walking, 60);
-        tour.Publish();
+        tour.Publish(FreePrice);
         return tour;
     }
 
@@ -96,10 +97,23 @@ public class TourTests
         var tour = CreateTour(LongDescription);
         tour.AddTransportTime(TransportMode.Bicycle, 45);
 
-        tour.Publish();
+        tour.Publish(FreePrice);
 
         tour.Status.Should().Be(TourStatus.Published);
         tour.PublishedAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Tour_without_a_price_cannot_be_published_and_stays_a_draft()
+    {
+        var tour = CreateTour(LongDescription);
+        tour.AddTransportTime(TransportMode.Walking, 120);
+
+        var publishing = () => tour.Publish(null!);
+
+        publishing.Should().Throw<DomainException>();
+        tour.Status.Should().Be(TourStatus.Draft);
+        tour.PublishedAt.Should().BeNull();
     }
 
     [Fact]
@@ -108,7 +122,7 @@ public class TourTests
         var tour = CreateTour("Kratak opis.");
         tour.AddTransportTime(TransportMode.Walking, 120);
 
-        var publishing = () => tour.Publish();
+        var publishing = () => tour.Publish(FreePrice);
 
         publishing.Should().Throw<DomainException>();
     }
@@ -118,7 +132,7 @@ public class TourTests
     {
         var tour = CreateTour(LongDescription);
 
-        var publishing = () => tour.Publish();
+        var publishing = () => tour.Publish(FreePrice);
 
         publishing.Should().Throw<DomainException>();
     }
@@ -128,9 +142,9 @@ public class TourTests
     {
         var tour = CreateTour(LongDescription);
         tour.AddTransportTime(TransportMode.Car, 30);
-        tour.Publish();
+        tour.Publish(FreePrice);
 
-        var publishing = () => tour.Publish();
+        var publishing = () => tour.Publish(FreePrice);
 
         publishing.Should().Throw<DomainException>();
     }
@@ -186,7 +200,7 @@ public class TourTests
         var tour = CreatePublishedTour();
         tour.Archive();
 
-        var publishing = () => tour.Publish();
+        var publishing = () => tour.Publish(FreePrice);
 
         publishing.Should().Throw<DomainException>();
     }

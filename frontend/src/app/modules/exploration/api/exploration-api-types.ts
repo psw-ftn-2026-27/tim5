@@ -14,6 +14,11 @@ export interface GroupSizeDto {
   max: number;
 }
 
+export interface PriceDto {
+  isFree: boolean;
+  amount: number;
+}
+
 export interface TourDto {
   id: string;
   authorId: string;

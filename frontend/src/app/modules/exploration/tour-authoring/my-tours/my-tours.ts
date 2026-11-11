@@ -41,6 +41,16 @@ export class MyTours {
     required(path.max, { message: 'Max is required.' });
   });
 
+  protected readonly publishTourId = signal<string | null>(null);
+  protected readonly priceChoice = signal<'Free' | 'Paid' | null>(null);
+
+  private readonly priceModel = signal({ amount: null as number | null });
+
+  protected readonly priceForm = form(this.priceModel, (path) => {
+    required(path.amount, { message: 'Amount is required.' });
+    min(path.amount, 1, { message: 'Amount must be greater than 0.' });
+  });
+
   protected selectGroupSize(tour: TourDto): void {
     this.error.set(null);
     this.groupSizeTourId.set(tour.id);
@@ -80,12 +90,39 @@ export class MyTours {
     this.form().reset({ transport: 'Walking', minutes: 30 });
   }
 
-  protected async publish(tourId: string): Promise<void> {
+  protected selectPublish(tourId: string): void {
+    this.error.set(null);
+    this.publishTourId.set(tourId);
+    this.cancelPrice();
+  }
+
+  protected choosePrice(choice: 'Free' | 'Paid'): void {
+    this.priceChoice.set(choice);
+  }
+
+  protected closePublish(): void {
+    this.publishTourId.set(null);
+  }
+
+  protected cancelPrice(): void {
+    this.priceChoice.set(null);
+    this.priceForm().reset({ amount: null });
+  }
+
+  protected async publish(event: Event): Promise<void> {
+    event.preventDefault();
+    const tourId = this.publishTourId();
+    const choice = this.priceChoice();
+    const amount = choice === 'Free' ? 0 : this.priceForm.amount().value();
+    if (tourId === null || choice === null || amount === null) {
+      return;
+    }
     this.pending.set(true);
     this.error.set(null);
     try {
-      await this.tourAuthoring.publish(tourId);
+      await this.tourAuthoring.publish(tourId, { isFree: choice === 'Free', amount: amount });
       this.tours.reload();
+      this.publishTourId.set(null);
     } catch (failure) {
       this.error.set(serverMessage(failure, 'Could not publish the tour.'));
     } finally {
