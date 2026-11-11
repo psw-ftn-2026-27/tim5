@@ -1,0 +1,86 @@
+<div class="card stack">
+  <h1>Create challenge</h1>
+
+  <form class="stack" (submit)="submit($event)">
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" [formField]="form.name" />
+      @if (form.name().touched()) {
+        @for (message of form.name().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="start">Start</label>
+      <input id="start" type="time" [formField]="form.start" />
+      @if (form.start().touched()) {
+        @for (message of form.start().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="end">End</label>
+      <input id="end" type="time" [formField]="form.end" />
+      @if (form.end().touched()) {
+        @for (message of form.end().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="required-people">Required people</label>
+      <input id="required-people" type="number" [formField]="form.requiredPeople" />
+      @if (form.requiredPeople().touched()) {
+        @for (message of form.requiredPeople().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="range-in-meters">Range in meters</label>
+      <input id="range-in-meters" type="number" [formField]="form.rangeInMeters" />
+      @if (form.rangeInMeters().touched()) {
+        @for (message of form.rangeInMeters().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="xp">XP</label>
+      <input id="xp" type="number" [formField]="form.xp" />
+      @if (form.xp().touched()) {
+        @for (message of form.xp().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="exit-message">Exit message</label>
+      <textarea id="exit-message" rows="3" [formField]="form.exitMessage"></textarea>
+      @if (form.exitMessage().touched()) {
+        @for (message of form.exitMessage().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <div class="actions">
+      <button class="button button--primary" type="submit" [disabled]="!form().valid() || pending()">
+        Create
+      </button>
+      <a routerLink="/games/challenges">Cancel</a>
+    </div>
+  </form>
+</div>

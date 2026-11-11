@@ -1,0 +1,9 @@
+<div class="map-frame">
+  <div class="map" [id]="mapId"></div>
+
+  @if (routeLengthText(); as length) {
+    <p class="map-note">Pešačka ruta po ulicama: {{ length }} km</p>
+  } @else if (routeFailed()) {
+    <p class="map-note map-note--error">Ruta trenutno nije dostupna.</p>
+  }
+</div>

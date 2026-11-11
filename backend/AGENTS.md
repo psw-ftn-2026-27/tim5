@@ -20,10 +20,16 @@ backend/
   Host.Tests/                      ArchUnitNET architecture tests            [platform]
   Shared/
     Shared.Domain/                 Entity, AggregateRoot, PageResult,
-                                   DomainException, NotFoundException       [platform]
+                                   DomainException, NotFoundException;
+                                   Images/: UploadedImage (shared aggregate),
+                                   ImageFile (value object), UploadQuota
+                                   (domain service)                          [platform]
     Shared.Api/                    ClaimsPrincipal.GetUserId()               [platform]
     Shared.Infrastructure/         AddModuleDbContext (Npgsql, schema-per-
-                                   module, per-schema migrations history)    [platform]
+                                   module, per-schema migrations history);
+                                   ConfigureUploadedImages (EF mapping each
+                                   module using images calls from its own
+                                   DbContext, so the table is in its schema) [platform]
     Shared.Tests/                  ExplorerApiFactory (per-assembly test DB,
                                    reseed, test JWTs), WellKnownUsers        [platform]
   Modules/

@@ -1,0 +1,16 @@
+<form class="deposit" (submit)="submit($event)">
+  <input
+    type="number"
+    step="1"
+    [attr.aria-label]="'Amount for ' + username()"
+    [formField]="form.amount"
+  />
+  <button class="button button--primary" type="submit" [disabled]="!form().valid() || pending()">
+    Deposit
+  </button>
+</form>
+@if (form.amount().touched()) {
+  @for (message of form.amount().errors(); track $index) {
+    <p class="error">{{ message.message }}</p>
+  }
+}

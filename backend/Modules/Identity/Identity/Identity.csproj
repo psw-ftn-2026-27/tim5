@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Identity.Tests" />
+    <InternalsVisibleTo Include="Payment.Tests" />
   </ItemGroup>
 
 </Project>

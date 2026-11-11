@@ -10,3 +10,13 @@ export interface WalletDto {
   balance: number;
   transactions: TransactionDto[];
 }
+
+export interface TouristBalanceDto {
+  touristId: string;
+  username: string;
+  balance: number;
+}
+
+export interface DepositDto {
+  amount: number;
+}

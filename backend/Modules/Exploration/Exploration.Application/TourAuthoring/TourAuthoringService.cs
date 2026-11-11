@@ -37,11 +37,11 @@ public sealed class TourAuthoringService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task PublishAsync(Guid tourId, Guid authorId)
+    public async Task PublishAsync(Guid tourId, Guid authorId, PriceDto dto)
     {
         var tour = await GetOwnedTourAsync(tourId, authorId);
 
-        tour.Publish();
+        tour.Publish(new Price(dto.IsFree, dto.Amount));
         await _unitOfWork.SaveChangesAsync();
     }
 

@@ -4,4 +4,8 @@
   @if (isExplorer()) {
     <p><a routerLink="/payment/wallet">My wallet</a></p>
   }
+
+  @if (isAdministrator()) {
+    <p><a routerLink="/payment/tourists">Tourist wallets</a></p>
+  }
 </div>

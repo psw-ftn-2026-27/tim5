@@ -13,4 +13,8 @@ export class PaymentHome {
   protected readonly isExplorer = computed(
     () => this.auth.user()?.roles.includes('explorer') ?? false,
   );
+
+  protected readonly isAdministrator = computed(
+    () => this.auth.user()?.roles.includes('administrator') ?? false,
+  );
 }

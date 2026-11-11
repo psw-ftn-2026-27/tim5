@@ -14,6 +14,11 @@ export interface GroupSizeDto {
   max: number;
 }
 
+export interface PriceDto {
+  isFree: boolean;
+  amount: number;
+}
+
 export interface TourDto {
   id: string;
   authorId: string;
@@ -34,4 +39,14 @@ export interface CreateTourDto {
   difficulty: TourDifficulty;
   tags: string[];
   recommendedGroupSize: GroupSizeDto;
+}
+
+export type TourSortOrder = 'Newest' | 'DifficultyAscending' | 'DifficultyDescending';
+
+export interface TourSearchCriteriaDto {
+  name: string | null;
+  difficulties: TourDifficulty[] | null;
+  tags: string[] | null;
+  transports: TransportMode[] | null;
+  sort: TourSortOrder;
 }
