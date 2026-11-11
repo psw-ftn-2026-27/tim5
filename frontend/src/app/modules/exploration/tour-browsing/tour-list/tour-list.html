@@ -8,34 +8,77 @@
     </p>
   }
 
-  <div class="filters">
-    <div class="field">
-      <label for="name-filter">Search by name</label>
-      <input id="name-filter" type="search" [formField]="form.name" />
+  <form class="card stack" (submit)="search($event)">
+    <div class="filters">
+      <div class="field">
+        <label for="name-filter">Deo naslova</label>
+        <input id="name-filter" type="search" [formField]="form.name" />
+      </div>
+
+      <div class="field">
+        <label for="tags-filter">Tagovi, odvojeni zarezom</label>
+        <input id="tags-filter" type="search" [formField]="form.tags" />
+      </div>
+
+      <div class="field">
+        <label for="sort">Sortiranje</label>
+        <select id="sort" [formField]="form.sort">
+          <option value="Newest">Najnovije</option>
+          <option value="DifficultyAscending">Težina rastuće</option>
+          <option value="DifficultyDescending">Težina opadajuće</option>
+        </select>
+      </div>
     </div>
 
-    <div class="field">
-      <label for="difficulty-filter">Difficulty</label>
-      <select id="difficulty-filter" [formField]="form.difficulty">
-        <option value="">All</option>
-        <option value="Easy">Easy</option>
-        <option value="Moderate">Moderate</option>
-        <option value="Hard">Hard</option>
-      </select>
+    <div class="filters">
+      <fieldset>
+        <legend>Težina</legend>
+        <label><input type="checkbox" [formField]="form.easy" /> Easy</label>
+        <label><input type="checkbox" [formField]="form.moderate" /> Moderate</label>
+        <label><input type="checkbox" [formField]="form.hard" /> Hard</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Tip transporta</legend>
+        <label><input type="checkbox" [formField]="form.walking" /> Peške</label>
+        <label><input type="checkbox" [formField]="form.bicycle" /> Bicikl</label>
+        <label><input type="checkbox" [formField]="form.car" /> Auto</label>
+      </fieldset>
     </div>
-  </div>
+
+    <button class="button button--primary" type="submit">Pretraži</button>
+  </form>
 
   @if (tours.isLoading()) {
-    <p>Loading tours...</p>
+    <p>Učitavanje...</p>
   } @else if (tours.error()) {
-    <p class="error">Could not load tours. Log in and try again.</p>
-  } @else if (visibleTours().length === 0) {
-    <p>No tours match the filter.</p>
-  } @else {
-    <div class="grid">
-      @for (tour of visibleTours(); track tour.id) {
-        <app-tour-card [tour]="tour" />
-      }
-    </div>
+    <p class="error">Ture nije moguće učitati. Prijavite se i pokušajte ponovo.</p>
+  } @else if (tours.hasValue()) {
+    @if (tours.value().items.length === 0) {
+      <p>Nema tura koje odgovaraju pretrazi.</p>
+    } @else {
+      <div class="grid">
+        @for (tour of tours.value().items; track tour.id) {
+          <app-tour-card [tour]="tour" />
+        }
+      </div>
+
+      <p class="meta">Pronađeno tura: {{ tours.value().totalCount }}</p>
+
+      <div class="paging">
+        <button class="button" type="button" [disabled]="page() === 1" (click)="previousPage()">
+          Prethodna
+        </button>
+        <span class="meta">Stranica {{ page() }}</span>
+        <button
+          class="button"
+          type="button"
+          [disabled]="isLastPage(tours.value().totalCount)"
+          (click)="nextPage()"
+        >
+          Sledeća
+        </button>
+      </div>
+    }
   }
 </div>

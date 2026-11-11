@@ -12,6 +12,7 @@ internal static class TourSeed
     public static readonly Tour PublishedVineyards;
     public static readonly Tour PublishedMonasteries;
     public static readonly Tour ArchivedSalasi;
+    public static readonly Tour PublishedOldTown;
 
     static TourSeed()
     {
@@ -30,7 +31,12 @@ internal static class TourSeed
         ArchivedSalasi.AddTransportTime(TransportMode.Car, 30);
         ArchivedSalasi.Publish(new Price(true, 0));
         ArchivedSalasi.Archive();
+
+        PublishedOldTown = new(WellKnownUsers.Explorer, "Stari grad Novog Sada", "Tura polazi sa Trga slobode, prolazi Zmaj Jovinom i Dunavskom ulicom do Dunavskog parka i završava se u Katoličkoj porti, uz priču o istoriji grada.", TourDifficulty.Easy, ["grad", "istorija"], new GroupSize(1, 20));
+        PublishedOldTown.AddTransportTime(TransportMode.Walking, 120);
+        PublishedOldTown.AddTransportTime(TransportMode.Bicycle, 40);
+        PublishedOldTown.Publish(new Price(true, 0));
     }
 
-    public static Tour[] All => [FortressWalk, CityStroll, SecondExplorersTrail, PublishableRiverside, PublishedVineyards, PublishedMonasteries, ArchivedSalasi];
+    public static Tour[] All => [FortressWalk, CityStroll, SecondExplorersTrail, PublishableRiverside, PublishedVineyards, PublishedMonasteries, ArchivedSalasi, PublishedOldTown];
 }
