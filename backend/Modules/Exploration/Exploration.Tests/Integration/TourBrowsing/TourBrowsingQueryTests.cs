@@ -87,6 +87,19 @@ public class TourBrowsingQueryTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task A_tag_finds_tours_regardless_of_letter_case()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.Administrator, "administrator");
+
+        var tours = await client.GetFromJsonAsync<PageResult<TourDto>>("/api/exploration/tours/published?tags=ISTORIJA", JsonOptions);
+
+        var expected = PublishedSeedTours()
+            .Where(tour => tour.Tags.Contains("istorija"))
+            .Select(tour => tour.Id);
+        tours!.Items.Select(tour => tour.Id).Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
     public async Task Several_transport_modes_find_tours_with_a_time_for_at_least_one_of_them()
     {
         var client = Factory.CreateClientFor(WellKnownUsers.Administrator, "administrator");

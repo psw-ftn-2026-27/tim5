@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Exploration.Application.TourBrowsing;
 using Exploration.Application.Tours;
 using Exploration.Domain.Tours;
@@ -48,8 +49,8 @@ internal sealed class TourReadRepository : ITourReadRepository
         }
         if (criteria.Tags is { Count: > 0 })
         {
-            var tags = criteria.Tags;
-            tours = tours.Where(tour => tour.Tags.Any(tag => tags.Contains(tag)));
+            var tags = criteria.Tags.Select(tag => tag.Trim().ToLower()).ToList();
+            tours = tours.Where(tour => tour.Tags.Any(tag => tags.Contains(tag.ToLower())));
         }
         if (criteria.Transports is { Count: > 0 })
         {
@@ -62,13 +63,16 @@ internal sealed class TourReadRepository : ITourReadRepository
     private static IQueryable<Tour> Sort(IQueryable<Tour> tours, TourSortOrder sort)
     {
         // Difficulty is stored as text, so the order Easy < Moderate < Hard is spelled out here.
+        Expression<Func<Tour, int>> difficultyRank = tour =>
+            tour.Difficulty == TourDifficulty.Easy ? 0 : tour.Difficulty == TourDifficulty.Moderate ? 1 : 2;
+
         return sort switch
         {
             TourSortOrder.DifficultyAscending => tours
-                .OrderBy(tour => tour.Difficulty == TourDifficulty.Easy ? 0 : tour.Difficulty == TourDifficulty.Moderate ? 1 : 2)
+                .OrderBy(difficultyRank)
                 .ThenByDescending(tour => tour.PublishedAt),
             TourSortOrder.DifficultyDescending => tours
-                .OrderByDescending(tour => tour.Difficulty == TourDifficulty.Easy ? 0 : tour.Difficulty == TourDifficulty.Moderate ? 1 : 2)
+                .OrderByDescending(difficultyRank)
                 .ThenByDescending(tour => tour.PublishedAt),
             _ => tours.OrderByDescending(tour => tour.PublishedAt)
         };
