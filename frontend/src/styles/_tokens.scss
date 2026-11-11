@@ -24,4 +24,47 @@
   --font-size-xl: 1.75rem;
 
   --container-width: 60rem;
+
+  --home-hero-text: #fffaf3;
+  --home-hero-muted: #e1dcd4;
+  --home-hero-accent: #d47a2d;
+  --home-hero-accent-hover: #e48a3b;
+  --home-hero-label: #e5a266;
+  --home-hero-accent-text: #20160c;
+  --home-hero-outline: #fffaf3a6;
+  --home-hero-overlay: linear-gradient(90deg, #0c151be6 0%, #0c151b99 32%, #0c151b1a 70%),
+    linear-gradient(0deg, #0c151b66, #0c151b00 65%);
+  --home-hero-font-family: Georgia, 'Times New Roman', serif;
+  --home-hero-title-size: clamp(3.6rem, 5.6vw, 5.6rem);
+  --home-hero-title-weight: 400;
+  --home-hero-title-leading: 0.95;
+  --home-hero-title-tracking: -0.035em;
+  --home-hero-description-size: 1.125rem;
+  --home-hero-content-width: 35rem;
+  --home-hero-description-width: 29rem;
+  --home-hero-label-tracking: 0.16em;
+
+  --home-discover-bg: #10191c;
+  --home-discover-surface: #182428;
+  --home-discover-border: #364247;
+  --home-discover-intro-width: 40rem;
+  --home-discover-heading-size: clamp(2rem, 3vw, 2.75rem);
+  --home-discover-card-title-size: 1.75rem;
+  --home-discover-card-min-width: 22rem;
+
+  --home-gallery-height: clamp(28rem, 42vw, 34rem);
+  --home-gallery-caption-width: 38rem;
+  --home-gallery-title-size: clamp(2.25rem, 4vw, 3.5rem);
+  --home-gallery-overlay: linear-gradient(90deg, #0c151b99, #0c151b00 85%),
+    linear-gradient(0deg, #0c151bf2, #0c151b00 90%);
+  --home-gallery-control-size: 2.75rem;
+  --home-gallery-arrow-size: 2.5rem;
+  --home-gallery-dot-size: 0.5rem;
+  --home-gallery-dot-color: #aab2b3;
+  --home-gallery-control-hover: #0c151b99;
+
+  --home-why-item-min-width: 15rem;
+  --home-content-width: 72rem;
+  --home-footer-width: 87.5rem;
+  --home-footer-font-size: 0.8125rem;
 }

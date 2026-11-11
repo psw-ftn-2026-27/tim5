@@ -1,0 +1,131 @@
+:host {
+  display: block;
+  // Recover the existing header gap from the home-only grid's remaining height.
+  block-size: calc(100% + var(--space-5));
+  min-block-size: min-content;
+  margin-block-start: calc(-1 * var(--space-5));
+}
+
+.hero {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-block-size: 100%;
+  color: var(--home-hero-text);
+}
+
+.hero-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero-media img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--home-hero-overlay);
+}
+
+.hero-container {
+  position: relative;
+  inline-size: 100%;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-4);
+  max-inline-size: var(--home-hero-content-width);
+  padding-block: var(--space-6);
+}
+
+.hero-eyebrow,
+.hero-location,
+.hero-description,
+.hero h1 {
+  margin: 0;
+}
+
+.hero-eyebrow {
+  color: var(--home-hero-label);
+  font-size: var(--font-size-sm);
+  letter-spacing: var(--home-hero-label-tracking);
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: var(--home-hero-font-family);
+  font-size: var(--home-hero-title-size);
+  font-weight: var(--home-hero-title-weight);
+  line-height: var(--home-hero-title-leading);
+  letter-spacing: var(--home-hero-title-tracking);
+}
+
+.hero h1 em {
+  display: block;
+}
+
+.hero-description {
+  max-inline-size: var(--home-hero-description-width);
+  color: var(--home-hero-muted);
+  font-size: var(--home-hero-description-size);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.hero-actions .button {
+  display: inline-block;
+  text-decoration: none;
+  padding: var(--space-2) var(--space-4);
+  transition: background-color 160ms, border-color 160ms;
+}
+
+.hero-primary {
+  background: var(--home-hero-accent);
+  border-color: var(--home-hero-accent);
+  color: var(--home-hero-accent-text);
+}
+
+.hero-primary:hover {
+  background: var(--home-hero-accent-hover);
+  border-color: var(--home-hero-accent-hover);
+}
+
+.hero-primary span {
+  margin-inline-start: var(--space-3);
+}
+
+.hero-secondary {
+  background: transparent;
+  border-color: var(--home-hero-outline);
+  color: var(--home-hero-text);
+}
+
+.hero-secondary:hover {
+  border-color: var(--home-hero-text);
+}
+
+.hero-actions .button:focus-visible {
+  outline: 2px solid var(--home-hero-text);
+  outline-offset: var(--space-1);
+}
+
+.hero-location {
+  color: var(--home-hero-muted);
+  font-size: var(--font-size-sm);
+}
