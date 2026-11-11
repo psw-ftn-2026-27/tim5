@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Payment.Application;
 using Payment.Application.Depositing;
+using Payment.Application.Reversing;
 using Payment.Application.WalletReading;
 using Payment.Application.Wallets;
 using Payment.Infrastructure.Persistence;
@@ -25,6 +26,8 @@ public static class PaymentModuleExtensions
         services.AddScoped<WalletReadingQueries>();
         services.AddScoped<DepositingService>();
         services.AddScoped<DepositingQueries>();
+        services.AddScoped<ReversingService>();
+        services.AddScoped<ReversingQueries>();
 
         return services;
     }

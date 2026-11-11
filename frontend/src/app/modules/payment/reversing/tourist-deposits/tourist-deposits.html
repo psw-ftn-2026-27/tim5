@@ -1,0 +1,81 @@
+<div class="stack">
+  <p><a routerLink="/payment/tourists">Back to tourists</a></p>
+
+  @if (tourist.isLoading()) {
+    <p>Loading deposits...</p>
+  } @else if (tourist.error()) {
+    <p class="error">Could not load the deposits. Sign in as an administrator and try again.</p>
+  } @else if (tourist.value(); as current) {
+    <h1>Deposits of {{ current.username }}</h1>
+
+    <p class="balance">Balance: {{ current.balance }} EC</p>
+
+    @if (success()) {
+      <p>{{ success() }}</p>
+    }
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    @if (current.deposits.length === 0) {
+      <p>This tourist has no deposits yet.</p>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Amount</th>
+            <th scope="col">Time</th>
+            <th scope="col">Status</th>
+            <th scope="col">Reversal</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (deposit of current.deposits; track deposit.id) {
+            <tr>
+              <td>{{ deposit.amount }} EC</td>
+              <td>{{ localTime(deposit.occurredAt) }}</td>
+              <td>
+                @if (deposit.reversedAt) {
+                  Reversed at {{ localTime(deposit.reversedAt) }}
+                } @else {
+                  Active
+                }
+              </td>
+              <td>
+                @if (!deposit.isReversed) {
+                  @if (confirmingId() === deposit.id) {
+                    <div class="confirm">
+                      <span>
+                        Reverse the deposit of {{ deposit.amount }} EC made at
+                        {{ localTime(deposit.occurredAt) }}?
+                      </span>
+                      <button
+                        class="button button--primary"
+                        type="button"
+                        [disabled]="pending()"
+                        (click)="reverse(deposit)"
+                      >
+                        Confirm
+                      </button>
+                      <button class="button" type="button" (click)="cancel()">Cancel</button>
+                    </div>
+                  } @else {
+                    <button
+                      class="button"
+                      type="button"
+                      [disabled]="pending()"
+                      (click)="askToConfirm(deposit)"
+                    >
+                      Reverse
+                    </button>
+                  }
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</div>

@@ -35,6 +35,12 @@ namespace Payment.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("OccurredAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("ReversedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ReversedByAdministratorId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(20)
