@@ -22,21 +22,22 @@
       }
     </div>
 
-    <div class="field">
-      <label for="images">Image URLs (one per line)</label>
-      <textarea id="images" rows="4" [formField]="form.images"></textarea>
-      @if (form.images().touched()) {
-        @for (message of form.images().errors(); track $index) {
-          <p class="error">{{ message.message }}</p>
-        }
-      }
-    </div>
+    <app-image-picker
+      [images]="images()"
+      [serverError]="imageError()"
+      (filePicked)="upload($event)"
+      (imageRemoved)="remove($event)"
+    />
 
     @if (error()) {
       <p class="error">{{ error() }}</p>
     }
 
-    <button class="button button--primary" type="submit" [disabled]="!form().valid() || pending()">
+    <button
+      class="button button--primary"
+      type="submit"
+      [disabled]="!form().valid() || pending() || uploading() || images().length === 0"
+    >
       Create
     </button>
   </form>

@@ -12,8 +12,8 @@
       <p>{{ club.description }}</p>
 
       <div class="grid">
-        @for (image of club.images; track $index) {
-          <img [src]="image" [alt]="club.name" />
+        @for (image of club.images; track image.id) {
+          <img [src]="image.url" [alt]="club.name" />
         }
       </div>
 
@@ -65,15 +65,12 @@
             }
           </div>
 
-          <div class="field">
-            <label for="images">Image URLs (one per line)</label>
-            <textarea id="images" rows="4" [formField]="form.images"></textarea>
-            @if (form.images().touched()) {
-              @for (message of form.images().errors(); track $index) {
-                <p class="error">{{ message.message }}</p>
-              }
-            }
-          </div>
+          <app-image-picker
+            [images]="images()"
+            [serverError]="imageError()"
+            (filePicked)="upload($event)"
+            (imageRemoved)="remove($event)"
+          />
 
           @if (error()) {
             <p class="error">{{ error() }}</p>
@@ -83,7 +80,7 @@
             <button
               class="button button--primary"
               type="submit"
-              [disabled]="!form().valid() || pending()"
+              [disabled]="!form().valid() || pending() || uploading() || images().length === 0"
             >
               Save
             </button>

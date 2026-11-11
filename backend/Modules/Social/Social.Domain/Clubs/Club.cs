@@ -5,39 +5,37 @@ namespace Social.Domain.Clubs;
 
 public sealed class Club : AggregateRoot
 {
-    private readonly List<ClubImage> _images = [];
-
     public Guid OwnerId { get; private set; }
     public ClubName Name { get; private set; }
     public string Description { get; private set; }
-    public IReadOnlyList<ClubImage> Images => _images;
+    public List<Guid> ImageIds { get; private set; }
 
     private Club()
     {
         Name = null!;
         Description = null!;
+        ImageIds = null!;
     }
 
-    public Club(Guid ownerId, ClubName name, string description, List<ClubImage> images)
+    public Club(Guid ownerId, ClubName name, string description, List<Guid> imageIds)
         : base(Guid.NewGuid())
     {
-        EnsureValidDetails(name, description, images);
+        EnsureValidDetails(name, description, imageIds);
 
         OwnerId = ownerId;
         Name = name;
         Description = description;
-        _images.AddRange(images);
+        ImageIds = imageIds;
     }
 
-    public void UpdateDetails(Guid userId, ClubName name, string description, List<ClubImage> images)
+    public void UpdateDetails(Guid userId, ClubName name, string description, List<Guid> imageIds)
     {
         EnsureOwner(userId);
-        EnsureValidDetails(name, description, images);
+        EnsureValidDetails(name, description, imageIds);
 
         Name = name;
         Description = description;
-        _images.Clear();
-        _images.AddRange(images);
+        ImageIds = imageIds;
     }
 
     public void Delete(Guid userId)
@@ -53,7 +51,7 @@ public sealed class Club : AggregateRoot
         }
     }
 
-    private static void EnsureValidDetails(ClubName name, string description, List<ClubImage> images)
+    private static void EnsureValidDetails(ClubName name, string description, List<Guid> imageIds)
     {
         if (name is null)
         {
@@ -63,7 +61,7 @@ public sealed class Club : AggregateRoot
         {
             throw new DomainException("A club requires a description.");
         }
-        if (images is null || images.Count == 0)
+        if (imageIds is null || imageIds.Count == 0)
         {
             throw new DomainException("A club requires at least one image.");
         }

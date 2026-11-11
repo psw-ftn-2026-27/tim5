@@ -1,3 +1,5 @@
+using Social.Application.UploadedImages;
+
 namespace Social.Application.ClubReading;
 
 public sealed record ClubDto(
@@ -5,4 +7,4 @@ public sealed record ClubDto(
     Guid OwnerId,
     string Name,
     string Description,
-    List<string> Images);
+    List<UploadedImageDto> Images);

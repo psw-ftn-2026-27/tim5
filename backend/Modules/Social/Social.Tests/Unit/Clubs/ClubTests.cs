@@ -8,15 +8,17 @@ namespace Social.Tests.Unit.Clubs;
 
 public class ClubTests
 {
+    private static readonly Guid MountainImageId = Guid.NewGuid();
+
     private static Club CreateClub() =>
-        new(WellKnownUsers.Explorer, new ClubName("Planinari Fruške gore"), "Vikend usponi na Frušku goru.", [new ClubImage("https://example.com/fruska-gora.jpg")]);
+        new(WellKnownUsers.Explorer, new ClubName("Planinari Fruške gore"), "Vikend usponi na Frušku goru.", [MountainImageId]);
 
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
     public void Club_cannot_be_founded_without_a_name(string name)
     {
-        var founding = () => new Club(WellKnownUsers.Explorer, new ClubName(name), "Vikend usponi na Frušku goru.", [new ClubImage("https://example.com/fruska-gora.jpg")]);
+        var founding = () => new Club(WellKnownUsers.Explorer, new ClubName(name), "Vikend usponi na Frušku goru.", [Guid.NewGuid()]);
 
         founding.Should().Throw<DomainException>();
     }
@@ -26,7 +28,7 @@ public class ClubTests
     [InlineData("   ")]
     public void Club_cannot_be_founded_without_a_description(string description)
     {
-        var founding = () => new Club(WellKnownUsers.Explorer, new ClubName("Planinari Fruške gore"), description, [new ClubImage("https://example.com/fruska-gora.jpg")]);
+        var founding = () => new Club(WellKnownUsers.Explorer, new ClubName("Planinari Fruške gore"), description, [Guid.NewGuid()]);
 
         founding.Should().Throw<DomainException>();
     }
@@ -47,7 +49,7 @@ public class ClubTests
         var update = () => club.UpdateDetails(WellKnownUsers.Explorer, new ClubName("Planinari Fruške gore"), "Novi opis.", []);
 
         update.Should().Throw<DomainException>();
-        club.Images.Should().ContainSingle().Which.Url.Should().Be("https://example.com/fruska-gora.jpg");
+        club.ImageIds.Should().Equal(MountainImageId);
     }
 
     [Fact]
@@ -55,7 +57,7 @@ public class ClubTests
     {
         var club = CreateClub();
 
-        var update = () => club.UpdateDetails(WellKnownUsers.SecondExplorer, new ClubName("Tuđi klub"), "Tuđi opis.", [new ClubImage("https://example.com/tudja.jpg")]);
+        var update = () => club.UpdateDetails(WellKnownUsers.SecondExplorer, new ClubName("Tuđi klub"), "Tuđi opis.", [Guid.NewGuid()]);
 
         update.Should().Throw<DomainException>();
         club.Name.Value.Should().Be("Planinari Fruške gore");

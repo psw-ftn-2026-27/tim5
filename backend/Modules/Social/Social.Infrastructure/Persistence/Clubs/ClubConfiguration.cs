@@ -19,7 +19,5 @@ internal static class ClubConfiguration
             name.Property(clubName => clubName.NormalizedValue).HasMaxLength(200);
         });
         builder.Navigation(club => club.Name).IsRequired();
-
-        builder.OwnsMany(club => club.Images, images => images.ToJson());
     }
 }

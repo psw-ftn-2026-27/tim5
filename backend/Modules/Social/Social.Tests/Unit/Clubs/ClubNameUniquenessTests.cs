@@ -9,7 +9,7 @@ namespace Social.Tests.Unit.Clubs;
 public class ClubNameUniquenessTests
 {
     private static Club CreateClub(Guid ownerId, string name) =>
-        new(ownerId, new ClubName(name), "Opis kluba.", [new ClubImage("https://example.com/klub.jpg")]);
+        new(ownerId, new ClubName(name), "Opis kluba.", [Guid.NewGuid()]);
 
     [Theory]
     [InlineData("Planinari Fruške gore")]

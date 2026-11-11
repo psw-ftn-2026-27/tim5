@@ -19,12 +19,24 @@ internal static class UploadedImageSeed
     public static readonly UploadedImage ExplorersUnlinkedSquarePhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
     public static readonly UploadedImage SecondExplorersUnlinkedPhoto = UploadQuota.CreateImage(WellKnownUsers.SecondExplorer, 0, new ImageFile(OnePixelPng));
     public static readonly UploadedImage ExplorersLinkedBridgePhoto;
+    public static readonly UploadedImage ExplorersLinkedMountainPhoto;
+    public static readonly UploadedImage ExplorersLinkedLodgePhoto;
+    public static readonly UploadedImage SecondExplorersLinkedQuayPhoto;
 
     static UploadedImageSeed()
     {
         ExplorersLinkedBridgePhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
         ExplorersLinkedBridgePhoto.LinkTo(WellKnownUsers.Explorer);
+
+        ExplorersLinkedMountainPhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
+        ExplorersLinkedMountainPhoto.LinkTo(WellKnownUsers.Explorer);
+
+        ExplorersLinkedLodgePhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
+        ExplorersLinkedLodgePhoto.LinkTo(WellKnownUsers.Explorer);
+
+        SecondExplorersLinkedQuayPhoto = UploadQuota.CreateImage(WellKnownUsers.SecondExplorer, 0, new ImageFile(OnePixelPng));
+        SecondExplorersLinkedQuayPhoto.LinkTo(WellKnownUsers.SecondExplorer);
     }
 
-    public static UploadedImage[] All => [ExplorersUnlinkedHarborPhoto, ExplorersUnlinkedSquarePhoto, SecondExplorersUnlinkedPhoto, ExplorersLinkedBridgePhoto];
+    public static UploadedImage[] All => [ExplorersUnlinkedHarborPhoto, ExplorersUnlinkedSquarePhoto, SecondExplorersUnlinkedPhoto, ExplorersLinkedBridgePhoto, ExplorersLinkedMountainPhoto, ExplorersLinkedLodgePhoto, SecondExplorersLinkedQuayPhoto];
 }

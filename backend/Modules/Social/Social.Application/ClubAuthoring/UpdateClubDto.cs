@@ -1,3 +1,3 @@
 namespace Social.Application.ClubAuthoring;
 
-public sealed record UpdateClubDto(string Name, string Description, List<string> Images);
+public sealed record UpdateClubDto(string Name, string Description, List<Guid> ImageIds);

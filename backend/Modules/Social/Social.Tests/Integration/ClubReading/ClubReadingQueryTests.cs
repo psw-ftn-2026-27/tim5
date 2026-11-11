@@ -3,6 +3,7 @@ using FluentAssertions;
 using Shared.Domain;
 using Shared.Tests;
 using Social.Application.ClubReading;
+using Social.Application.UploadedImages;
 using Social.Tests.Integration.Seeds;
 using Xunit;
 
@@ -25,7 +26,7 @@ public class ClubReadingQueryTests : BaseIntegrationTest
             var listed = clubs.Items.Single(club => club.Id == seeded.Id);
             listed.Name.Should().Be(seeded.Name.Value);
             listed.Description.Should().Be(seeded.Description);
-            listed.Images.Should().Equal(seeded.Images.Select(image => image.Url));
+            listed.Images.Should().Equal(seeded.ImageIds.Select(imageId => new UploadedImageDto(imageId, ImageAddress.For(imageId))));
         }
     }
 }

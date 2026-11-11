@@ -65,17 +65,17 @@ export interface ClubDto {
   ownerId: string;
   name: string;
   description: string;
-  images: string[];
+  images: UploadedImageDto[];
 }
 
 export interface CreateClubDto {
   name: string;
   description: string;
-  images: string[];
+  imageIds: string[];
 }
 
 export interface UpdateClubDto {
   name: string;
   description: string;
-  images: string[];
+  imageIds: string[];
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Domain;
 using Social.Application.ClubReading;
 using Social.Application.Clubs;
+using Social.Application.UploadedImages;
 using Social.Domain.Clubs;
 
 namespace Social.Infrastructure.Persistence.Clubs;
@@ -41,6 +42,6 @@ internal sealed class ClubReadRepository : IClubReadRepository
                 club.OwnerId,
                 club.Name.Value,
                 club.Description,
-                club.Images.Select(image => image.Url).ToList()));
+                club.ImageIds.Select(imageId => new UploadedImageDto(imageId, ImageAddress.For(imageId))).ToList()));
     }
 }
