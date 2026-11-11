@@ -1,40 +1,7 @@
-<div class="stack">
-  <section class="card stack" aria-labelledby="explorer-title">
-    <h1 id="explorer-title">Explorer</h1>
-    <p>Discover places through tours and stories shared by other explorers.</p>
-    <a class="button button--primary" href="#explore">Start exploring</a>
-  </section>
-
-  <section class="stack" aria-labelledby="explore">
-    <h2 id="explore" tabindex="-1">What you can explore</h2>
-    <div class="grid">
-      <article class="card stack featured">
-        <h3>Explore tours</h3>
-        <p>Browse published tours and find places you want to explore.</p>
-        @if (auth.isLoggedIn()) {
-          <a class="button button--primary" routerLink="/exploration">Browse tours</a>
-        } @else {
-          <p>Browsing tours requires an account.</p>
-          <div class="account-links">
-            <a routerLink="/login">Log in</a>
-            <a routerLink="/register">Register</a>
-          </div>
-        }
-      </article>
-
-      <article class="card stack">
-        <h3>Read blogs</h3>
-        <p>Read stories and experiences shared by Explorer members.</p>
-        @if (auth.isLoggedIn()) {
-          <a class="button" routerLink="/social">Browse blogs</a>
-        } @else {
-          <p>Reading blogs requires an account.</p>
-          <div class="account-links">
-            <a routerLink="/login">Log in</a>
-            <a routerLink="/register">Register</a>
-          </div>
-        }
-      </article>
-    </div>
-  </section>
+<app-home-hero />
+<div class="home-content">
+  <app-home-discover [loggedIn]="auth.isLoggedIn()" />
+  <app-home-gallery />
+  <app-home-why-explorer />
+  <app-home-footer [loggedIn]="auth.isLoggedIn()" />
 </div>
