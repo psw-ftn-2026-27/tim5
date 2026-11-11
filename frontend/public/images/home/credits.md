@@ -1,7 +1,7 @@
 # Explorer home photography
 
 Sources and licenses checked on 11 November 2026. These are real photographs.
-All four source pages identify their photograph as free to use under the
+The original four source pages identify their photograph as free to use under the
 [Unsplash License](https://unsplash.com/license).
 
 The license permits downloading, copying, modifying and using the photographs,
@@ -65,3 +65,22 @@ exclusive use across those projects cannot be verified.
 - The original page explicitly links the free [Unsplash License](https://unsplash.com/license), checked on 11 November 2026.
 - Cropped from a portrait source to a 1600 × 1067 landscape composition, with the crop centred lower to emphasise the sea; converted to WebP at quality 84 with metadata removed.
 - Replaces the former Positano photograph by Sekwang Chia: the new composition gives sea and coastal cliffs priority over buildings. The original colour palette is preserved; the readability overlay is applied in CSS.
+
+## Games card — mountain biking
+
+- Local file `card-games-biking.webp`, 1600 × 900 pixels, used only by the Discover Games & Challenges card.
+- Photographer **Emil Karlsen** (@emil_karlsen).
+- Original [A man riding a bike on top of a grass covered hillside](https://unsplash.com/photos/a-man-riding-a-bike-on-top-of-a-grass-covered-hillside-7XAUOxfTqBY).
+- Source image: https://images.unsplash.com/photo-1681076307092-d2d1e3bd6038?w=1600&q=85&fm=jpg&fit=max
+- Free to use under the [Unsplash License](https://unsplash.com/license), checked 11 November 2026.
+- The portrait photograph was cropped to 16:9, with vertical centring at 68% to retain the rider, bicycle and mountain trail. Converted to WebP at quality 84, with metadata omitted.
+
+## Payment card — forest retreat
+
+- Local file `card-payment-retreat.webp`, 1600 × 900 pixels, used only by the Discover Payment & Wallet card.
+- Photographer **Jonathan Adams**.
+- Original [Illuminated wooden cabin with a fire pit at dusk](https://unsplash.com/photos/illuminated-wooden-cabin-with-a-fire-pit-at-dusk-wcpofj_J3mc).
+- Source image: https://images.unsplash.com/photo-1782226796423-8d72656a332c?w=1600&q=85&fm=jpg&fit=max
+- Free to use under the [Unsplash License](https://unsplash.com/license), explicitly linked by the original page; checked 11 November 2026.
+- Centre-cropped to 16:9 and converted to WebP at quality 84, with metadata omitted. The warm lighting is part of the original photograph.
+- Illustrative travel accommodation only: the photograph does not identify an Explorer partner or imply that accommodation booking or tour purchases are implemented.
