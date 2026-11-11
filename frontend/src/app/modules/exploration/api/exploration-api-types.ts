@@ -40,3 +40,13 @@ export interface CreateTourDto {
   tags: string[];
   recommendedGroupSize: GroupSizeDto;
 }
+
+export type TourSortOrder = 'Newest' | 'DifficultyAscending' | 'DifficultyDescending';
+
+export interface TourSearchCriteriaDto {
+  name: string | null;
+  difficulties: TourDifficulty[] | null;
+  tags: string[] | null;
+  transports: TransportMode[] | null;
+  sort: TourSortOrder;
+}
