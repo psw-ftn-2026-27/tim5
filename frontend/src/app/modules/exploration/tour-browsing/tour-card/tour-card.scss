@@ -14,3 +14,12 @@
   font-size: var(--font-size-sm);
   padding: var(--space-1) var(--space-2);
 }
+
+// The description excerpt: the start of the description, cut off after three lines.
+.excerpt {
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
