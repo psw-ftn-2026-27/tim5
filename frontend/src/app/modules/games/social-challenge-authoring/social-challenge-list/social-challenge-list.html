@@ -1,0 +1,150 @@
+<div class="stack">
+  <h1>Social challenges</h1>
+
+  <div class="toolbar">
+    <div class="field">
+      <label for="status">Status</label>
+      <select id="status" [formField]="filter.status">
+        <option value="">All statuses</option>
+        <option value="Draft">Draft</option>
+        <option value="Published">Published</option>
+        <option value="Retired">Retired</option>
+        <option value="Archived">Archived</option>
+      </select>
+    </div>
+
+    <a class="button button--primary" routerLink="/games/challenges/create">Create challenge</a>
+  </div>
+
+  @if (challenges.isLoading()) {
+    <p>Loading challenges...</p>
+  } @else if (challenges.error()) {
+    <p class="error">Could not load challenges. Log in as an administrator and try again.</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Time window</th>
+          <th scope="col">Required people</th>
+          <th scope="col">Range (m)</th>
+          <th scope="col">XP</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (challenge of challenges.value() ?? []; track challenge.id) {
+          <tr>
+            <td>{{ challenge.name }}</td>
+            <td>{{ challenge.window.start.slice(0, 5) }}–{{ challenge.window.end.slice(0, 5) }}</td>
+            <td>{{ challenge.requiredPeople }}</td>
+            <td>{{ challenge.rangeInMeters }}</td>
+            <td>{{ challenge.xp }}</td>
+            <td>{{ challenge.status }}</td>
+            <td>
+              @if (challenge.status === 'Draft') {
+                <button class="button" type="button" (click)="selectForEdit(challenge)">Edit</button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7">No challenges to show.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (editedChallengeId()) {
+    <form class="card stack" (submit)="update($event)">
+      <h2>Edit challenge</h2>
+
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" type="text" [formField]="editForm.name" />
+        @if (editForm.name().touched()) {
+          @for (message of editForm.name().errors(); track $index) {
+            <p class="error">{{ message.message }}</p>
+          }
+        }
+      </div>
+
+      <div class="field">
+        <label for="start">Start</label>
+        <input id="start" type="time" [formField]="editForm.start" />
+        @if (editForm.start().touched()) {
+          @for (message of editForm.start().errors(); track $index) {
+            <p class="error">{{ message.message }}</p>
+          }
+        }
+      </div>
+
+      <div class="field">
+        <label for="end">End</label>
+        <input id="end" type="time" [formField]="editForm.end" />
+        @if (editForm.end().touched()) {
+          @for (message of editForm.end().errors(); track $index) {
+            <p class="error">{{ message.message }}</p>
+          }
+        }
+      </div>
+
+      <div class="field">
+        <label for="required-people">Required people</label>
+        <input id="required-people" type="number" [formField]="editForm.requiredPeople" />
+        @if (editForm.requiredPeople().touched()) {
+          @for (message of editForm.requiredPeople().errors(); track $index) {
+            <p class="error">{{ message.message }}</p>
+          }
+        }
+      </div>
+
+      <div class="field">
+        <label for="range-in-meters">Range in meters</label>
+        <input id="range-in-meters" type="number" [formField]="editForm.rangeInMeters" />
+        @if (editForm.rangeInMeters().touched()) {
+          @for (message of editForm.rangeInMeters().errors(); track $index) {
+            <p class="error">{{ message.message }}</p>
+          }
+        }
+      </div>
+
+      <div class="field">
+        <label for="xp">XP</label>
+        <input id="xp" type="number" [formField]="editForm.xp" />
+        @if (editForm.xp().touched()) {
+          @for (message of editForm.xp().errors(); track $index) {
+            <p class="error">{{ message.message }}</p>
+          }
+        }
+      </div>
+
+      <div class="field">
+        <label for="exit-message">Exit message</label>
+        <textarea id="exit-message" rows="3" [formField]="editForm.exitMessage"></textarea>
+        @if (editForm.exitMessage().touched()) {
+          @for (message of editForm.exitMessage().errors(); track $index) {
+            <p class="error">{{ message.message }}</p>
+          }
+        }
+      </div>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <div class="actions">
+        <button
+          class="button button--primary"
+          type="submit"
+          [disabled]="!editForm().valid() || pending()"
+        >
+          Save
+        </button>
+        <button class="button" type="button" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  }
+</div>
