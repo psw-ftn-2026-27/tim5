@@ -1,3 +1,11 @@
+.cover {
+  border-radius: var(--radius);
+  display: block;
+  height: 3rem;
+  object-fit: cover;
+  width: 4rem;
+}
+
 .table td:last-child {
   width: 8rem;
 }

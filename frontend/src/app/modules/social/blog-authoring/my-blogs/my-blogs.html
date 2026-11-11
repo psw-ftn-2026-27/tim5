@@ -15,6 +15,7 @@
     <table class="table">
       <thead>
         <tr>
+          <th scope="col">Cover</th>
           <th scope="col">Title</th>
           <th scope="col">Status</th>
           <th scope="col">Comments</th>
@@ -24,6 +25,11 @@
       <tbody>
         @for (blog of blogs.value() ?? []; track blog.id) {
           <tr>
+            <td>
+              @if (blog.images.length > 0) {
+                <img class="cover" [src]="blog.images[0]" alt="Cover image of {{ blog.title }}" />
+              }
+            </td>
             <td>{{ blog.title }}</td>
             <td>{{ blog.status }}</td>
             <td>{{ blog.comments.length }}</td>
@@ -42,7 +48,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="4">You have no blogs yet.</td>
+            <td colspan="5">You have no blogs yet.</td>
           </tr>
         }
       </tbody>

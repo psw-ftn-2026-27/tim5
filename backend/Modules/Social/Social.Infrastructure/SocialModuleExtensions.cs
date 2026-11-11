@@ -9,9 +9,11 @@ using Social.Application.Blogs;
 using Social.Application.Connections;
 using Social.Application.FollowerManagement;
 using Social.Application.Following;
+using Social.Application.UploadedImages;
 using Social.Infrastructure.Persistence;
 using Social.Infrastructure.Persistence.Blogs;
 using Social.Infrastructure.Persistence.Connections;
+using Social.Infrastructure.Persistence.UploadedImages;
 
 namespace Social.Infrastructure;
 
@@ -28,6 +30,8 @@ public static class SocialModuleExtensions
         services.AddScoped<IBlogReadRepository, BlogReadRepository>();
         services.AddScoped<IConnectionRepository, ConnectionRepository>();
         services.AddScoped<IConnectionReadRepository, ConnectionReadRepository>();
+        services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();
+        services.AddScoped<IUploadedImageReadRepository, UploadedImageReadRepository>();
 
         services.AddScoped<BlogAuthoringService>();
         services.AddScoped<BlogAuthoringQueries>();
