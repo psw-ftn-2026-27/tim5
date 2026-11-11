@@ -84,24 +84,6 @@ namespace Social.Infrastructure.Persistence.Migrations
                     b.ToTable("Comments", "social");
                 });
 
-            modelBuilder.Entity("Social.Domain.Clubs.Club", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Clubs", "social");
-                });
-
             modelBuilder.Entity("Social.Domain.Connections.Connection", b =>
                 {
                     b.Property<Guid>("Id")
@@ -151,59 +133,6 @@ namespace Social.Infrastructure.Persistence.Migrations
                         .WithMany("Comments")
                         .HasForeignKey("BlogId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Social.Domain.Clubs.Club", b =>
-                {
-                    b.OwnsMany("Social.Domain.Clubs.ClubImage", "Images", b1 =>
-                        {
-                            b1.Property<Guid>("ClubId");
-
-                            b1.Property<int>("__synthesizedOrdinal")
-                                .ValueGeneratedOnAdd();
-
-                            b1.Property<string>("Url")
-                                .IsRequired();
-
-                            b1.HasKey("ClubId", "__synthesizedOrdinal");
-
-                            b1.ToTable("Clubs", "social");
-
-                            b1
-                                .ToJson("Images")
-                                .HasColumnType("jsonb");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ClubId");
-                        });
-
-                    b.OwnsOne("Social.Domain.Clubs.ClubName", "Name", b1 =>
-                        {
-                            b1.Property<Guid>("ClubId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("NormalizedValue")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("character varying(200)");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("character varying(200)");
-
-                            b1.HasKey("ClubId");
-
-                            b1.ToTable("Clubs", "social");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ClubId");
-                        });
-
-                    b.Navigation("Images");
-
-                    b.Navigation("Name")
                         .IsRequired();
                 });
 
