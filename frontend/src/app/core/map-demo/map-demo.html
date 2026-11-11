@@ -1,0 +1,45 @@
+<section class="stack" aria-labelledby="map-demo-title">
+  <h1 id="map-demo-title">Prikaz lokacija na mapi</h1>
+
+  <div class="actions">
+    @for (set of pinSets; track set.name) {
+      <button
+        class="button"
+        type="button"
+        [class.button--primary]="selectedSet() === set"
+        (click)="selectSet(set)"
+      >
+        {{ set.name }}
+      </button>
+    }
+    <button
+      class="button"
+      type="button"
+      [class.button--primary]="selectedSet() === null"
+      (click)="selectSet(null)"
+    >
+      Prazna mapa
+    </button>
+  </div>
+
+  <div class="actions">
+    <button class="button" type="button" [disabled]="showPath()" (click)="setShowPath(true)">
+      Pronađi putanju
+    </button>
+    <button class="button" type="button" [disabled]="!showPath()" (click)="setShowPath(false)">
+      Isključi putanju
+    </button>
+  </div>
+
+  <app-map
+    [pins]="selectedSet()?.pins ?? []"
+    [showPath]="showPath()"
+    (routeLength)="routeLength.set($event)"
+  />
+
+  @if (routeLength() === null) {
+    <p>Dužina putanje nije poznata.</p>
+  } @else {
+    <p>Dužina putanje: {{ routeLength()?.toFixed(2) }} km</p>
+  }
+</section>
