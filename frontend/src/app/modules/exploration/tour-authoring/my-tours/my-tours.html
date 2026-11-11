@@ -58,7 +58,7 @@
                   class="button button--primary"
                   type="button"
                   [disabled]="pending()"
-                  (click)="publish(tour.id)"
+                  (click)="selectPublish(tour.id)"
                 >
                   Publish
                 </button>
@@ -158,6 +158,45 @@
       >
         Save
       </button>
+    </form>
+  }
+
+  @if (publishTourId()) {
+    <form class="card stack" (submit)="publish($event)">
+      <h2>Publish tour</h2>
+
+      @if (priceChoice() === null) {
+        <div class="actions">
+          <button class="button" type="button" (click)="choosePrice('Free')">Free</button>
+          <button class="button" type="button" (click)="choosePrice('Paid')">Paid</button>
+          <button class="button" type="button" (click)="closePublish()">Cancel</button>
+        </div>
+      } @else {
+        @if (priceChoice() === 'Free') {
+          <p>This tour is free.</p>
+        } @else {
+          <div class="field">
+            <label for="price-amount">Amount (EC)</label>
+            <input id="price-amount" type="number" [formField]="priceForm.amount" />
+            @if (priceForm.amount().touched()) {
+              @for (message of priceForm.amount().errors(); track $index) {
+                <p class="error">{{ message.message }}</p>
+              }
+            }
+          </div>
+        }
+
+        <div class="actions">
+          <button
+            class="button button--primary"
+            type="submit"
+            [disabled]="(priceChoice() === 'Paid' && !priceForm().valid()) || pending()"
+          >
+            Confirm
+          </button>
+          <button class="button" type="button" (click)="cancelPrice()">Cancel</button>
+        </div>
+      }
     </form>
   }
 </div>
