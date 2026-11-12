@@ -42,11 +42,14 @@
               <td>{{ tourist.username }}</td>
               <td>{{ tourist.balance }} EC</td>
               <td>
-                <app-deposit-form
-                  [username]="tourist.username"
-                  [pending]="pending()"
-                  (deposit)="deposit(tourist, $event)"
-                />
+                <div class="actions">
+                  <app-deposit-form
+                    [username]="tourist.username"
+                    [pending]="pending()"
+                    (deposit)="deposit(tourist, $event)"
+                  />
+                  <a [routerLink]="['/payment/tourists', tourist.touristId, 'deposits']">Deposits</a>
+                </div>
               </td>
             </tr>
           }

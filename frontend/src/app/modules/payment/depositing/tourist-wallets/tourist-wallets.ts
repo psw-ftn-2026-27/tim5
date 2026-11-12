@@ -1,13 +1,14 @@
 import { httpResource } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormField, form, required } from '@angular/forms/signals';
+import { RouterLink } from '@angular/router';
 import { serverMessage } from '../../../../shared/util/server-message';
 import { TouristBalanceDto } from '../../api/payment-api-types';
 import { DepositForm } from '../deposit-form/deposit-form';
 import { Depositing } from '../depositing';
 
 @Component({
-  imports: [DepositForm, FormField],
+  imports: [DepositForm, FormField, RouterLink],
   selector: 'app-tourist-wallets',
   styleUrl: './tourist-wallets.scss',
   templateUrl: './tourist-wallets.html',

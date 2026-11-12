@@ -4,6 +4,8 @@ export interface TransactionDto {
   type: TransactionType;
   amount: number;
   occurredAt: string;
+  isReversed: boolean;
+  reversedAt: string | null;
 }
 
 export interface WalletDto {
@@ -19,4 +21,18 @@ export interface TouristBalanceDto {
 
 export interface DepositDto {
   amount: number;
+}
+
+export interface TouristDepositDto {
+  id: string;
+  amount: number;
+  occurredAt: string;
+  isReversed: boolean;
+  reversedAt: string | null;
+}
+
+export interface TouristDepositsDto {
+  username: string;
+  balance: number;
+  deposits: TouristDepositDto[];
 }

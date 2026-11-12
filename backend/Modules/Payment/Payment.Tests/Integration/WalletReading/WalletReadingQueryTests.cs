@@ -66,6 +66,22 @@ public class WalletReadingQueryTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task Tourist_sees_a_reversed_deposit_with_its_original_amount_and_time_marked_reversed_with_the_reversal_time()
+    {
+        var seeded = WalletSeed.WalletWithOneReversedDeposit;
+        var reversed = seeded.Transactions.Single(transaction => transaction.IsReversed);
+        var client = Factory.CreateClientFor(seeded.TouristId, "explorer");
+
+        var wallet = await client.GetFromJsonAsync<WalletDto>("/api/payment/wallets/mine", JsonOptions);
+
+        wallet!.Balance.Should().Be(seeded.Balance);
+        var shown = wallet.Transactions.Single(transaction => transaction.IsReversed);
+        shown.Amount.Should().Be(reversed.Amount.Value);
+        shown.OccurredAt.Should().BeCloseTo(reversed.OccurredAt, TimeSpan.FromMilliseconds(1));
+        shown.ReversedAt.Should().BeCloseTo(reversed.ReversedAt!.Value, TimeSpan.FromMilliseconds(1));
+    }
+
+    [Fact]
     public async Task Anonymous_user_cannot_see_a_wallet()
     {
         var client = Factory.CreateClient();
