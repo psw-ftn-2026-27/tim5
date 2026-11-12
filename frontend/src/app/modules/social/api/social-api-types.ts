@@ -59,3 +59,23 @@ export interface FollowersDto {
   pendingRequests: FollowerDto[];
   followers: FollowerDto[];
 }
+
+export interface ClubDto {
+  id: string;
+  ownerId: string;
+  name: string;
+  description: string;
+  images: UploadedImageDto[];
+}
+
+export interface CreateClubDto {
+  name: string;
+  description: string;
+  imageIds: string[];
+}
+
+export interface UpdateClubDto {
+  name: string;
+  description: string;
+  imageIds: string[];
+}

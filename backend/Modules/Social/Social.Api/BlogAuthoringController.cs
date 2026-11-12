@@ -5,6 +5,7 @@ using Shared.Api;
 using Shared.Domain.Images;
 using Social.Application.BlogAuthoring;
 using Social.Application.Blogs;
+using Social.Application.UploadedImages;
 
 namespace Social.Api;
 

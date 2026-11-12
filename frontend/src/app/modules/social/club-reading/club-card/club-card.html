@@ -1,0 +1,11 @@
+<article class="card stack">
+  @if (club().images.length > 0) {
+    <img [src]="club().images[0].url" [alt]="club().name" />
+  }
+
+  <h3>{{ club().name }}</h3>
+
+  <p>{{ club().description }}</p>
+
+  <a [routerLink]="['/social/clubs', club().id]">Open club</a>
+</article>

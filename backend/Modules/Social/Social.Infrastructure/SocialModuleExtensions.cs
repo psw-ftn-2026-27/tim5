@@ -6,12 +6,17 @@ using Social.Application.BlogAuthoring;
 using Social.Application.BlogCommenting;
 using Social.Application.BlogReading;
 using Social.Application.Blogs;
+using Social.Application.ClubAuthoring;
+using Social.Application.ClubReading;
+using Social.Application.Clubs;
 using Social.Application.Connections;
 using Social.Application.FollowerManagement;
 using Social.Application.Following;
 using Social.Application.UploadedImages;
+using Social.Domain.Clubs;
 using Social.Infrastructure.Persistence;
 using Social.Infrastructure.Persistence.Blogs;
+using Social.Infrastructure.Persistence.Clubs;
 using Social.Infrastructure.Persistence.Connections;
 using Social.Infrastructure.Persistence.UploadedImages;
 
@@ -32,6 +37,9 @@ public static class SocialModuleExtensions
         services.AddScoped<IConnectionReadRepository, ConnectionReadRepository>();
         services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();
         services.AddScoped<IUploadedImageReadRepository, UploadedImageReadRepository>();
+        services.AddScoped<IClubRepository, ClubRepository>();
+        services.AddScoped<IClubReadRepository, ClubReadRepository>();
+        services.AddScoped<ClubNameUniqueness>();
 
         services.AddScoped<BlogAuthoringService>();
         services.AddScoped<BlogAuthoringQueries>();
@@ -41,6 +49,8 @@ public static class SocialModuleExtensions
         services.AddScoped<FollowingQueries>();
         services.AddScoped<FollowerManagementService>();
         services.AddScoped<FollowerManagementQueries>();
+        services.AddScoped<ClubAuthoringService>();
+        services.AddScoped<ClubReadingQueries>();
 
         return services;
     }
