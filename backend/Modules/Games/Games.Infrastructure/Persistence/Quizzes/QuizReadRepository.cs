@@ -1,5 +1,6 @@
 using Games.Application.QuizAuthoring;
 using Games.Application.Quizzes;
+using Games.Domain.SocialChallenges;
 using Microsoft.EntityFrameworkCore;
 
 namespace Games.Infrastructure.Persistence.Quizzes;
@@ -13,9 +14,13 @@ internal sealed class QuizReadRepository : IQuizReadRepository
         _dbContext = dbContext;
     }
 
-    public Task<List<QuizSummaryDto>> GetAllAsync()
+    public Task<List<QuizSummaryDto>> GetAllAsync(ChallengeStatus? status)
     {
-        return _dbContext.Quizzes
+        var quizzes = status is null
+            ? _dbContext.Quizzes
+            : _dbContext.Quizzes.Where(quiz => quiz.Status == status);
+
+        return quizzes
             .Select(quiz => new QuizSummaryDto(
                 quiz.Id,
                 quiz.Name,

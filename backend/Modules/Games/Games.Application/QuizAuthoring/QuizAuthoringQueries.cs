@@ -14,7 +14,7 @@ public sealed class QuizAuthoringQueries
 
     public Task<List<QuizSummaryDto>> GetAllAsync()
     {
-        return _quizReadRepository.GetAllAsync();
+        return _quizReadRepository.GetAllAsync(null);
     }
 
     public async Task<QuizDto> GetByIdAsync(Guid quizId)
