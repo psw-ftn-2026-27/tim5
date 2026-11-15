@@ -51,6 +51,36 @@ public sealed class Quiz : AggregateRoot
         _questions.AddRange(questions);
     }
 
+    public void Publish()
+    {
+        if (Status == ChallengeStatus.Published)
+        {
+            throw new DomainException("The quiz is already published.");
+        }
+
+        Status = ChallengeStatus.Published;
+    }
+
+    public void Retire()
+    {
+        if (Status != ChallengeStatus.Published)
+        {
+            throw new DomainException("Only a published quiz can be retired.");
+        }
+
+        Status = ChallengeStatus.Retired;
+    }
+
+    public void Archive()
+    {
+        if (Status != ChallengeStatus.Published && Status != ChallengeStatus.Retired)
+        {
+            throw new DomainException("Only a published or retired quiz can be archived.");
+        }
+
+        Status = ChallengeStatus.Archived;
+    }
+
     public void Delete()
     {
         if (Status != ChallengeStatus.Draft && Status != ChallengeStatus.Archived)
