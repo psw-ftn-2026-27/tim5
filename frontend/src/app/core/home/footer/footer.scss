@@ -84,3 +84,22 @@ nav a:focus-visible {
   gap: var(--space-4);
   padding-block: var(--space-4);
 }
+
+.cookie-settings {
+  background: none;
+  border: none;
+  color: var(--home-hero-muted);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.cookie-settings:hover {
+  color: var(--home-hero-label);
+}
+
+.cookie-settings:focus-visible {
+  outline: 2px solid var(--home-hero-label);
+  outline-offset: var(--space-1);
+}

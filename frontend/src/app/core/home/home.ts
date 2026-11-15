@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { AnalyticsConsent } from '../analytics/analytics-consent';
 import { Auth } from '../auth/auth';
 import { Discover } from './discover/discover';
 import { Hero } from './hero/hero';
@@ -14,4 +15,5 @@ import { Footer } from './footer/footer';
 })
 export class Home {
   protected readonly auth = inject(Auth);
+  protected readonly consent = inject(AnalyticsConsent);
 }

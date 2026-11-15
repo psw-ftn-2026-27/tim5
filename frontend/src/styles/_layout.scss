@@ -27,3 +27,8 @@ app-root:has(app-home) > main.container {
   min-block-size: 0;
   padding-inline: 0;
 }
+
+// The home page has its own footer, which carries the cookie settings link.
+app-root:has(app-home) > footer {
+  display: none;
+}

@@ -3,5 +3,9 @@
   <app-home-discover [loggedIn]="auth.isLoggedIn()" />
   <app-home-gallery />
   <app-home-why-explorer />
-  <app-home-footer [loggedIn]="auth.isLoggedIn()" />
+  <app-home-footer
+    [loggedIn]="auth.isLoggedIn()"
+    [showCookieSettings]="consent.isConfigured"
+    (cookieSettings)="consent.reopen()"
+  />
 </div>

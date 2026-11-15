@@ -29,6 +29,7 @@ frontend/src/
     _components.scss         global classes: button, card, form field, table
   app/
     core/                    auth (state, interceptor, login, register), home,
+                             analytics (consent state, consent banner),
                              app.routes.ts                                    [platform]
     shared/
       util/
