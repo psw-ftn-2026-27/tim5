@@ -65,3 +65,17 @@ export interface QuizInputDto {
   location: LocationDto;
   questions: QuestionDto[];
 }
+
+export type ChallengeKind = 'Quiz' | 'SocialChallenge';
+
+export interface ChallengeOverviewItemDto {
+  id: string;
+  name: string;
+  kind: ChallengeKind;
+  xp: number;
+  status: ChallengeStatus;
+}
+
+export interface ChallengeOverviewFilterDto {
+  status: ChallengeStatus | null;
+}

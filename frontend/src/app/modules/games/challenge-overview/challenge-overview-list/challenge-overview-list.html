@@ -1,0 +1,63 @@
+<div class="stack">
+  <h1>All challenges</h1>
+
+  <div class="toolbar">
+    <div class="field">
+      <label for="status">Status</label>
+      <select id="status" [formField]="filter.status">
+        <option value="">All statuses</option>
+        <option value="Draft">Draft</option>
+        <option value="Published">Published</option>
+        <option value="Retired">Retired</option>
+        <option value="Archived">Archived</option>
+      </select>
+    </div>
+  </div>
+
+  @if (challenges.isLoading()) {
+    <p>Loading challenges...</p>
+  } @else if (challenges.error()) {
+    <p class="error">Could not load challenges. Log in as an administrator and try again.</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Kind</th>
+          <th scope="col">XP</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (challenge of challenges.value() ?? []; track challenge.id) {
+          <tr>
+            <td>{{ challenge.name }}</td>
+            <td>
+              @switch (challenge.kind) {
+                @case ('Quiz') { Quiz }
+                @case ('SocialChallenge') { Social challenge }
+              }
+            </td>
+            <td>{{ challenge.xp }}</td>
+            <td>{{ challenge.status }}</td>
+            <td>
+              @switch (challenge.kind) {
+                @case ('Quiz') {
+                  <a class="button" routerLink="/games/quizzes">Manage</a>
+                }
+                @case ('SocialChallenge') {
+                  <a class="button" routerLink="/games/challenges">Manage</a>
+                }
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5">No challenges to show.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
