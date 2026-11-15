@@ -1,0 +1,10 @@
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  gap: var(--space-4);
+}

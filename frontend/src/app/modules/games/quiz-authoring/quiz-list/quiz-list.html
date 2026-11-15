@@ -1,0 +1,53 @@
+<div class="stack">
+  <h1>Quizzes</h1>
+
+  <div class="toolbar">
+    <a class="button button--primary" routerLink="/games/quizzes/create">Create quiz</a>
+  </div>
+
+  @if (actionError()) {
+    <p class="error">{{ actionError() }}</p>
+  }
+
+  @if (quizzes.isLoading()) {
+    <p>Loading quizzes...</p>
+  } @else if (quizzes.error()) {
+    <p class="error">Could not load quizzes. Log in as an administrator and try again.</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">XP</th>
+          <th scope="col">Questions</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (quiz of quizzes.value() ?? []; track quiz.id) {
+          <tr>
+            <td>{{ quiz.name }}</td>
+            <td>{{ quiz.xp }}</td>
+            <td>{{ quiz.questionCount }}</td>
+            <td>{{ quiz.status }}</td>
+            <td>
+              @if (quiz.status === 'Draft') {
+                <div class="actions">
+                  <a class="button" [routerLink]="['/games/quizzes', quiz.id, 'edit']">Edit</a>
+                  <button class="button" type="button" [disabled]="actionPending()" (click)="delete(quiz.id)">
+                    Delete
+                  </button>
+                </div>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5">No quizzes to show.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
