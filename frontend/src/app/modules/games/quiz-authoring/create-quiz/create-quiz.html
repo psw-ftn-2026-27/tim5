@@ -1,0 +1,108 @@
+<div class="card stack">
+  <h1>Create quiz</h1>
+
+  <form class="stack" (submit)="submit($event)">
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" [formField]="form.name" />
+      @if (form.name().touched()) {
+        @for (message of form.name().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="instructions">Instructions</label>
+      <textarea id="instructions" rows="3" [formField]="form.instructions"></textarea>
+      @if (form.instructions().touched()) {
+        @for (message of form.instructions().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="xp">XP</label>
+      <input id="xp" type="number" [formField]="form.xp" />
+      @if (form.xp().touched()) {
+        @for (message of form.xp().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="latitude">Latitude</label>
+      <input id="latitude" type="number" step="any" [formField]="form.latitude" />
+      @if (form.latitude().touched()) {
+        @for (message of form.latitude().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="longitude">Longitude</label>
+      <input id="longitude" type="number" step="any" [formField]="form.longitude" />
+      @if (form.longitude().touched()) {
+        @for (message of form.longitude().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <app-map [pins]="pins()" />
+
+    <h2>Questions</h2>
+
+    @for (question of form.questions; track $index; let questionIndex = $index) {
+      <div class="question stack">
+        <div class="field">
+          <label [for]="'question-' + questionIndex">Question {{ questionIndex + 1 }}</label>
+          <input [id]="'question-' + questionIndex" type="text" [formField]="question.text" />
+        </div>
+
+        @for (answer of question.answers; track $index; let answerIndex = $index) {
+          <div class="answer">
+            <div class="field">
+              <label [for]="'answer-' + questionIndex + '-' + answerIndex">Answer {{ answerIndex + 1 }}</label>
+              <input [id]="'answer-' + questionIndex + '-' + answerIndex" type="text" [formField]="answer.text" />
+            </div>
+            <label>
+              <input type="checkbox" [formField]="answer.isCorrect" />
+              Correct
+            </label>
+            <button class="button" type="button" (click)="removeAnswer(questionIndex, answerIndex)">
+              Remove answer
+            </button>
+          </div>
+        }
+
+        <div class="actions">
+          <button class="button" type="button" (click)="addAnswer(questionIndex)">Add answer</button>
+          <button class="button" type="button" (click)="removeQuestion(questionIndex)">Remove question</button>
+        </div>
+      </div>
+    }
+
+    @for (message of form.questions().errors(); track $index) {
+      <p class="error">{{ message.message }}</p>
+    }
+
+    <div>
+      <button class="button" type="button" (click)="addQuestion()">Add question</button>
+    </div>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <div class="actions">
+      <button class="button button--primary" type="submit" [disabled]="!form().valid() || pending()">
+        Create
+      </button>
+      <a routerLink="/games/quizzes">Cancel</a>
+    </div>
+  </form>
+</div>

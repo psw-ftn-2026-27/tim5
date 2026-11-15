@@ -23,6 +23,33 @@ namespace Games.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Games.Domain.Quizzes.Quiz", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Instructions")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("Xp")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Quizzes", "games");
+                });
+
             modelBuilder.Entity("Games.Domain.SocialChallenges.SocialChallenge", b =>
                 {
                     b.Property<Guid>("Id")
@@ -54,6 +81,79 @@ namespace Games.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SocialChallenges", "games");
+                });
+
+            modelBuilder.Entity("Games.Domain.Quizzes.Quiz", b =>
+                {
+                    b.OwnsOne("Games.Domain.Quizzes.Location", "Location", b1 =>
+                        {
+                            b1.Property<Guid>("QuizId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("double precision");
+
+                            b1.HasKey("QuizId");
+
+                            b1.ToTable("Quizzes", "games");
+
+                            b1.WithOwner()
+                                .HasForeignKey("QuizId");
+                        });
+
+                    b.OwnsMany("Games.Domain.Quizzes.Question", "Questions", b1 =>
+                        {
+                            b1.Property<Guid>("QuizId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd();
+
+                            b1.Property<string>("Text")
+                                .IsRequired();
+
+                            b1.HasKey("QuizId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Quizzes", "games");
+
+                            b1
+                                .ToJson("Questions")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("QuizId");
+
+                            b1.OwnsMany("Games.Domain.Quizzes.Answer", "Answers", b2 =>
+                                {
+                                    b2.Property<Guid>("QuestionQuizId");
+
+                                    b2.Property<int>("Question__synthesizedOrdinal");
+
+                                    b2.Property<int>("__synthesizedOrdinal")
+                                        .ValueGeneratedOnAdd();
+
+                                    b2.Property<bool>("IsCorrect");
+
+                                    b2.Property<string>("Text")
+                                        .IsRequired();
+
+                                    b2.HasKey("QuestionQuizId", "Question__synthesizedOrdinal", "__synthesizedOrdinal");
+
+                                    b2.ToTable("Quizzes", "games");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("QuestionQuizId", "Question__synthesizedOrdinal");
+                                });
+
+                            b1.Navigation("Answers");
+                        });
+
+                    b.Navigation("Location")
+                        .IsRequired();
+
+                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("Games.Domain.SocialChallenges.SocialChallenge", b =>
