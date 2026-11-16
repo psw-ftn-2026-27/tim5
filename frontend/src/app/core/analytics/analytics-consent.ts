@@ -68,6 +68,13 @@ export class AnalyticsConsent {
     this.reopened.set(true);
   }
 
+  // Used only by shared/analytics; modules record events through that service.
+  sendEvent(name: string, params: Record<string, string | number | boolean>): void {
+    if (this.isConfigured && this.consent() === 'granted') {
+      this.gtag('event', name, params);
+    }
+  }
+
   private store(consent: Consent): void {
     localStorage.setItem(CONSENT_KEY, consent);
     this.consent.set(consent);
