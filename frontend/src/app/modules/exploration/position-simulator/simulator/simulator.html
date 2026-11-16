@@ -15,7 +15,7 @@
     @if (pending()) {
       <p>Čuva se…</p>
     } @else if (error()) {
-      <p class="error">Pozicija nije sačuvana: {{ error() }}</p>
+      <p class="error">Pozicija nije sačuvana: {{ error() }} Pokušaj ponovo klikom na mapu.</p>
     }
 
     @if (position.hasValue()) {
