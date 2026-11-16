@@ -1,0 +1,42 @@
+<div class="stack">
+  <h1>Cart</h1>
+
+  @if (cart.isLoading()) {
+    <p>Loading your cart...</p>
+  } @else if (cart.error()) {
+    <p class="error">Could not load your cart. Log in as a tourist and try again.</p>
+  } @else if (cart.value(); as current) {
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Tour</th>
+          <th scope="col">Price</th>
+          <th scope="col">Remove</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of current.items; track item.entityId) {
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.price }} EC</td>
+            <td>
+              <button class="button" type="button" [disabled]="pending()" (click)="remove(item)">
+                Remove
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3">Your cart is empty.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <p class="total">Total: {{ current.total }} EC</p>
+  }
+</div>

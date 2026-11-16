@@ -1,0 +1,33 @@
+<div class="stack">
+  @if (product.isLoading()) {
+    <p>Loading the product...</p>
+  } @else if (hasNoProduct()) {
+    <h1>Product</h1>
+    <p>This tour is not for sale.</p>
+  } @else if (product.error()) {
+    <p class="error">Could not load the product. Log in and try again.</p>
+  } @else if (product.value(); as current) {
+    <h1>{{ current.name }}</h1>
+
+    <p class="price">Price: {{ current.price }} EC</p>
+
+    @if (current.price === 0) {
+      <p>This tour is not for sale.</p>
+    } @else if (isExplorer()) {
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <p>
+        <button
+          class="button button--primary"
+          type="button"
+          [disabled]="pending()"
+          (click)="addToCart()"
+        >
+          Add to cart
+        </button>
+      </p>
+    }
+  }
+</div>

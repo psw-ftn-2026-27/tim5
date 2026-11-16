@@ -36,3 +36,23 @@ export interface TouristDepositsDto {
   balance: number;
   deposits: TouristDepositDto[];
 }
+
+export interface ProductDto {
+  name: string;
+  price: number;
+}
+
+export interface OrderItemDto {
+  entityId: string;
+  name: string;
+  price: number;
+}
+
+export interface ShoppingCartDto {
+  items: OrderItemDto[];
+  total: number;
+}
+
+export interface AddToCartDto {
+  entityId: string;
+}
