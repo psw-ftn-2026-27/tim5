@@ -15,6 +15,7 @@ internal static class ShoppingCartConfiguration
     private static void ConfigureShoppingCart(EntityTypeBuilder<ShoppingCart> builder)
     {
         builder.HasIndex(cart => cart.TouristId).IsUnique();
+        builder.Property<uint>("xmin").IsRowVersion();
 
         builder.HasMany(cart => cart.Items)
             .WithOne()

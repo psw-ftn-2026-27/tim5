@@ -4,15 +4,18 @@ using Payment.Application;
 using Payment.Application.Depositing;
 using Payment.Application.Listing;
 using Payment.Application.Products;
+using Payment.Application.Purchasing;
 using Payment.Application.Reversing;
 using Payment.Application.Shopping;
 using Payment.Application.ShoppingCarts;
+using Payment.Application.TourPurchaseTokens;
 using Payment.Application.WalletReading;
 using Payment.Application.Wallets;
 using Payment.Contracts;
 using Payment.Infrastructure.Persistence;
 using Payment.Infrastructure.Persistence.Products;
 using Payment.Infrastructure.Persistence.ShoppingCarts;
+using Payment.Infrastructure.Persistence.TourPurchaseTokens;
 using Payment.Infrastructure.Persistence.Wallets;
 using Shared.Infrastructure;
 
@@ -33,6 +36,8 @@ public static class PaymentModuleExtensions
         services.AddScoped<IProductReadRepository, ProductReadRepository>();
         services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
         services.AddScoped<IShoppingCartReadRepository, ShoppingCartReadRepository>();
+        services.AddScoped<ITourPurchaseTokenRepository, TourPurchaseTokenRepository>();
+        services.AddScoped<ITourPurchaseTokenReadRepository, TourPurchaseTokenReadRepository>();
 
         services.AddScoped<WalletReadingQueries>();
         services.AddScoped<DepositingService>();
@@ -43,6 +48,7 @@ public static class PaymentModuleExtensions
         services.AddScoped<ListingQueries>();
         services.AddScoped<ShoppingService>();
         services.AddScoped<ShoppingQueries>();
+        services.AddScoped<PurchasingQueries>();
 
         services.AddScoped<IPaymentApi, PaymentApi>();
 

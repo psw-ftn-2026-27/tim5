@@ -6,6 +6,10 @@
   } @else if (cart.error()) {
     <p class="error">Could not load your cart. Log in as a tourist and try again.</p>
   } @else if (cart.value(); as current) {
+    @if (paid()) {
+      <p>Payment successful. <a routerLink="/payment/wallet">My wallet</a></p>
+    }
+
     @if (error()) {
       <p class="error">{{ error() }}</p>
     }
@@ -38,5 +42,26 @@
     </table>
 
     <p class="total">Total: {{ current.total }} EC</p>
+
+    @if (wallet.isLoading()) {
+      <p>Loading your balance...</p>
+    } @else if (wallet.error()) {
+      <p class="error">Could not load your balance.</p>
+    } @else if (wallet.value(); as currentWallet) {
+      <p>Balance: {{ currentWallet.balance }} EC</p>
+    }
+
+    @if (current.items.length > 0) {
+      <p>
+        <button
+          class="button button--primary"
+          type="button"
+          [disabled]="pending()"
+          (click)="checkout()"
+        >
+          Checkout
+        </button>
+      </p>
+    }
   }
 </div>

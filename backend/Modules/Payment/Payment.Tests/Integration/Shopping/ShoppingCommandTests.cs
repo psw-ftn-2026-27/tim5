@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Payment.Application.Shopping;
+using Payment.Domain.Wallets;
 using Payment.Infrastructure.Persistence;
 using Payment.Tests.Integration.Seeds;
 using Shared.Tests;
@@ -149,6 +150,104 @@ public class ShoppingCommandTests : BaseIntegrationTest
         var client = Factory.CreateClientFor(WellKnownUsers.Administrator, "administrator");
 
         var response = await client.DeleteAsync($"/api/payment/cart/items/{ProductSeed.PaidTour.EntityId}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task Adding_a_tour_the_tourist_has_already_purchased_is_rejected_and_creates_no_cart()
+    {
+        var token = TourPurchaseTokenSeed.PaidTourPurchasedByTouristWithoutCart;
+        var client = Factory.CreateClientFor(token.TouristId, "explorer");
+        using var arrangeContext = Factory.CreateContext<PaymentDbContext>();
+        var cartCountBefore = arrangeContext.ShoppingCarts.Count();
+
+        var response = await client.PostAsJsonAsync("/api/payment/cart/items", new AddToCartDto(token.EntityId));
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        using var assertContext = Factory.CreateContext<PaymentDbContext>();
+        assertContext.ShoppingCarts.Count().Should().Be(cartCountBefore);
+        assertContext.ShoppingCarts.Should().NotContain(cart => cart.TouristId == token.TouristId);
+    }
+
+    [Fact]
+    public async Task Tourist_pays_the_cart_which_empties_it_lowers_the_balance_by_the_total_and_records_a_purchase_and_a_token_for_each_tour()
+    {
+        var seededCart = ShoppingCartSeed.BuyersCartWithEnoughEC;
+        var seededWallet = WalletSeed.BuyersWalletWithEnoughEC;
+        var client = Factory.CreateClientFor(seededCart.TouristId, "explorer");
+
+        var response = await client.PostAsync("/api/payment/cart/checkout", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        using var assertContext = Factory.CreateContext<PaymentDbContext>();
+        assertContext.ShoppingCarts.Single(cart => cart.Id == seededCart.Id).Items.Should().BeEmpty();
+        var storedWallet = assertContext.Wallets.Single(wallet => wallet.Id == seededWallet.Id);
+        storedWallet.Balance.Should().Be(seededWallet.Balance - seededCart.Total);
+        storedWallet.Transactions
+            .Where(transaction => transaction.Type == TransactionType.Purchase)
+            .Select(transaction => new { transaction.EntityId, transaction.Name, Amount = transaction.Amount.Value })
+            .Should().BeEquivalentTo(seededCart.Items
+                .Select(item => new { EntityId = (Guid?)item.EntityId, Name = (string?)item.Name, Amount = item.Price.Value }));
+        assertContext.TourPurchaseTokens
+            .Where(token => token.TouristId == seededCart.TouristId)
+            .Select(token => token.EntityId)
+            .Should().BeEquivalentTo(seededCart.Items.Select(item => item.EntityId));
+    }
+
+    [Fact]
+    public async Task Paying_with_too_few_EC_is_rejected_and_leaves_the_cart_the_wallet_and_the_tokens_unchanged()
+    {
+        var seededCart = ShoppingCartSeed.BuyersCartShortOfEC;
+        var seededWallet = WalletSeed.BuyersWalletShortOfEC;
+        var client = Factory.CreateClientFor(seededCart.TouristId, "explorer");
+        using var arrangeContext = Factory.CreateContext<PaymentDbContext>();
+        var tokenCountBefore = arrangeContext.TourPurchaseTokens.Count();
+
+        var response = await client.PostAsync("/api/payment/cart/checkout", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        using var assertContext = Factory.CreateContext<PaymentDbContext>();
+        assertContext.ShoppingCarts.Single(cart => cart.Id == seededCart.Id).Items.Should().HaveSameCount(seededCart.Items);
+        var storedWallet = assertContext.Wallets.Single(wallet => wallet.Id == seededWallet.Id);
+        storedWallet.Balance.Should().Be(seededWallet.Balance);
+        storedWallet.Transactions.Should().HaveSameCount(seededWallet.Transactions);
+        assertContext.TourPurchaseTokens.Count().Should().Be(tokenCountBefore);
+    }
+
+    [Fact]
+    public async Task Paying_for_a_tourist_without_a_wallet_is_rejected_and_creates_no_wallet()
+    {
+        var seededCart = ShoppingCartSeed.CartWithTwoTours;
+        var client = Factory.CreateClientFor(seededCart.TouristId, "explorer");
+        using var arrangeContext = Factory.CreateContext<PaymentDbContext>();
+        var walletCountBefore = arrangeContext.Wallets.Count();
+
+        var response = await client.PostAsync("/api/payment/cart/checkout", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        using var assertContext = Factory.CreateContext<PaymentDbContext>();
+        assertContext.Wallets.Count().Should().Be(walletCountBefore);
+        assertContext.Wallets.Should().NotContain(wallet => wallet.TouristId == seededCart.TouristId);
+        assertContext.ShoppingCarts.Single(cart => cart.Id == seededCart.Id).Items.Should().HaveSameCount(seededCart.Items);
+    }
+
+    [Fact]
+    public async Task Anonymous_user_cannot_pay_a_cart()
+    {
+        var client = Factory.CreateClient();
+
+        var response = await client.PostAsync("/api/payment/cart/checkout", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Administrator_cannot_pay_a_cart()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.Administrator, "administrator");
+
+        var response = await client.PostAsync("/api/payment/cart/checkout", null);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
