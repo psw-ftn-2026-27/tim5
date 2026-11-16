@@ -40,6 +40,14 @@ public sealed class ShoppingController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("cart/checkout")]
+    [Authorize(Roles = "explorer")]
+    public async Task<ActionResult> Checkout()
+    {
+        await _shoppingService.CheckoutAsync(User.GetUserId());
+        return NoContent();
+    }
+
     [HttpDelete("cart/items/{entityId:guid}")]
     [Authorize(Roles = "explorer")]
     public async Task<ActionResult> RemoveFromCart(Guid entityId)

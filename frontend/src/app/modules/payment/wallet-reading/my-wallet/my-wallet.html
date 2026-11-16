@@ -12,6 +12,7 @@
       <thead>
         <tr>
           <th scope="col">Type</th>
+          <th scope="col">Tour</th>
           <th scope="col">Amount</th>
           <th scope="col">Time</th>
           <th scope="col">Status</th>
@@ -21,7 +22,14 @@
         @for (transaction of current.transactions; track $index) {
           <tr>
             <td>{{ transaction.type }}</td>
-            <td>{{ transaction.amount }} EC</td>
+            <td>{{ transaction.name }}</td>
+            <td>
+              @if (transaction.type === 'Purchase') {
+                -{{ transaction.amount }} EC
+              } @else {
+                {{ transaction.amount }} EC
+              }
+            </td>
             <td>{{ localTime(transaction.occurredAt) }}</td>
             <td>
               @if (transaction.reversedAt) {
@@ -31,7 +39,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="4">You have no transactions yet.</td>
+            <td colspan="5">You have no transactions yet.</td>
           </tr>
         }
       </tbody>

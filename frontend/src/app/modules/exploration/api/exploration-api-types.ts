@@ -108,3 +108,21 @@ export interface TouristPositionDto {
   longitude: number;
   markedAt: string;
 }
+export interface PublicKeyPointDto {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  location: LocationDto;
+}
+
+export interface TourPreviewDto {
+  id: string;
+  name: string;
+  description: string;
+  difficulty: TourDifficulty;
+  tags: string[];
+  lengthInKm: number | null;
+  transportTimes: TransportTimeDto[];
+  publicKeyPoints: PublicKeyPointDto[];
+}
