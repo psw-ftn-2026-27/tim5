@@ -32,6 +32,7 @@ frontend/src/
                              analytics (consent state, consent banner),
                              app.routes.ts                                    [platform]
     shared/
+      analytics/             the Analytics service and its event catalog         [platform]
       util/
       api/                   shared types (PageResult, ProblemDetails),
                              mirror the server, no client-only fields          [platform]
@@ -159,5 +160,7 @@ assigned to the platform team, and misalignment is an accepted learning experien
 - A page component owns the interaction: it declares its read resource, injects its
   group's service for commands, and passes plain values down to presentational
   components, which take `input()`s and raise `output()`s and inject nothing.
+- Analytics events are recorded only through `shared/analytics`, never by calling GA
+  directly; see the guide in `src/app/shared/analytics/README.md`.
 - Do not produce Vitest tests unless specifically instructed. Frontend testing is not
   taught; it is a platform-team assignment.
