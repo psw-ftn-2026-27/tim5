@@ -34,6 +34,12 @@ export interface MapPin {
 ## Ponašanje
 
 - Pogled se podešava tako da se svi pinovi vide. Bez pinova mapa je centrirana na Novi Sad.
+- U režimu biranja pogled obuhvata i `initialLocation`. Kada je ona jedina tačka, mapa je
+  centrirana na nju, sa istim najvećim uvećanjem kao kod pinova. Van režima biranja
+  `initialLocation` ne utiče na pogled.
+- Dok korisnik ne klikne na mapu, pogled se ponovo podešava svaki put kad stigne nova
+  `initialLocation` (na primer kad se sačuvana lokacija učita sa servera). Posle prvog klika
+  promena `initialLocation` ne pomera pogled, pa korisnik vidi mapu kako ju je ostavio.
 - Putanja je **pešačka ruta po ulicama** od prvog do poslednjeg pina, redom kojim su
   predati, bez povratka na prvi. Računa je spoljni servis (javni OSRM server sa pešačkim
   profilom, `routing.openstreetmap.de`), pa je za nju potreban internet.

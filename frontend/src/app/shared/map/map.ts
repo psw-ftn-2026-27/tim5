@@ -51,6 +51,9 @@ export class MapView {
   private readonly routeLayer = L.layerGroup();
   private readonly pickedLayer = L.layerGroup();
   private routeRequest = 0;
+  // Plain fields, not signals: the first click must not itself re-run the view effect.
+  private clicked = false;
+  private fittedPins: MapPin[] | null = null;
 
   constructor() {
     // Leaflet needs the rendered <div> to build the map in, and that <div> carries
@@ -76,12 +79,15 @@ export class MapView {
         onCleanup(() => map.remove());
       }
     });
-    effect(() => this.drawPins(this.pins(), this.map(), this.picking()));
+    effect(() => this.drawPins(this.pins(), this.picking()));
+    effect(() =>
+      this.fitView(this.pins(), this.map(), this.picking() ? this.initialLocation() : null),
+    );
     effect(() => this.drawPicked(this.picking() ? this.initialLocation() : null));
     effect(() => this.drawRoute(this.pins(), this.showPath()));
   }
 
-  private drawPins(pins: MapPin[], map: L.Map | null, picking: boolean) {
+  private drawPins(pins: MapPin[], picking: boolean) {
     this.pinLayer.clearLayers();
     for (const pin of pins) {
       // In picking mode a click on a pin must reach the map, so the pin ignores it.
@@ -92,11 +98,25 @@ export class MapView {
         marker.bindTooltip(pin.label, { permanent: true, direction: 'top', offset: [-16, -12] });
       }
     }
+  }
 
-    if (pins.length === 0) {
+  // The view fits the pins and, in picking mode, the initial location. After the user's
+  // first click the view follows only the pins: a new initial location (usually the page
+  // saving that click) must not move what the user is looking at.
+  private fitView(pins: MapPin[], map: L.Map | null, initialLocation: MapPin | null) {
+    if (this.clicked) {
+      if (pins === this.fittedPins) {
+        return;
+      }
+      initialLocation = null;
+    }
+    this.fittedPins = pins;
+
+    const points = initialLocation ? [...pins, initialLocation] : pins;
+    if (points.length === 0) {
       map?.setView(NOVI_SAD, DEFAULT_ZOOM);
     } else {
-      const bounds = L.latLngBounds(pins.map((pin) => [pin.latitude, pin.longitude]));
+      const bounds = L.latLngBounds(points.map((point) => [point.latitude, point.longitude]));
       map?.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
     }
   }
@@ -105,6 +125,7 @@ export class MapView {
     if (!this.picking()) {
       return;
     }
+    this.clicked = true;
     this.drawPicked({ latitude: clicked.lat, longitude: clicked.lng });
 
     // A click on a repeated copy of the world gives a longitude outside -180..180.

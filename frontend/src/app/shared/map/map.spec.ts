@@ -9,6 +9,9 @@ const PINS: MapPin[] = [
   { latitude: 45.2522, longitude: 19.8628 },
 ];
 
+// Far from Novi Sad, so a view that ignores it cannot contain it by accident.
+const BELGRADE: MapPin = { latitude: 44.8176, longitude: 20.4569 };
+
 const ROUTE: WalkingRoute = {
   line: [
     [45.2551, 19.8451],
@@ -67,6 +70,20 @@ describe('MapView', () => {
   function click(latitude: number, longitude: number) {
     const map = fixture.componentInstance['map']() as L.Map;
     map.fire('click', { latlng: L.latLng(latitude, longitude) });
+  }
+
+  // The test DOM lays nothing out, so the map would have no size and see a single point.
+  function giveMapASize() {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(800);
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(400);
+  }
+
+  function view(): L.Map {
+    return fixture.componentInstance['map']() as L.Map;
+  }
+
+  function inView(location: MapPin): boolean {
+    return view().getBounds().contains([location.latitude, location.longitude]);
   }
 
   function text(): string {
@@ -196,5 +213,61 @@ describe('MapView', () => {
     expect(picked).toHaveLength(1);
     expect(picked[0].latitude).toBe(45.25);
     expect(picked[0].longitude).toBeCloseTo(19.84);
+  });
+
+  it('centres on a far initial location that is the only point, without zooming past the pin limit', async () => {
+    giveMapASize();
+    await pickOn([], BELGRADE);
+
+    expect(view().getCenter().lat).toBeCloseTo(BELGRADE.latitude);
+    expect(view().getCenter().lng).toBeCloseTo(BELGRADE.longitude);
+    expect(view().getZoom()).toBeLessThanOrEqual(16);
+  });
+
+  it('keeps every pin and a far initial location in view', async () => {
+    giveMapASize();
+    await pickOn(PINS, BELGRADE);
+
+    for (const location of [...PINS, BELGRADE]) {
+      expect(inView(location)).toBe(true);
+    }
+  });
+
+  it('does not let the initial location change the view outside picking mode', async () => {
+    giveMapASize();
+    await show(PINS, false);
+    const center = view().getCenter();
+    const zoom = view().getZoom();
+
+    fixture.componentRef.setInput('initialLocation', BELGRADE);
+    await fixture.whenStable();
+
+    expect(view().getCenter()).toEqual(center);
+    expect(view().getZoom()).toBe(zoom);
+  });
+
+  it('moves the view to an initial location that arrives later, before a click', async () => {
+    giveMapASize();
+    await pickOn(PINS, null);
+    expect(inView(BELGRADE)).toBe(false);
+
+    fixture.componentRef.setInput('initialLocation', BELGRADE);
+    await fixture.whenStable();
+
+    expect(inView(BELGRADE)).toBe(true);
+  });
+
+  it('does not change the view when the initial location changes after a click', async () => {
+    giveMapASize();
+    await pickOn(PINS, null);
+    click(45.25, 19.84);
+    const center = view().getCenter();
+    const zoom = view().getZoom();
+
+    fixture.componentRef.setInput('initialLocation', BELGRADE);
+    await fixture.whenStable();
+
+    expect(view().getCenter()).toEqual(center);
+    expect(view().getZoom()).toBe(zoom);
   });
 });
