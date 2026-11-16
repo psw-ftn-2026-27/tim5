@@ -9,7 +9,9 @@ public sealed class Transaction : Entity
 
     public TransactionType Type { get; private set; }
     public Amount Amount { get; private set; } = null!;
-    public Guid AdministratorId { get; private set; }
+    public Guid? AdministratorId { get; private set; }
+    public Guid? EntityId { get; private set; }
+    public string? Name { get; private set; }
     public DateTime OccurredAt { get; private set; }
     public DateTime? ReversedAt { get; private set; }
     public Guid? ReversedByAdministratorId { get; private set; }
@@ -17,12 +19,25 @@ public sealed class Transaction : Entity
 
     private Transaction() { }
 
-    public Transaction(TransactionType type, Amount amount, Guid administratorId) : base(Guid.NewGuid())
+    public Transaction(TransactionType type, Amount amount, Guid? administratorId, Guid? entityId, string? name, DateTime occurredAt)
+        : base(Guid.NewGuid())
     {
+        if (type == TransactionType.Deposit && administratorId is null)
+        {
+            throw new DomainException("A deposit must record the administrator who made it.");
+        }
+
+        if (type == TransactionType.Purchase && (entityId is null || string.IsNullOrWhiteSpace(name)))
+        {
+            throw new DomainException("A purchase must record the purchased tour and its name.");
+        }
+
         Type = type;
         Amount = amount;
         AdministratorId = administratorId;
-        OccurredAt = DateTime.UtcNow;
+        EntityId = entityId;
+        Name = name;
+        OccurredAt = occurredAt;
     }
 
     internal void Reverse(Guid administratorId, DateTime now)

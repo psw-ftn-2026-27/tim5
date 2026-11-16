@@ -20,10 +20,26 @@ public sealed class Wallet : AggregateRoot
 
     public void Deposit(Amount amount, Guid administratorId)
     {
-        var transaction = new Transaction(TransactionType.Deposit, amount, administratorId);
+        var transaction = new Transaction(TransactionType.Deposit, amount, administratorId, null, null, DateTime.UtcNow);
 
         _transactions.Add(transaction);
         Balance += transaction.Amount.Value;
+    }
+
+    public void Purchase(IReadOnlyList<PurchaseItem> items, DateTime now)
+    {
+        var total = items.Sum(item => item.Price.Value);
+        if (Balance < total)
+        {
+            throw new DomainException("The wallet does not have enough EC for the purchase.");
+        }
+
+        foreach (var item in items)
+        {
+            _transactions.Add(new Transaction(TransactionType.Purchase, item.Price, null, item.EntityId, item.Name, now));
+        }
+
+        Balance -= total;
     }
 
     public void Reverse(Guid transactionId, Guid administratorId, DateTime now)

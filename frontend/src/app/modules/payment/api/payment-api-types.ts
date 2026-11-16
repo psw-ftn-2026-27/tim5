@@ -1,7 +1,8 @@
-export type TransactionType = 'Deposit';
+export type TransactionType = 'Deposit' | 'Purchase';
 
 export interface TransactionDto {
   type: TransactionType;
+  name: string | null;
   amount: number;
   occurredAt: string;
   isReversed: boolean;

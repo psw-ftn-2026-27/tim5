@@ -26,6 +26,7 @@ internal sealed class WalletReadRepository : IWalletReadRepository
                     .OrderByDescending(transaction => transaction.OccurredAt)
                     .Select(transaction => new TransactionDto(
                         transaction.Type,
+                        transaction.Name,
                         transaction.Amount.Value,
                         transaction.OccurredAt,
                         transaction.ReversedAt != null,

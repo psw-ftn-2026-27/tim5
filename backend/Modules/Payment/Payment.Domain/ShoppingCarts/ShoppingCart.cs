@@ -18,7 +18,7 @@ public sealed class ShoppingCart : AggregateRoot
         TouristId = touristId;
     }
 
-    public void AddItem(Guid entityId, string name, Price price, Guid ownerId)
+    public void AddItem(Guid entityId, string name, Price price, Guid ownerId, bool isPurchased)
     {
         if (price.Value == 0)
         {
@@ -30,12 +30,29 @@ public sealed class ShoppingCart : AggregateRoot
             throw new DomainException("The tour is already in the cart.");
         }
 
+        if (isPurchased)
+        {
+            throw new DomainException("The tour has already been purchased.");
+        }
+
         if (ownerId == TouristId)
         {
             throw new DomainException("A tourist cannot add their own tour to the cart.");
         }
 
         _items.Add(new OrderItem(entityId, name, price));
+    }
+
+    public IReadOnlyList<OrderItem> Checkout()
+    {
+        if (_items.Count == 0)
+        {
+            throw new DomainException("An empty cart cannot be paid.");
+        }
+
+        var items = _items.ToList();
+        _items.Clear();
+        return items;
     }
 
     public void RemoveItem(Guid entityId)

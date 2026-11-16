@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { AddToCartDto } from '../api/payment-api-types';
 
 const BASE_URL = '/api/payment/cart/items';
+const CHECKOUT_URL = '/api/payment/cart/checkout';
 
 @Injectable({ providedIn: 'root' })
 export class Shopping {
@@ -15,5 +16,9 @@ export class Shopping {
 
   async removeFromCart(entityId: string): Promise<void> {
     await firstValueFrom(this.http.delete<void>(`${BASE_URL}/${entityId}`));
+  }
+
+  async checkout(): Promise<void> {
+    await firstValueFrom(this.http.post<void>(CHECKOUT_URL, null));
   }
 }

@@ -16,7 +16,7 @@ public class ShoppingCartTests
     private static ShoppingCart CreateCartWithOneTour()
     {
         var cart = new ShoppingCart(WellKnownUsers.Explorer);
-        cart.AddItem(FirstTour, "Petrovaradinska tvrdjava", new Price(150), Author);
+        cart.AddItem(FirstTour, "Petrovaradinska tvrdjava", new Price(150), Author, false);
         return cart;
     }
 
@@ -25,7 +25,7 @@ public class ShoppingCartTests
     {
         var cart = CreateCartWithOneTour();
 
-        var add = () => cart.AddItem(SecondTour, "Dunavski kej", new Price(0), Author);
+        var add = () => cart.AddItem(SecondTour, "Dunavski kej", new Price(0), Author, false);
 
         add.Should().Throw<DomainException>();
         cart.Items.Should().ContainSingle(item => item.EntityId == FirstTour);
@@ -36,7 +36,7 @@ public class ShoppingCartTests
     {
         var cart = CreateCartWithOneTour();
 
-        var add = () => cart.AddItem(FirstTour, "Petrovaradinska tvrdjava", new Price(150), Author);
+        var add = () => cart.AddItem(FirstTour, "Petrovaradinska tvrdjava", new Price(150), Author, false);
 
         add.Should().Throw<DomainException>();
         cart.Items.Should().ContainSingle(item => item.EntityId == FirstTour);
@@ -47,7 +47,7 @@ public class ShoppingCartTests
     {
         var cart = CreateCartWithOneTour();
 
-        var add = () => cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), WellKnownUsers.Explorer);
+        var add = () => cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), WellKnownUsers.Explorer, false);
 
         add.Should().Throw<DomainException>();
         cart.Items.Should().ContainSingle(item => item.EntityId == FirstTour);
@@ -58,7 +58,7 @@ public class ShoppingCartTests
     {
         var cart = CreateCartWithOneTour();
 
-        cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), Author);
+        cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), Author, false);
 
         cart.Total.Should().Be(350);
     }
@@ -67,7 +67,7 @@ public class ShoppingCartTests
     public void Removing_a_tour_from_a_cart_with_two_tours_removes_only_that_tour()
     {
         var cart = CreateCartWithOneTour();
-        cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), Author);
+        cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), Author, false);
 
         cart.RemoveItem(FirstTour);
 
@@ -83,5 +83,38 @@ public class ShoppingCartTests
 
         remove.Should().Throw<NotFoundException>();
         cart.Items.Should().ContainSingle(item => item.EntityId == FirstTour);
+    }
+
+    [Fact]
+    public void A_tour_the_tourist_has_already_purchased_is_rejected_and_the_cart_stays_the_same()
+    {
+        var cart = CreateCartWithOneTour();
+
+        var add = () => cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), Author, true);
+
+        add.Should().Throw<DomainException>();
+        cart.Items.Should().ContainSingle(item => item.EntityId == FirstTour);
+    }
+
+    [Fact]
+    public void Paying_an_empty_cart_is_rejected()
+    {
+        var cart = new ShoppingCart(WellKnownUsers.Explorer);
+
+        var checkout = () => cart.Checkout();
+
+        checkout.Should().Throw<DomainException>();
+    }
+
+    [Fact]
+    public void Paying_a_cart_with_two_tours_returns_both_tours_and_leaves_the_cart_empty()
+    {
+        var cart = CreateCartWithOneTour();
+        cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), Author, false);
+
+        var items = cart.Checkout();
+
+        items.Select(item => item.EntityId).Should().BeEquivalentTo([FirstTour, SecondTour]);
+        cart.Items.Should().BeEmpty();
     }
 }
