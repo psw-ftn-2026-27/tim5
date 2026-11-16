@@ -25,6 +25,9 @@
     <div class="container footer-bottom">
       <p>© 2026 Explorer</p>
       <p>Made for the curious.</p>
+      @if (showCookieSettings()) {
+        <button class="cookie-settings" type="button" (click)="cookieSettings.emit()">Cookie settings</button>
+      }
     </div>
   </div>
 </footer>

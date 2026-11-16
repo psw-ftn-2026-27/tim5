@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -9,4 +9,7 @@ import { RouterLink } from '@angular/router';
 })
 export class Footer {
   readonly loggedIn = input.required<boolean>();
+  readonly showCookieSettings = input(false);
+
+  readonly cookieSettings = output();
 }
