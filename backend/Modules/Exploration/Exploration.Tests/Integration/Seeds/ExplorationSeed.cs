@@ -2,5 +2,5 @@ namespace Exploration.Tests.Integration.Seeds;
 
 internal static class ExplorationSeed
 {
-    public static object[] All => [.. TourSeed.All, .. UploadedImageSeed.All];
+    public static object[] All => [.. TourSeed.All, .. UploadedImageSeed.All, .. TouristPositionSeed.All];
 }

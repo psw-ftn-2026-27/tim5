@@ -102,3 +102,9 @@ export interface TourSearchCriteriaDto {
   transports: TransportMode[] | null;
   sort: TourSortOrder;
 }
+
+export interface TouristPositionDto {
+  latitude: number;
+  longitude: number;
+  markedAt: string;
+}

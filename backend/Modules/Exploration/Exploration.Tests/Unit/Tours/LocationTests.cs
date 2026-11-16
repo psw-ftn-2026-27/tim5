@@ -18,4 +18,17 @@ public class LocationTests
 
         creation.Should().Throw<DomainException>();
     }
+
+    [Theory]
+    [InlineData(-90, -180)]
+    [InlineData(90, 180)]
+    [InlineData(-90, 180)]
+    [InlineData(90, -180)]
+    public void Location_on_the_latitude_and_longitude_boundaries_exists(double latitude, double longitude)
+    {
+        var location = new Location(latitude, longitude);
+
+        location.Latitude.Should().Be(latitude);
+        location.Longitude.Should().Be(longitude);
+    }
 }
