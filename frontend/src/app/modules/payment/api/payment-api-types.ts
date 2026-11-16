@@ -57,3 +57,9 @@ export interface ShoppingCartDto {
 export interface AddToCartDto {
   entityId: string;
 }
+
+export interface PurchasedTourDto {
+  entityId: string;
+  name: string;
+  purchasedAt: string;
+}
