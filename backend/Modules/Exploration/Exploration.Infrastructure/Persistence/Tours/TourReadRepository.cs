@@ -61,6 +61,33 @@ internal sealed class TourReadRepository : ITourReadRepository
         return new PageResult<TourDto>(items, totalCount);
     }
 
+    public Task<TourPreviewDto?> GetPublishedPreviewAsync(Guid tourId)
+    {
+        return _dbContext.Tours
+            .Where(tour => tour.Id == tourId && tour.Status == TourStatus.Published)
+            .Select(tour => new TourPreviewDto(
+                tour.Id,
+                tour.Name,
+                tour.Description,
+                tour.Difficulty,
+                tour.Tags,
+                tour.LengthInKm,
+                tour.TransportTimes
+                    .Select(time => new TransportTimeDto(time.Transport, time.Minutes))
+                    .ToList(),
+                tour.KeyPoints
+                    .Where(keyPoint => keyPoint.IsPublic)
+                    .OrderBy(keyPoint => keyPoint.Order)
+                    .Select(keyPoint => new PublicKeyPointDto(
+                        keyPoint.Id,
+                        keyPoint.Name,
+                        keyPoint.Description,
+                        ImageAddress.For(keyPoint.ImageId),
+                        new LocationDto(keyPoint.Location.Latitude, keyPoint.Location.Longitude)))
+                    .ToList()))
+            .FirstOrDefaultAsync();
+    }
+
     private static IQueryable<Tour> Filter(IQueryable<Tour> tours, TourSearchCriteriaDto criteria)
     {
         if (!string.IsNullOrWhiteSpace(criteria.Name))
