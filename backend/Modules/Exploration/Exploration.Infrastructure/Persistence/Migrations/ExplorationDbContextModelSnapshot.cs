@@ -24,6 +24,42 @@ namespace Exploration.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Exploration.Domain.Tours.KeyPoint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ImageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Secret")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TourId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TourId");
+
+                    b.ToTable("KeyPoints", "exploration");
+                });
+
             modelBuilder.Entity("Exploration.Domain.Tours.Tour", b =>
                 {
                     b.Property<Guid>("Id")
@@ -45,6 +81,9 @@ namespace Exploration.Infrastructure.Persistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<decimal?>("LengthInKm")
+                        .HasColumnType("numeric");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -65,6 +104,62 @@ namespace Exploration.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tours", "exploration");
+                });
+
+            modelBuilder.Entity("Shared.Domain.Images.UploadedImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsLinked")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("StoredName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UploadedImages", "exploration");
+                });
+
+            modelBuilder.Entity("Exploration.Domain.Tours.KeyPoint", b =>
+                {
+                    b.HasOne("Exploration.Domain.Tours.Tour", null)
+                        .WithMany("KeyPoints")
+                        .HasForeignKey("TourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Exploration.Domain.Tours.Location", "Location", b1 =>
+                        {
+                            b1.Property<Guid>("KeyPointId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("double precision");
+
+                            b1.HasKey("KeyPointId");
+
+                            b1.ToTable("KeyPoints", "exploration");
+
+                            b1.WithOwner()
+                                .HasForeignKey("KeyPointId");
+                        });
+
+                    b.Navigation("Location")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Exploration.Domain.Tours.Tour", b =>
@@ -115,6 +210,42 @@ namespace Exploration.Infrastructure.Persistence.Migrations
                     b.Navigation("RecommendedGroupSize");
 
                     b.Navigation("TransportTimes");
+                });
+
+            modelBuilder.Entity("Shared.Domain.Images.UploadedImage", b =>
+                {
+                    b.OwnsOne("Shared.Domain.Images.ImageFile", "File", b1 =>
+                        {
+                            b1.Property<Guid>("UploadedImageId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<byte[]>("Content")
+                                .IsRequired()
+                                .HasColumnType("bytea");
+
+                            b1.Property<string>("ContentType")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)");
+
+                            b1.Property<int>("Size")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("UploadedImageId");
+
+                            b1.ToTable("UploadedImages", "exploration");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UploadedImageId");
+                        });
+
+                    b.Navigation("File")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Exploration.Domain.Tours.Tour", b =>
+                {
+                    b.Navigation("KeyPoints");
                 });
 #pragma warning restore 612, 618
         }
