@@ -68,4 +68,10 @@ public sealed class TourAuthoringController : ControllerBase
     {
         return await _authoringQueries.GetByAuthorAsync(User.GetUserId());
     }
+
+    [HttpGet("mine/{id:guid}")]
+    public async Task<ActionResult<TourWithKeyPointsDto>> GetMineWithKeyPoints(Guid id)
+    {
+        return await _authoringQueries.GetOwnedTourWithKeyPointsAsync(id, User.GetUserId());
+    }
 }

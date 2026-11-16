@@ -41,6 +41,58 @@ export interface CreateTourDto {
   recommendedGroupSize: GroupSizeDto;
 }
 
+export interface LocationDto {
+  latitude: number;
+  longitude: number;
+}
+
+export interface KeyPointDto {
+  id: string;
+  name: string;
+  description: string;
+  imageId: string;
+  imageUrl: string;
+  secret: string | null;
+  isPublic: boolean;
+  order: number;
+  location: LocationDto;
+}
+
+export interface TourWithKeyPointsDto {
+  id: string;
+  name: string;
+  status: TourStatus;
+  lengthInKm: number | null;
+  keyPoints: KeyPointDto[];
+}
+
+export interface AddKeyPointDto {
+  name: string;
+  description: string;
+  imageId: string;
+  secret: string | null;
+  isPublic: boolean;
+  location: LocationDto;
+}
+
+export interface ChangeKeyPointDto {
+  name: string;
+  description: string;
+  imageId: string;
+  secret: string | null;
+  isPublic: boolean;
+  location: LocationDto;
+}
+
+export interface TourLengthDto {
+  lengthInKm: number;
+}
+
+export interface UploadedImageDto {
+  id: string;
+  url: string;
+}
+
 export type TourSortOrder = 'Newest' | 'DifficultyAscending' | 'DifficultyDescending';
 
 export interface TourSearchCriteriaDto {

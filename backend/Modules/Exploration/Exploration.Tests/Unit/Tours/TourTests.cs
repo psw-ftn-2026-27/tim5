@@ -18,9 +18,24 @@ public class TourTests
     {
         var tour = CreateTour(LongDescription);
         tour.AddTransportTime(TransportMode.Walking, 60);
+        AddKeyPoint(tour);
+        AddKeyPoint(tour);
         tour.Publish(FreePrice);
         return tour;
     }
+
+    private static Tour CreateMeasuredDraftWithThreeKeyPoints()
+    {
+        var tour = CreateTour(LongDescription);
+        AddKeyPoint(tour);
+        AddKeyPoint(tour);
+        AddKeyPoint(tour);
+        tour.RecordLength(3.5m);
+        return tour;
+    }
+
+    private static void AddKeyPoint(Tour tour) =>
+        tour.AddKeyPoint("Tačka", "Opis tačke.", Guid.NewGuid(), null, false, new Location(45.25, 19.85));
 
     [Fact]
     public void New_tour_starts_as_a_draft()
@@ -96,6 +111,8 @@ public class TourTests
     {
         var tour = CreateTour(LongDescription);
         tour.AddTransportTime(TransportMode.Bicycle, 45);
+        AddKeyPoint(tour);
+        AddKeyPoint(tour);
 
         tour.Publish(FreePrice);
 
@@ -108,6 +125,8 @@ public class TourTests
     {
         var tour = CreateTour(LongDescription);
         tour.AddTransportTime(TransportMode.Walking, 120);
+        AddKeyPoint(tour);
+        AddKeyPoint(tour);
 
         var publishing = () => tour.Publish(null!);
 
@@ -121,6 +140,8 @@ public class TourTests
     {
         var tour = CreateTour("Kratak opis.");
         tour.AddTransportTime(TransportMode.Walking, 120);
+        AddKeyPoint(tour);
+        AddKeyPoint(tour);
 
         var publishing = () => tour.Publish(FreePrice);
 
@@ -131,6 +152,8 @@ public class TourTests
     public void Tour_without_a_transport_time_cannot_be_published()
     {
         var tour = CreateTour(LongDescription);
+        AddKeyPoint(tour);
+        AddKeyPoint(tour);
 
         var publishing = () => tour.Publish(FreePrice);
 
@@ -140,9 +163,7 @@ public class TourTests
     [Fact]
     public void Published_tour_cannot_be_published_again()
     {
-        var tour = CreateTour(LongDescription);
-        tour.AddTransportTime(TransportMode.Car, 30);
-        tour.Publish(FreePrice);
+        var tour = CreatePublishedTour();
 
         var publishing = () => tour.Publish(FreePrice);
 
@@ -203,5 +224,129 @@ public class TourTests
         var publishing = () => tour.Publish(FreePrice);
 
         publishing.Should().Throw<DomainException>();
+    }
+
+    [Theory]
+    [InlineData("", "Opis tačke.", true)]
+    [InlineData("   ", "Opis tačke.", true)]
+    [InlineData("Tačka", "", true)]
+    [InlineData("Tačka", "   ", true)]
+    [InlineData("Tačka", "Opis tačke.", false)]
+    public void Key_point_without_a_name_description_or_image_cannot_be_added(string name, string description, bool hasImage)
+    {
+        var tour = CreateTour(LongDescription);
+        var imageId = hasImage ? Guid.NewGuid() : Guid.Empty;
+
+        var addition = () => tour.AddKeyPoint(name, description, imageId, null, false, new Location(45.25, 19.85));
+
+        addition.Should().Throw<DomainException>();
+        tour.KeyPoints.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Key_point_cannot_be_added_to_a_published_tour()
+    {
+        var tour = CreatePublishedTour();
+
+        var addition = () => tour.AddKeyPoint("Nova tačka", "Opis tačke.", Guid.NewGuid(), null, false, new Location(45.25, 19.85));
+
+        addition.Should().Throw<DomainException>();
+        tour.KeyPoints.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void Key_point_of_a_published_tour_cannot_be_changed()
+    {
+        var tour = CreatePublishedTour();
+        var keyPoint = tour.KeyPoints[0];
+
+        var change = () => tour.ChangeKeyPoint(keyPoint.Id, "Novi naziv", "Novi opis.", Guid.NewGuid(), null, true, new Location(45.26, 19.86));
+
+        change.Should().Throw<DomainException>();
+        keyPoint.Name.Should().Be("Tačka");
+    }
+
+    [Fact]
+    public void Key_point_of_a_published_tour_cannot_be_removed()
+    {
+        var tour = CreatePublishedTour();
+        var keyPointId = tour.KeyPoints[0].Id;
+
+        var removal = () => tour.RemoveKeyPoint(keyPointId);
+
+        removal.Should().Throw<DomainException>();
+        tour.KeyPoints.Should().Contain(keyPoint => keyPoint.Id == keyPointId);
+    }
+
+    [Fact]
+    public void Remaining_key_points_keep_their_order_without_gaps_after_a_removal()
+    {
+        var tour = CreateMeasuredDraftWithThreeKeyPoints();
+        var first = tour.KeyPoints[0];
+        var middle = tour.KeyPoints[1];
+        var last = tour.KeyPoints[2];
+
+        tour.RemoveKeyPoint(middle.Id);
+
+        tour.KeyPoints.Should().HaveCount(2);
+        first.Order.Should().Be(1);
+        last.Order.Should().Be(2);
+    }
+
+    [Fact]
+    public void Adding_a_key_point_clears_the_tour_length()
+    {
+        var tour = CreateMeasuredDraftWithThreeKeyPoints();
+
+        tour.AddKeyPoint("Nova tačka", "Opis tačke.", Guid.NewGuid(), null, false, new Location(45.25, 19.85));
+
+        tour.LengthInKm.Should().BeNull();
+    }
+
+    [Fact]
+    public void Changing_a_key_point_clears_the_tour_length()
+    {
+        var tour = CreateMeasuredDraftWithThreeKeyPoints();
+
+        tour.ChangeKeyPoint(tour.KeyPoints[0].Id, "Novi naziv", "Novi opis.", Guid.NewGuid(), "Tajna", true, new Location(45.26, 19.86));
+
+        tour.LengthInKm.Should().BeNull();
+    }
+
+    [Fact]
+    public void Removing_a_key_point_clears_the_tour_length()
+    {
+        var tour = CreateMeasuredDraftWithThreeKeyPoints();
+
+        tour.RemoveKeyPoint(tour.KeyPoints[0].Id);
+
+        tour.LengthInKm.Should().BeNull();
+    }
+
+    [Fact]
+    public void Tour_with_one_key_point_cannot_be_published()
+    {
+        var tour = CreateTour(LongDescription);
+        tour.AddTransportTime(TransportMode.Walking, 60);
+        AddKeyPoint(tour);
+
+        var publishing = () => tour.Publish(FreePrice);
+
+        publishing.Should().Throw<DomainException>();
+        tour.Status.Should().Be(TourStatus.Draft);
+    }
+
+    [Fact]
+    public void Tour_with_two_key_points_and_an_unknown_length_is_published()
+    {
+        var tour = CreateTour(LongDescription);
+        tour.AddTransportTime(TransportMode.Walking, 60);
+        AddKeyPoint(tour);
+        AddKeyPoint(tour);
+
+        tour.Publish(FreePrice);
+
+        tour.Status.Should().Be(TourStatus.Published);
+        tour.LengthInKm.Should().BeNull();
     }
 }

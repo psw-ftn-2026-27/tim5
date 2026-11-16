@@ -1,0 +1,216 @@
+<div class="stack">
+  <p><a routerLink="/exploration/mine">Back to my tours</a></p>
+
+  @if (tour.isLoading() && !tour.value()) {
+    <p>Loading the tour...</p>
+  } @else if (tour.error()) {
+    <p class="error">Could not load the tour. Log in and try again.</p>
+  } @else if (tour.value(); as current) {
+    <h1>{{ current.name }}</h1>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <ol class="key-points">
+      @for (keyPoint of current.keyPoints; track keyPoint.id) {
+        <li class="card key-point">
+          <div class="key-point-row">
+            <img [src]="keyPoint.imageUrl" alt="{{ keyPoint.name }}" />
+            <div class="key-point-text">
+              <h2>{{ keyPoint.order }}. {{ keyPoint.name }}</h2>
+              <p>{{ keyPoint.description }}</p>
+              @if (keyPoint.secret) {
+                <p class="meta">Secret: {{ keyPoint.secret }}</p>
+              }
+              @if (keyPoint.isPublic) {
+                <p class="meta">visible without purchase</p>
+              }
+            </div>
+            <div class="actions">
+              <button
+                class="button"
+                type="button"
+                [disabled]="editingKeyPointId() !== null || pending()"
+                (click)="startEdit(keyPoint)"
+              >
+                Edit
+              </button>
+              <button
+                class="button"
+                type="button"
+                [disabled]="editingKeyPointId() !== null || pending()"
+                (click)="remove(keyPoint.id)"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+
+          @if (editingKeyPointId() === keyPoint.id) {
+            <form class="stack" (submit)="save($event)">
+              <h2>Edit key point</h2>
+
+              <div class="field">
+                <label for="key-point-name">Name</label>
+                <input id="key-point-name" type="text" [formField]="form.name" />
+                @if (form.name().touched()) {
+                  @for (message of form.name().errors(); track $index) {
+                    <p class="error">{{ message.message }}</p>
+                  }
+                }
+              </div>
+
+              <div class="field">
+                <label for="key-point-description">Description</label>
+                <textarea
+                  id="key-point-description"
+                  rows="4"
+                  [formField]="form.description"
+                ></textarea>
+                @if (form.description().touched()) {
+                  @for (message of form.description().errors(); track $index) {
+                    <p class="error">{{ message.message }}</p>
+                  }
+                }
+              </div>
+
+              <app-image-picker
+                [images]="images()"
+                [canAdd]="image() === null"
+                [serverError]="imageError()"
+                (filePicked)="upload($event)"
+                (imageRemoved)="removeImage()"
+              />
+              @if (form().touched() && image() === null) {
+                <p class="error">Image is required.</p>
+              }
+
+              <div class="field">
+                <label for="key-point-secret">Secret (optional)</label>
+                <textarea id="key-point-secret" rows="2" [formField]="form.secret"></textarea>
+              </div>
+
+              <label>
+                <input type="checkbox" [formField]="form.isPublic" />
+                Visible without purchase
+              </label>
+
+              <div class="field">
+                <label for="key-point-latitude">Latitude</label>
+                <input id="key-point-latitude" type="number" step="any" [formField]="form.latitude" />
+                @if (form.latitude().touched()) {
+                  @for (message of form.latitude().errors(); track $index) {
+                    <p class="error">{{ message.message }}</p>
+                  }
+                }
+              </div>
+
+              <div class="field">
+                <label for="key-point-longitude">Longitude</label>
+                <input id="key-point-longitude" type="number" step="any" [formField]="form.longitude" />
+                @if (form.longitude().touched()) {
+                  @for (message of form.longitude().errors(); track $index) {
+                    <p class="error">{{ message.message }}</p>
+                  }
+                }
+              </div>
+
+              <app-map [pins]="formPins()" />
+
+              <div class="actions">
+                <button class="button button--primary" type="submit" [disabled]="!canSave()">
+                  Save
+                </button>
+                <button class="button" type="button" [disabled]="pending()" (click)="closeEdit()">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          }
+        </li>
+      } @empty {
+        <li class="meta">This tour has no key points yet.</li>
+      }
+    </ol>
+
+    @if (lengthText(); as length) {
+      <p>Tour length: {{ length }} km</p>
+    } @else {
+      <p class="meta">Dužina ture trenutno ne može da se izračuna.</p>
+    }
+
+    <app-map [pins]="pins()" [showPath]="true" (routeLength)="recordLength($event)" />
+
+    @if (editingKeyPointId() === null) {
+      <form class="card stack" (submit)="save($event)">
+        <h2>Add key point</h2>
+
+        <div class="field">
+          <label for="key-point-name">Name</label>
+          <input id="key-point-name" type="text" [formField]="form.name" />
+          @if (form.name().touched()) {
+            @for (message of form.name().errors(); track $index) {
+              <p class="error">{{ message.message }}</p>
+            }
+          }
+        </div>
+
+        <div class="field">
+          <label for="key-point-description">Description</label>
+          <textarea id="key-point-description" rows="4" [formField]="form.description"></textarea>
+          @if (form.description().touched()) {
+            @for (message of form.description().errors(); track $index) {
+              <p class="error">{{ message.message }}</p>
+            }
+          }
+        </div>
+
+        <app-image-picker
+          [images]="images()"
+          [canAdd]="image() === null"
+          [serverError]="imageError()"
+          (filePicked)="upload($event)"
+          (imageRemoved)="removeImage()"
+        />
+        @if (form().touched() && image() === null) {
+          <p class="error">Image is required.</p>
+        }
+
+        <div class="field">
+          <label for="key-point-secret">Secret (optional)</label>
+          <textarea id="key-point-secret" rows="2" [formField]="form.secret"></textarea>
+        </div>
+
+        <label>
+          <input type="checkbox" [formField]="form.isPublic" />
+          Visible without purchase
+        </label>
+
+        <div class="field">
+          <label for="key-point-latitude">Latitude</label>
+          <input id="key-point-latitude" type="number" step="any" [formField]="form.latitude" />
+          @if (form.latitude().touched()) {
+            @for (message of form.latitude().errors(); track $index) {
+              <p class="error">{{ message.message }}</p>
+            }
+          }
+        </div>
+
+        <div class="field">
+          <label for="key-point-longitude">Longitude</label>
+          <input id="key-point-longitude" type="number" step="any" [formField]="form.longitude" />
+          @if (form.longitude().touched()) {
+            @for (message of form.longitude().errors(); track $index) {
+              <p class="error">{{ message.message }}</p>
+            }
+          }
+        </div>
+
+        <app-map [pins]="formPins()" />
+
+        <button class="button button--primary" type="submit" [disabled]="!canSave()">Save</button>
+      </form>
+    }
+  }
+</div>

@@ -63,6 +63,7 @@
                   Edit group size
                 </button>
                 @if (tour.status === 'Draft') {
+                  <a class="button" [routerLink]="['/exploration/mine', tour.id]">Key points</a>
                   <button
                     class="button button--primary"
                     type="button"
