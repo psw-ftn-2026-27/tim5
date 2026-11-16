@@ -6,6 +6,8 @@ using Exploration.Domain.Tours;
 using Exploration.Infrastructure.Persistence;
 using Exploration.Tests.Integration.Seeds;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Payment.Contracts;
 using Shared.Tests;
 using Xunit;
 
@@ -89,7 +91,7 @@ public class TourAuthoringCommandTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task Author_publishes_a_tour_with_a_paid_price()
+    public async Task Author_publishes_a_tour_with_a_paid_price_and_payment_lists_it_at_that_price()
     {
         var client = Factory.CreateClientFor(WellKnownUsers.Explorer, "explorer");
         var request = new PriceDto(false, 500);
@@ -102,6 +104,39 @@ public class TourAuthoringCommandTests : BaseIntegrationTest
         var stored = assertContext.Tours.Single(tour => tour.Id == TourSeed.PublishableRiverside.Id);
         stored.Status.Should().Be(TourStatus.Published);
         stored.PublishedAt.Should().NotBeNull();
+        var listedPrices = await GetListedPricesAsync(TourSeed.PublishableRiverside.Id);
+        listedPrices.Should().Contain(TourSeed.PublishableRiverside.Id, 500);
+    }
+
+    [Fact]
+    public async Task Free_tour_is_listed_in_payment_at_a_zero_price()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.Explorer, "explorer");
+        var request = new PriceDto(true, 0);
+
+        var response = await client.PostAsJsonAsync($"/api/exploration/tours/{TourSeed.PublishableRiverside.Id}/publish",
+            request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var listedPrices = await GetListedPricesAsync(TourSeed.PublishableRiverside.Id);
+        listedPrices.Should().Contain(TourSeed.PublishableRiverside.Id, 0);
+    }
+
+    [Fact]
+    public async Task Tour_that_fails_the_publishing_rules_stays_a_draft_and_is_not_listed_in_payment()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.Explorer, "explorer");
+        var request = new PriceDto(false, 500);
+
+        var response = await client.PostAsJsonAsync($"/api/exploration/tours/{TourSeed.FortressWalk.Id}/publish",
+            request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        using var assertContext = Factory.CreateContext<ExplorationDbContext>();
+        var stored = assertContext.Tours.Single(tour => tour.Id == TourSeed.FortressWalk.Id);
+        stored.Status.Should().Be(TourStatus.Draft);
+        var listedPrices = await GetListedPricesAsync(TourSeed.FortressWalk.Id);
+        listedPrices.Should().NotContainKey(TourSeed.FortressWalk.Id);
     }
 
     [Fact]
@@ -349,5 +384,12 @@ public class TourAuthoringCommandTests : BaseIntegrationTest
             request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    private async Task<IReadOnlyDictionary<Guid, int>> GetListedPricesAsync(Guid tourId)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var paymentApi = scope.ServiceProvider.GetRequiredService<IPaymentApi>();
+        return await paymentApi.GetTourPricesAsync([tourId]);
     }
 }
