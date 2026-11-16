@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { TouristWallets } from './depositing/tourist-wallets/tourist-wallets';
 import { PaymentHome } from './payment-home/payment-home';
+import { PurchasedTours } from './purchasing/purchased-tours/purchased-tours';
 import { TouristDeposits } from './reversing/tourist-deposits/tourist-deposits';
 import { ProductDetails } from './shopping/product-details/product-details';
 import { ShoppingCart } from './shopping/shopping-cart/shopping-cart';
@@ -13,4 +14,5 @@ export const paymentRoutes: Routes = [
   { path: 'tourists/:touristId/deposits', component: TouristDeposits },
   { path: 'products/:entityId', component: ProductDetails },
   { path: 'cart', component: ShoppingCart },
+  { path: 'purchases', component: PurchasedTours },
 ];

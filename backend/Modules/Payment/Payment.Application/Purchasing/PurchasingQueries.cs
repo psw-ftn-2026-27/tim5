@@ -15,4 +15,9 @@ public sealed class PurchasingQueries
     {
         return _tourPurchaseTokenReadRepository.ExistsAsync(touristId, tourId);
     }
+
+    public Task<List<PurchasedTourDto>> GetMyPurchasesAsync(Guid touristId)
+    {
+        return _tourPurchaseTokenReadRepository.GetPurchasedToursAsync(touristId);
+    }
 }

@@ -1,0 +1,32 @@
+<div class="stack">
+  <h1>Purchased tours</h1>
+
+  @if (purchases.isLoading()) {
+    <p>Loading your purchased tours...</p>
+  } @else if (purchases.error()) {
+    <p class="error">Could not load your purchased tours. Log in as a tourist and try again.</p>
+  } @else if (purchases.value(); as current) {
+    @if (current.length === 0) {
+      <p>You have not purchased any tours yet. <a routerLink="/exploration">Browse tours</a></p>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Tour</th>
+            <th scope="col">Purchased at</th>
+            <th scope="col">Open</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (purchase of current; track purchase.entityId) {
+            <tr>
+              <td>{{ purchase.name }}</td>
+              <td>{{ localTime(purchase.purchasedAt) }}</td>
+              <td><a [routerLink]="['/exploration', purchase.entityId]">Open</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</div>
