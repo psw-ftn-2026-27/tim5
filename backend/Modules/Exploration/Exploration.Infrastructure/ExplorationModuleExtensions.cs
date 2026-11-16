@@ -1,11 +1,15 @@
 using Exploration.Application;
 using Exploration.Application.ImageViewing;
 using Exploration.Application.KeyPointAuthoring;
+using Exploration.Application.PositionSimulator;
 using Exploration.Application.TourAuthoring;
 using Exploration.Application.TourBrowsing;
+using Exploration.Application.TouristPositions;
 using Exploration.Application.Tours;
 using Exploration.Application.UploadedImages;
+using Exploration.Contracts;
 using Exploration.Infrastructure.Persistence;
+using Exploration.Infrastructure.Persistence.TouristPositions;
 using Exploration.Infrastructure.Persistence.Tours;
 using Exploration.Infrastructure.Persistence.UploadedImages;
 using Microsoft.Extensions.Configuration;
@@ -27,12 +31,18 @@ public static class ExplorationModuleExtensions
         services.AddScoped<ITourReadRepository, TourReadRepository>();
         services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();
         services.AddScoped<IUploadedImageReadRepository, UploadedImageReadRepository>();
+        services.AddScoped<ITouristPositionRepository, TouristPositionRepository>();
+        services.AddScoped<ITouristPositionReadRepository, TouristPositionReadRepository>();
 
         services.AddScoped<TourAuthoringService>();
         services.AddScoped<TourAuthoringQueries>();
         services.AddScoped<KeyPointAuthoringService>();
         services.AddScoped<TourBrowsingQueries>();
         services.AddScoped<ImageViewingQueries>();
+        services.AddScoped<PositionSimulatorService>();
+        services.AddScoped<PositionSimulatorQueries>();
+
+        services.AddScoped<IExplorationApi, ExplorationApi>();
 
         return services;
     }

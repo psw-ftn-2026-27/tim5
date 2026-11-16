@@ -1,5 +1,7 @@
 ﻿using Exploration.Application;
+using Exploration.Domain.TouristPositions;
 using Exploration.Domain.Tours;
+using Exploration.Infrastructure.Persistence.TouristPositions;
 using Exploration.Infrastructure.Persistence.Tours;
 using Microsoft.EntityFrameworkCore;
 using Shared.Domain.Images;
@@ -13,11 +15,13 @@ internal sealed class ExplorationDbContext : DbContext, IUnitOfWork
 
     public DbSet<Tour> Tours => Set<Tour>();
     public DbSet<UploadedImage> UploadedImages => Set<UploadedImage>();
+    public DbSet<TouristPosition> TouristPositions => Set<TouristPosition>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.HasDefaultSchema("exploration");
         builder.ConfigureTours();
         builder.ConfigureUploadedImages();
+        builder.ConfigureTouristPositions();
     }
 }

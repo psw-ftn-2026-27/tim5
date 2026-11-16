@@ -1,0 +1,27 @@
+<div class="stack">
+  <h1>Simulator pozicije</h1>
+
+  @if (position.isLoading() && !position.hasValue()) {
+    <p>Pozicija se učitava…</p>
+  } @else if (position.error() && !hasNoPosition()) {
+    <p class="error">Pozicija nije učitana. Prijavite se kao explorer i pokušajte ponovo.</p>
+  } @else {
+    <app-map
+      [picking]="!pending()"
+      [initialLocation]="savedLocation()"
+      (locationPicked)="mark($event)"
+    />
+
+    @if (pending()) {
+      <p>Čuva se…</p>
+    } @else if (error()) {
+      <p class="error">Pozicija nije sačuvana: {{ error() }} Pokušaj ponovo klikom na mapu.</p>
+    }
+
+    @if (position.hasValue()) {
+      <p>Pozicija označena: {{ localTime(position.value().markedAt) }}</p>
+    } @else {
+      <p>Pozicija još nije označena.</p>
+    }
+  }
+</div>

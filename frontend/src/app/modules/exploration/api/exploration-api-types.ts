@@ -103,6 +103,11 @@ export interface TourSearchCriteriaDto {
   sort: TourSortOrder;
 }
 
+export interface TouristPositionDto {
+  latitude: number;
+  longitude: number;
+  markedAt: string;
+}
 export interface PublicKeyPointDto {
   id: string;
   name: string;

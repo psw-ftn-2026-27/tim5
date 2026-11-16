@@ -24,6 +24,26 @@ namespace Exploration.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Exploration.Domain.TouristPositions.TouristPosition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("MarkedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("TouristPositions", "exploration");
+                });
+
             modelBuilder.Entity("Exploration.Domain.Tours.KeyPoint", b =>
                 {
                     b.Property<Guid>("Id")
@@ -129,6 +149,31 @@ namespace Exploration.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UploadedImages", "exploration");
+                });
+
+            modelBuilder.Entity("Exploration.Domain.TouristPositions.TouristPosition", b =>
+                {
+                    b.OwnsOne("Exploration.Domain.Tours.Location", "Location", b1 =>
+                        {
+                            b1.Property<Guid>("TouristPositionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("double precision");
+
+                            b1.HasKey("TouristPositionId");
+
+                            b1.ToTable("TouristPositions", "exploration");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TouristPositionId");
+                        });
+
+                    b.Navigation("Location")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Exploration.Domain.Tours.KeyPoint", b =>
