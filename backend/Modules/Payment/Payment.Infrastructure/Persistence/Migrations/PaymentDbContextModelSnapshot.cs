@@ -57,6 +57,54 @@ namespace Payment.Infrastructure.Persistence.Migrations
                     b.ToTable("Products", "payment");
                 });
 
+            modelBuilder.Entity("Payment.Domain.ShoppingCarts.OrderItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ShoppingCartId")
+                        .HasColumnType("uuid");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Price", "Payment.Domain.ShoppingCarts.OrderItem.Price#Price", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("integer")
+                                .HasColumnName("Price");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShoppingCartId");
+
+                    b.ToTable("OrderItems", "payment");
+                });
+
+            modelBuilder.Entity("Payment.Domain.ShoppingCarts.ShoppingCart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TouristId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TouristId")
+                        .IsUnique();
+
+                    b.ToTable("ShoppingCarts", "payment");
+                });
+
             modelBuilder.Entity("Payment.Domain.Wallets.Transaction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -124,6 +172,15 @@ namespace Payment.Infrastructure.Persistence.Migrations
                     b.ToTable("Wallets", "payment");
                 });
 
+            modelBuilder.Entity("Payment.Domain.ShoppingCarts.OrderItem", b =>
+                {
+                    b.HasOne("Payment.Domain.ShoppingCarts.ShoppingCart", null)
+                        .WithMany("Items")
+                        .HasForeignKey("ShoppingCartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Payment.Domain.Wallets.Transaction", b =>
                 {
                     b.HasOne("Payment.Domain.Wallets.Wallet", null)
@@ -131,6 +188,11 @@ namespace Payment.Infrastructure.Persistence.Migrations
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Payment.Domain.ShoppingCarts.ShoppingCart", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Payment.Domain.Wallets.Wallet", b =>

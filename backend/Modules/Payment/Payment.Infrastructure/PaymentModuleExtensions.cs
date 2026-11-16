@@ -5,11 +5,14 @@ using Payment.Application.Depositing;
 using Payment.Application.Listing;
 using Payment.Application.Products;
 using Payment.Application.Reversing;
+using Payment.Application.Shopping;
+using Payment.Application.ShoppingCarts;
 using Payment.Application.WalletReading;
 using Payment.Application.Wallets;
 using Payment.Contracts;
 using Payment.Infrastructure.Persistence;
 using Payment.Infrastructure.Persistence.Products;
+using Payment.Infrastructure.Persistence.ShoppingCarts;
 using Payment.Infrastructure.Persistence.Wallets;
 using Shared.Infrastructure;
 
@@ -28,6 +31,8 @@ public static class PaymentModuleExtensions
         services.AddScoped<IWalletReadRepository, WalletReadRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductReadRepository, ProductReadRepository>();
+        services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+        services.AddScoped<IShoppingCartReadRepository, ShoppingCartReadRepository>();
 
         services.AddScoped<WalletReadingQueries>();
         services.AddScoped<DepositingService>();
@@ -36,6 +41,8 @@ public static class PaymentModuleExtensions
         services.AddScoped<ReversingQueries>();
         services.AddScoped<ListingService>();
         services.AddScoped<ListingQueries>();
+        services.AddScoped<ShoppingService>();
+        services.AddScoped<ShoppingQueries>();
 
         services.AddScoped<IPaymentApi, PaymentApi>();
 

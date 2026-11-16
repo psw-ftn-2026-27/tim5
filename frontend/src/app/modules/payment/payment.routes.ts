@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { TouristWallets } from './depositing/tourist-wallets/tourist-wallets';
 import { PaymentHome } from './payment-home/payment-home';
 import { TouristDeposits } from './reversing/tourist-deposits/tourist-deposits';
+import { ProductDetails } from './shopping/product-details/product-details';
+import { ShoppingCart } from './shopping/shopping-cart/shopping-cart';
 import { MyWallet } from './wallet-reading/my-wallet/my-wallet';
 
 export const paymentRoutes: Routes = [
@@ -9,4 +11,6 @@ export const paymentRoutes: Routes = [
   { path: 'wallet', component: MyWallet },
   { path: 'tourists', component: TouristWallets },
   { path: 'tourists/:touristId/deposits', component: TouristDeposits },
+  { path: 'products/:entityId', component: ProductDetails },
+  { path: 'cart', component: ShoppingCart },
 ];
