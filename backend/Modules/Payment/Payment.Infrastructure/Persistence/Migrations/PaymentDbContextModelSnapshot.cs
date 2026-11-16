@@ -24,6 +24,39 @@ namespace Payment.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Payment.Domain.Products.Product", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Price", "Payment.Domain.Products.Product.Price#Price", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("integer")
+                                .HasColumnName("Price");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntityId")
+                        .IsUnique();
+
+                    b.ToTable("Products", "payment");
+                });
+
             modelBuilder.Entity("Payment.Domain.Wallets.Transaction", b =>
                 {
                     b.Property<Guid>("Id")

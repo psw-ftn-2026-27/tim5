@@ -2,10 +2,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Payment.Application;
 using Payment.Application.Depositing;
+using Payment.Application.Listing;
+using Payment.Application.Products;
 using Payment.Application.Reversing;
 using Payment.Application.WalletReading;
 using Payment.Application.Wallets;
+using Payment.Contracts;
 using Payment.Infrastructure.Persistence;
+using Payment.Infrastructure.Persistence.Products;
 using Payment.Infrastructure.Persistence.Wallets;
 using Shared.Infrastructure;
 
@@ -22,12 +26,18 @@ public static class PaymentModuleExtensions
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<PaymentDbContext>());
         services.AddScoped<IWalletRepository, WalletRepository>();
         services.AddScoped<IWalletReadRepository, WalletReadRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductReadRepository, ProductReadRepository>();
 
         services.AddScoped<WalletReadingQueries>();
         services.AddScoped<DepositingService>();
         services.AddScoped<DepositingQueries>();
         services.AddScoped<ReversingService>();
         services.AddScoped<ReversingQueries>();
+        services.AddScoped<ListingService>();
+        services.AddScoped<ListingQueries>();
+
+        services.AddScoped<IPaymentApi, PaymentApi>();
 
         return services;
     }
