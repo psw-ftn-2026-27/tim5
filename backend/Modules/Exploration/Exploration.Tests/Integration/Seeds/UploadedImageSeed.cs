@@ -30,6 +30,8 @@ internal static class UploadedImageSeed
     public static readonly UploadedImage ExplorersLinkedQuayStartPhoto;
     public static readonly UploadedImage ExplorersLinkedQuayPierPhoto;
     public static readonly UploadedImage ExplorersLinkedQuayEndPhoto;
+    public static readonly UploadedImage ExplorersLinkedMarshPhoto;
+    public static readonly UploadedImage ExplorersLinkedHeronColonyPhoto;
 
     static UploadedImageSeed()
     {
@@ -71,6 +73,12 @@ internal static class UploadedImageSeed
 
         ExplorersLinkedQuayEndPhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
         ExplorersLinkedQuayEndPhoto.LinkTo(WellKnownUsers.Explorer);
+
+        ExplorersLinkedMarshPhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
+        ExplorersLinkedMarshPhoto.LinkTo(WellKnownUsers.Explorer);
+
+        ExplorersLinkedHeronColonyPhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
+        ExplorersLinkedHeronColonyPhoto.LinkTo(WellKnownUsers.Explorer);
     }
 
     public static UploadedImage[] All =>
@@ -81,6 +89,7 @@ internal static class UploadedImageSeed
         ExplorersLinkedKrusedolPhoto, ExplorersLinkedGrgetegPhoto,
         ExplorersLinkedFarmhousePhoto, ExplorersLinkedWorkshopPhoto,
         ExplorersLinkedLibertySquarePhoto, ExplorersLinkedDanubeParkPhoto,
-        ExplorersLinkedQuayStartPhoto, ExplorersLinkedQuayPierPhoto, ExplorersLinkedQuayEndPhoto
+        ExplorersLinkedQuayStartPhoto, ExplorersLinkedQuayPierPhoto, ExplorersLinkedQuayEndPhoto,
+        ExplorersLinkedMarshPhoto, ExplorersLinkedHeronColonyPhoto
     ];
 }

@@ -14,6 +14,7 @@ internal static class TourSeed
     public static readonly Tour ArchivedSalasi;
     public static readonly Tour PublishedOldTown;
     public static readonly Tour MeasuredDraftQuay;
+    public static readonly Tour PublishedMarshWithPublicSecret;
 
     static TourSeed()
     {
@@ -53,7 +54,14 @@ internal static class TourSeed
         MeasuredDraftQuay.AddKeyPoint("Pristanište", "Pristanište za rečne brodove.", UploadedImageSeed.ExplorersLinkedQuayPierPhoto.Id, null, false, new Location(45.2480, 19.8550));
         MeasuredDraftQuay.AddKeyPoint("Kraj keja", "Kej se završava kod Varadinskog mosta.", UploadedImageSeed.ExplorersLinkedQuayEndPhoto.Id, "Treća tajna keja.", false, new Location(45.2530, 19.8620));
         MeasuredDraftQuay.RecordLength(2.4m);
+
+        PublishedMarshWithPublicSecret = new(WellKnownUsers.Explorer, "Koviljski rit", "Tura vodi nasipom kroz Koviljski rit, pored rukavaca Dunava i bara, do kolonije čaplji koja se posmatra sa drvene osmatračnice.", TourDifficulty.Moderate, ["priroda"], new GroupSize(2, 6));
+        PublishedMarshWithPublicSecret.AddTransportTime(TransportMode.Walking, 150);
+        PublishedMarshWithPublicSecret.AddKeyPoint("Nasip uz rukavac", "Nasip sa koga se vide rukavci Dunava i stare vrbe.", UploadedImageSeed.ExplorersLinkedMarshPhoto.Id, "Ispod nasipa je skrivena stara skela.", true, new Location(45.1900, 20.1200));
+        PublishedMarshWithPublicSecret.AddKeyPoint("Kolonija čaplji", "Osmatračnica iznad kolonije sivih čaplji.", UploadedImageSeed.ExplorersLinkedHeronColonyPhoto.Id, null, false, new Location(45.1850, 20.1350));
+        PublishedMarshWithPublicSecret.RecordLength(6.5m);
+        PublishedMarshWithPublicSecret.Publish(new Price(true, 0));
     }
 
-    public static Tour[] All => [FortressWalk, CityStroll, SecondExplorersTrail, PublishableRiverside, PublishedVineyards, PublishedMonasteries, ArchivedSalasi, PublishedOldTown, MeasuredDraftQuay];
+    public static Tour[] All => [FortressWalk, CityStroll, SecondExplorersTrail, PublishableRiverside, PublishedVineyards, PublishedMonasteries, ArchivedSalasi, PublishedOldTown, MeasuredDraftQuay, PublishedMarshWithPublicSecret];
 }

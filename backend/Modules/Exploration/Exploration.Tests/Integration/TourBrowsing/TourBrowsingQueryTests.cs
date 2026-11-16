@@ -1,4 +1,6 @@
+using System.Net;
 using System.Net.Http.Json;
+using Exploration.Application.TourBrowsing;
 using Exploration.Application.Tours;
 using Exploration.Domain.Tours;
 using Exploration.Tests.Integration.Seeds;
@@ -153,6 +155,63 @@ public class TourBrowsingQueryTests : BaseIntegrationTest
 
         tours!.Items.Should().ContainSingle();
         tours.TotalCount.Should().Be(PublishedSeedTours().Count(tour => tour.Difficulty is TourDifficulty.Easy or TourDifficulty.Moderate));
+    }
+
+    [Fact]
+    public async Task Tourist_opening_a_published_tour_gets_its_basic_data_and_only_the_key_points_visible_without_buying_in_order()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.SecondExplorer, "explorer");
+        var seeded = TourSeed.PublishedMarshWithPublicSecret;
+
+        var preview = await client.GetFromJsonAsync<TourPreviewDto>($"/api/exploration/tours/published/{seeded.Id}", JsonOptions);
+
+        preview!.Id.Should().Be(seeded.Id);
+        preview.Name.Should().Be(seeded.Name);
+        preview.Description.Should().Be(seeded.Description);
+        preview.Difficulty.Should().Be(seeded.Difficulty);
+        preview.Tags.Should().Equal(seeded.Tags);
+        preview.LengthInKm.Should().Be(seeded.LengthInKm);
+        preview.TransportTimes.Should().BeEquivalentTo(seeded.TransportTimes.Select(time => new TransportTimeDto(time.Transport, time.Minutes)));
+        preview.PublicKeyPoints.Select(keyPoint => keyPoint.Id)
+            .Should().Equal(seeded.KeyPoints.Where(keyPoint => keyPoint.IsPublic).OrderBy(keyPoint => keyPoint.Order).Select(keyPoint => keyPoint.Id));
+    }
+
+    [Fact]
+    public async Task Secret_of_a_public_key_point_is_not_part_of_the_tour_preview()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.SecondExplorer, "explorer");
+        var seeded = TourSeed.PublishedMarshWithPublicSecret;
+
+        var body = await client.GetStringAsync($"/api/exploration/tours/published/{seeded.Id}");
+
+        var secret = seeded.KeyPoints.Single(keyPoint => keyPoint.IsPublic && keyPoint.Secret is not null).Secret!;
+        body.Should().NotContain(secret);
+    }
+
+    [Theory]
+    [MemberData(nameof(UnpublishedTourIds))]
+    public async Task Draft_and_archived_tours_do_not_exist_for_a_preview(Guid tourId)
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.SecondExplorer, "explorer");
+
+        var response = await client.GetAsync($"/api/exploration/tours/published/{tourId}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task Anonymous_user_cannot_preview_a_tour()
+    {
+        var client = Factory.CreateClient();
+
+        var response = await client.GetAsync($"/api/exploration/tours/published/{TourSeed.PublishedMarshWithPublicSecret.Id}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    public static TheoryData<Guid> UnpublishedTourIds()
+    {
+        return new TheoryData<Guid> { TourSeed.PublishableRiverside.Id, TourSeed.ArchivedSalasi.Id };
     }
 
     private static IEnumerable<Tour> PublishedSeedTours()
