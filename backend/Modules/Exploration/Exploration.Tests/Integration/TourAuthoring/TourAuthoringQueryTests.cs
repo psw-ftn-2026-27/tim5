@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Http.Json;
 using Exploration.Application.TourAuthoring;
 using Exploration.Application.Tours;
@@ -41,18 +40,5 @@ public class TourAuthoringQueryTests : BaseIntegrationTest
         tour.KeyPoints.Select(keyPoint => keyPoint.Secret)
             .Should().Equal(seeded.KeyPoints.OrderBy(keyPoint => keyPoint.Order).Select(keyPoint => keyPoint.Secret));
         tour.KeyPoints.Should().OnlyContain(keyPoint => keyPoint.ImageUrl == ImageAddress.For(keyPoint.ImageId));
-    }
-
-    [Fact]
-    public async Task Stored_image_is_returned_with_its_content_and_type()
-    {
-        var client = Factory.CreateClient();
-        var imageId = UploadedImageSeed.ExplorersLinkedQuayStartPhoto.Id;
-
-        var response = await client.GetAsync($"/api/exploration/images/{imageId}");
-
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        response.Content.Headers.ContentType!.MediaType.Should().Be("image/png");
-        (await response.Content.ReadAsByteArrayAsync()).Should().Equal(UploadedImageSeed.OnePixelPng);
     }
 }

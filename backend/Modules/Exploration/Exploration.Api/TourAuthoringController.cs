@@ -1,6 +1,5 @@
 using Exploration.Application.TourAuthoring;
 using Exploration.Application.Tours;
-using Exploration.Application.UploadedImages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Api;
@@ -74,13 +73,5 @@ public sealed class TourAuthoringController : ControllerBase
     public async Task<ActionResult<TourWithKeyPointsDto>> GetMineWithKeyPoints(Guid id)
     {
         return await _authoringQueries.GetOwnedTourWithKeyPointsAsync(id, User.GetUserId());
-    }
-
-    [HttpGet("/api/exploration/images/{id:guid}")]
-    [AllowAnonymous]
-    public async Task<ActionResult> GetImageFile(Guid id)
-    {
-        var file = await _authoringQueries.GetImageFileAsync(id);
-        return File(file.Content, file.ContentType);
     }
 }

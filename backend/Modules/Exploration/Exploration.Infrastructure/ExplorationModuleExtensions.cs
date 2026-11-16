@@ -1,4 +1,5 @@
 using Exploration.Application;
+using Exploration.Application.ImageViewing;
 using Exploration.Application.KeyPointAuthoring;
 using Exploration.Application.TourAuthoring;
 using Exploration.Application.TourBrowsing;
@@ -31,6 +32,7 @@ public static class ExplorationModuleExtensions
         services.AddScoped<TourAuthoringQueries>();
         services.AddScoped<KeyPointAuthoringService>();
         services.AddScoped<TourBrowsingQueries>();
+        services.AddScoped<ImageViewingQueries>();
 
         return services;
     }
