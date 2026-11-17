@@ -135,6 +135,40 @@ namespace Payment.Infrastructure.Persistence.Migrations
                     b.ToTable("Products", "payment");
                 });
 
+            modelBuilder.Entity("Payment.Domain.Purchases.Purchase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CouponDiscount")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("CouponId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("GiftCardDiscount")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("GiftCardId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("PurchasedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Total")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TouristId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TouristId");
+
+                    b.ToTable("Purchases", "payment");
+                });
+
             modelBuilder.Entity("Payment.Domain.ShoppingCarts.OrderItem", b =>
                 {
                     b.Property<Guid>("Id")

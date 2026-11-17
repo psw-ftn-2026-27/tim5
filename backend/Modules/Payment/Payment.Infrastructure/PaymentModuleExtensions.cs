@@ -16,6 +16,7 @@ using Payment.Application.ShoppingCarts;
 using Payment.Application.TourPurchaseTokens;
 using Payment.Application.WalletReading;
 using Payment.Application.Wallets;
+using Payment.Application.Purchases;
 using Payment.Contracts;
 using Payment.Infrastructure.Persistence;
 using Payment.Infrastructure.Persistence.Products;
@@ -24,6 +25,7 @@ using Payment.Infrastructure.Persistence.GiftCards;
 using Payment.Infrastructure.Persistence.ShoppingCarts;
 using Payment.Infrastructure.Persistence.TourPurchaseTokens;
 using Payment.Infrastructure.Persistence.Wallets;
+using Payment.Infrastructure.Persistence.Purchases;
 using Shared.Infrastructure;
 
 namespace Payment.Infrastructure;
@@ -49,6 +51,8 @@ public static class PaymentModuleExtensions
         services.AddScoped<IShoppingCartReadRepository, ShoppingCartReadRepository>();
         services.AddScoped<ITourPurchaseTokenRepository, TourPurchaseTokenRepository>();
         services.AddScoped<ITourPurchaseTokenReadRepository, TourPurchaseTokenReadRepository>();
+        services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+        services.AddScoped<IPurchaseReadRepository, PurchaseReadRepository>();
 
         services.AddScoped<WalletReadingQueries>();
         services.AddScoped<GiftCardPurchasingService>();
@@ -63,6 +67,7 @@ public static class PaymentModuleExtensions
         services.AddScoped<CouponCreatingQueries>();
         services.AddScoped<ShoppingService>();
         services.AddScoped<ShoppingQueries>();
+        services.AddScoped<Payment.Domain.ShoppingCarts.BenefitCalculator>();
         services.AddScoped<PurchasingQueries>();
 
         services.AddScoped<IPaymentApi, PaymentApi>();

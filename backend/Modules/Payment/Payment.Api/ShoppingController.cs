@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Payment.Application.Shopping;
 using Shared.Api;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Payment.Api;
 
@@ -32,6 +33,15 @@ public sealed class ShoppingController : ControllerBase
         return await _shoppingQueries.GetMyCartAsync(User.GetUserId());
     }
 
+    [HttpGet("cart/checkout-preview")]
+    [Authorize(Roles = "explorer")]
+    public async Task<ActionResult<CheckoutPreviewDto>> GetCheckoutPreview(
+        [FromQuery] string? couponCode,
+        [FromQuery] Guid? giftCardId)
+    {
+        return await _shoppingQueries.GetCheckoutPreviewAsync(User.GetUserId(), couponCode, giftCardId);
+    }
+
     [HttpPost("cart/items")]
     [Authorize(Roles = "explorer")]
     public async Task<ActionResult> AddToCart(AddToCartDto dto)
@@ -42,10 +52,18 @@ public sealed class ShoppingController : ControllerBase
 
     [HttpPost("cart/checkout")]
     [Authorize(Roles = "explorer")]
-    public async Task<ActionResult> Checkout()
+    public async Task<ActionResult<Guid>> Checkout(
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] CheckoutBenefitsDto? benefits = null)
     {
-        await _shoppingService.CheckoutAsync(User.GetUserId());
-        return NoContent();
+        var purchaseId = await _shoppingService.CheckoutAsync(User.GetUserId(), benefits);
+        return benefits is null ? NoContent() : purchaseId;
+    }
+
+    [HttpGet("purchases/{id:guid}")]
+    [Authorize(Roles = "explorer")]
+    public async Task<ActionResult<PurchaseDto>> GetPurchase(Guid id)
+    {
+        return await _shoppingQueries.GetPurchaseAsync(id, User.GetUserId());
     }
 
     [HttpDelete("cart/items/{entityId:guid}")]

@@ -39,4 +39,14 @@ public sealed class Coupon : AggregateRoot
         ExpiresAt = expiresAt;
         CreatedAt = createdAt;
     }
+
+    public bool IsValidAt(DateTime now)
+    {
+        return DateOnly.FromDateTime(now.ToUniversalTime()) <= ExpiresAt;
+    }
+
+    public bool AppliesTo(Guid productId, Guid ownerId)
+    {
+        return OwnerId == ownerId && (ProductId is null || ProductId == productId);
+    }
 }
