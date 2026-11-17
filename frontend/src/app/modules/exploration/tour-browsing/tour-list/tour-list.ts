@@ -1,12 +1,12 @@
 import { httpResource } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { FormField, form } from '@angular/forms/signals';
+import { FormField, form, min, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { Auth } from '../../../../core/auth/auth';
 import { PageResult } from '../../../../shared/api/page-result';
 import {
+  PublishedTourDto,
   TourDifficulty,
-  TourDto,
   TourSearchCriteriaDto,
   TourSortOrder,
   TransportMode,
@@ -34,8 +34,21 @@ export class TourList {
       bicycle: false,
       car: false,
       tags: '',
+      minPrice: null as number | null,
+      maxPrice: null as number | null,
       sort: 'Newest' as TourSortOrder,
     }),
+    (path) => {
+      min(path.minPrice, 0, { message: 'Price cannot be negative.' });
+      min(path.maxPrice, 0, { message: 'Price cannot be negative.' });
+      validate(path.maxPrice, ({ value, valueOf }) => {
+        const minPrice = valueOf(path.minPrice);
+        const maxPrice = value();
+        return minPrice !== null && maxPrice !== null && minPrice > maxPrice
+          ? { kind: 'minAboveMax', message: 'Price from cannot be greater than price to.' }
+          : null;
+      });
+    },
   );
 
   // The criteria of the last executed search. Paging reuses them, not the current form contents.
@@ -44,12 +57,14 @@ export class TourList {
     difficulties: null,
     tags: null,
     transports: null,
+    minPrice: null,
+    maxPrice: null,
     sort: 'Newest',
   });
 
   protected readonly page = signal(1);
 
-  protected readonly tours = httpResource<PageResult<TourDto>>(() => {
+  protected readonly tours = httpResource<PageResult<PublishedTourDto>>(() => {
     const criteria = this.criteria();
     const parts = [`page=${this.page()}`, `pageSize=${pageSize}`, `sort=${criteria.sort}`];
     if (criteria.name !== null) {
@@ -64,11 +79,21 @@ export class TourList {
     for (const transport of criteria.transports ?? []) {
       parts.push(`transports=${transport}`);
     }
+    if (criteria.minPrice !== null) {
+      parts.push(`minPrice=${criteria.minPrice}`);
+    }
+    if (criteria.maxPrice !== null) {
+      parts.push(`maxPrice=${criteria.maxPrice}`);
+    }
     return `/api/exploration/tours/published?${parts.join('&')}`;
   });
 
   protected search(event: Event): void {
     event.preventDefault();
+    // An impossible price range keeps the current list and shows the error under the price field.
+    if (!this.form().valid()) {
+      return;
+    }
     const model = this.form().value();
 
     const difficulties: TourDifficulty[] = [];
@@ -103,6 +128,8 @@ export class TourList {
       difficulties: difficulties.length > 0 ? difficulties : null,
       tags: tags.length > 0 ? tags : null,
       transports: transports.length > 0 ? transports : null,
+      minPrice: model.minPrice,
+      maxPrice: model.maxPrice,
       sort: model.sort,
     });
     this.page.set(1);

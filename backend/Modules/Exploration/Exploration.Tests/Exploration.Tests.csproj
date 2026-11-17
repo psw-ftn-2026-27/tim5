@@ -16,6 +16,8 @@
     <ProjectReference Include="..\..\..\Host.Api\Host.Api.csproj" />
     <ProjectReference Include="..\..\..\Shared\Shared.Tests\Shared.Tests.csproj" />
     <ProjectReference Include="..\Exploration.Infrastructure\Exploration.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Payment\Payment.Domain\Payment.Domain.csproj" />
+    <ProjectReference Include="..\..\Payment\Payment.Infrastructure\Payment.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

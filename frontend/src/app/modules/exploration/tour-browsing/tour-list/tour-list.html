@@ -22,11 +22,29 @@
       </div>
 
       <div class="field">
+        <label for="min-price">Price from (EC)</label>
+        <input id="min-price" type="number" [formField]="form.minPrice" />
+        @for (message of form.minPrice().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="max-price">Price to (EC)</label>
+        <input id="max-price" type="number" [formField]="form.maxPrice" />
+        @for (message of form.maxPrice().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      </div>
+
+      <div class="field">
         <label for="sort">Sort by</label>
         <select id="sort" [formField]="form.sort">
           <option value="Newest">Newest</option>
           <option value="DifficultyAscending">Difficulty, easiest first</option>
           <option value="DifficultyDescending">Difficulty, hardest first</option>
+          <option value="PriceAscending">Price, lowest first</option>
+          <option value="PriceDescending">Price, highest first</option>
         </select>
       </div>
     </div>
