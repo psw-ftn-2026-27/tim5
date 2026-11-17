@@ -30,7 +30,8 @@ internal sealed class WalletReadRepository : IWalletReadRepository
                         transaction.Amount.Value,
                         transaction.OccurredAt,
                         transaction.ReversedAt != null,
-                        transaction.ReversedAt))
+                        transaction.ReversedAt,
+                        transaction.GiftCardId))
                     .ToList()))
             .FirstOrDefaultAsync();
     }

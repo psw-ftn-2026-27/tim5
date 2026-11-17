@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Payment.Application.WalletReading;
+using Payment.Domain.Wallets;
 using Payment.Tests.Integration.Seeds;
 using Shared.Tests;
 using Xunit;
@@ -79,6 +80,21 @@ public class WalletReadingQueryTests : BaseIntegrationTest
         shown.Amount.Should().Be(reversed.Amount.Value);
         shown.OccurredAt.Should().BeCloseTo(reversed.OccurredAt, TimeSpan.FromMilliseconds(1));
         shown.ReversedAt.Should().BeCloseTo(reversed.ReversedAt!.Value, TimeSpan.FromMilliseconds(1));
+    }
+
+    [Fact]
+    public async Task Tourist_sees_a_gift_card_purchase_transaction_with_its_gift_card_reference()
+    {
+        var seeded = WalletSeed.GiftCardBuyerWallet;
+        var client = Factory.CreateClientFor(seeded.TouristId, "explorer");
+
+        var wallet = await client.GetFromJsonAsync<WalletDto>("/api/payment/wallets/mine", JsonOptions);
+
+        wallet!.Transactions.Should().ContainSingle(transaction =>
+            transaction.Type == TransactionType.GiftCardPurchase
+            && transaction.GiftCardId == GiftCardSeed.GiftCardBuyerSentToSecondExplorer.Id
+            && transaction.Name == null
+            && transaction.Amount == 80);
     }
 
     [Fact]
