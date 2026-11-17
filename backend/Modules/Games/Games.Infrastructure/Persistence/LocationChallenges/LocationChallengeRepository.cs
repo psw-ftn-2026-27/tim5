@@ -22,4 +22,9 @@ internal sealed class LocationChallengeRepository : ILocationChallengeRepository
     {
         _dbContext.LocationChallenges.Add(challenge);
     }
+
+    public void Remove(LocationChallenge challenge)
+    {
+        _dbContext.LocationChallenges.Remove(challenge);
+    }
 }
