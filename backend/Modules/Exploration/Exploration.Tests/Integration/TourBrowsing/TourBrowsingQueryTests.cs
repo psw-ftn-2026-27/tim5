@@ -312,6 +312,19 @@ public class TourBrowsingQueryTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task Buyer_sees_in_the_preview_the_secrets_of_key_points_completed_in_an_earlier_abandoned_execution()
+    {
+        var abandoned = TourExecutionSeed.AbandonedFortressWithClockTowerCompletedOfBuyerWhoAbandoned;
+        var client = Factory.CreateClientFor(abandoned.TouristId, "explorer");
+        var seeded = TourSeed.PublishedFortressWithSecrets;
+
+        var preview = await client.GetFromJsonAsync<TourPreviewDto>($"/api/exploration/tours/published/{seeded.Id}", JsonOptions);
+
+        var clockTower = seeded.KeyPoints[0];
+        preview!.CompletedKeyPoints.Should().Equal(new CompletedKeyPointSecretDto(clockTower.Id, clockTower.Name, clockTower.Secret));
+    }
+
+    [Fact]
     public async Task Anonymous_user_cannot_preview_a_tour()
     {
         var client = Factory.CreateClient();

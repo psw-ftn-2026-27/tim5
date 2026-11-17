@@ -31,4 +31,18 @@ public class LocationTests
         location.Latitude.Should().Be(latitude);
         location.Longitude.Should().Be(longitude);
     }
+
+    // Liberty Square to Danube Park in Novi Sad is about 446 m; one degree of latitude is about 111 km.
+    [Theory]
+    [InlineData(45.2551, 19.8451, 45.2550, 19.8508, 446)]
+    [InlineData(0, 0, 1, 0, 111_195)]
+    public void Distance_between_two_known_locations_matches_the_real_distance_in_meters(
+        double fromLatitude, double fromLongitude, double toLatitude, double toLongitude, double expectedMeters)
+    {
+        var from = new Location(fromLatitude, fromLongitude);
+
+        var distance = from.DistanceTo(new Location(toLatitude, toLongitude));
+
+        distance.Should().BeApproximately(expectedMeters, expectedMeters * 0.01);
+    }
 }

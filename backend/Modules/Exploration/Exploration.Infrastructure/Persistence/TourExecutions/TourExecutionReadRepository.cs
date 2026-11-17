@@ -15,7 +15,8 @@ internal sealed class TourExecutionReadRepository : ITourExecutionReadRepository
         _dbContext = dbContext;
     }
 
-    // The next key point is the one with the lowest order, the same rule as Tour.FirstKeyPoint().
+    // The next key point is the uncompleted one with the lowest order, the same rule as Tour.NextKeyPoint().
+    // Only completed key points carry their secret.
     public Task<ActiveTourExecutionDto?> GetActiveAsync(Guid touristId)
     {
         return _dbContext.TourExecutions
@@ -34,11 +35,20 @@ internal sealed class TourExecutionReadRepository : ITourExecutionReadRepository
                     executionTour.Tour.Name,
                     new LocationDto(position.Location.Latitude, position.Location.Longitude),
                     executionTour.Tour.KeyPoints
+                        .Where(keyPoint => !executionTour.Execution.CompletedKeyPoints.Any(completed => completed.KeyPointId == keyPoint.Id))
                         .OrderBy(keyPoint => keyPoint.Order)
                         .Select(keyPoint => new NextKeyPointDto(
                             keyPoint.Name,
                             new LocationDto(keyPoint.Location.Latitude, keyPoint.Location.Longitude)))
-                        .First()))
+                        .First(),
+                    executionTour.Execution.CompletedKeyPoints
+                        .OrderBy(completed => completed.ReachedAt)
+                        .Select(completed => new CompletedKeyPointDto(
+                            completed.KeyPointId,
+                            executionTour.Tour.KeyPoints.First(keyPoint => keyPoint.Id == completed.KeyPointId).Name,
+                            completed.ReachedAt,
+                            executionTour.Tour.KeyPoints.First(keyPoint => keyPoint.Id == completed.KeyPointId).Secret))
+                        .ToList()))
             .FirstOrDefaultAsync();
     }
 }

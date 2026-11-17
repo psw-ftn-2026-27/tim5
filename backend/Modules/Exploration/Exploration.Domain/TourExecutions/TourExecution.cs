@@ -6,6 +6,8 @@ namespace Exploration.Domain.TourExecutions;
 
 public sealed class TourExecution : AggregateRoot
 {
+    private readonly List<CompletedKeyPoint> _completedKeyPoints = [];
+
     public Guid TouristId { get; private set; }
     public Guid TourId { get; private set; }
     public TourExecutionStatus Status { get; private set; }
@@ -13,6 +15,7 @@ public sealed class TourExecution : AggregateRoot
     public DateTime StartedAt { get; private set; }
     public DateTime? EndedAt { get; private set; }
     public DateTime LastActivity { get; private set; }
+    public IReadOnlyList<CompletedKeyPoint> CompletedKeyPoints => _completedKeyPoints;
 
     private TourExecution()
     {
@@ -36,6 +39,26 @@ public sealed class TourExecution : AggregateRoot
         Status = TourExecutionStatus.Active;
     }
 
+    public void RecordActivity(DateTime at)
+    {
+        EnsureActive();
+
+        LastActivity = at;
+    }
+
+    // Called by TourProgress, which decides from the tour which key point is reached and whether it is the last one.
+    public void CompleteKeyPoint(Guid keyPointId, DateTime reachedAt, bool isLastKeyPoint)
+    {
+        EnsureActive();
+
+        _completedKeyPoints.Add(new CompletedKeyPoint(keyPointId, reachedAt));
+        if (isLastKeyPoint)
+        {
+            Status = TourExecutionStatus.Completed;
+            EndedAt = reachedAt;
+        }
+    }
+
     public void Abandon(DateTime abandonedAt)
     {
         if (Status != TourExecutionStatus.Active)
@@ -45,5 +68,13 @@ public sealed class TourExecution : AggregateRoot
 
         Status = TourExecutionStatus.Abandoned;
         EndedAt = abandonedAt;
+    }
+
+    private void EnsureActive()
+    {
+        if (Status != TourExecutionStatus.Active)
+        {
+            throw new DomainException("The tour execution is no longer active.");
+        }
     }
 }

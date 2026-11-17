@@ -139,6 +139,13 @@ export interface PublicKeyPointDto {
   location: LocationDto;
 }
 
+// A key point the buyer completed in any of their executions, the only kind whose secret the preview shows.
+export interface CompletedKeyPointSecretDto {
+  keyPointId: string;
+  name: string;
+  secret: string | null;
+}
+
 export interface TourPreviewDto {
   id: string;
   name: string;
@@ -150,6 +157,8 @@ export interface TourPreviewDto {
   publicKeyPoints: PublicKeyPointDto[];
   isPurchased: boolean;
   hasActiveExecution: boolean;
+  completedKeyPoints: CompletedKeyPointSecretDto[];
+  hasCompletedTour: boolean;
 }
 
 export interface NextKeyPointDto {
@@ -157,9 +166,17 @@ export interface NextKeyPointDto {
   location: LocationDto;
 }
 
+export interface CompletedKeyPointDto {
+  keyPointId: string;
+  name: string;
+  reachedAt: string;
+  secret: string | null;
+}
+
 export interface ActiveTourExecutionDto {
   tourId: string;
   tourName: string;
   currentPosition: LocationDto;
   nextKeyPoint: NextKeyPointDto;
+  completedKeyPoints: CompletedKeyPointDto[];
 }

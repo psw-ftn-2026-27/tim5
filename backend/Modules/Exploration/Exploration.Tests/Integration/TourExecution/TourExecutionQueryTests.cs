@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using Exploration.Application.TourExecution;
 using Exploration.Application.Tours;
 using Exploration.Tests.Integration.Seeds;
@@ -27,5 +28,25 @@ public class TourExecutionQueryTests : BaseIntegrationTest
         active.NextKeyPoint.Should().Be(new NextKeyPointDto(
             firstKeyPoint.Name,
             new LocationDto(firstKeyPoint.Location.Latitude, firstKeyPoint.Location.Longitude)));
+    }
+
+    [Fact]
+    public async Task Active_execution_shows_the_secret_only_of_its_completed_key_points()
+    {
+        var seeded = TourExecutionSeed.ActiveFortressWithClockTowerCompletedOfTouristOnFortress;
+        var client = Factory.CreateClientFor(seeded.TouristId, "explorer");
+
+        var body = await client.GetStringAsync("/api/exploration/executions/active");
+
+        var keyPoints = TourSeed.PublishedFortressWithSecrets.KeyPoints;
+        var active = JsonSerializer.Deserialize<ActiveTourExecutionDto>(body, JsonOptions)!;
+        active.CompletedKeyPoints.Should().Equal(new CompletedKeyPointDto(
+            keyPoints[0].Id,
+            keyPoints[0].Name,
+            seeded.CompletedKeyPoints[0].ReachedAt,
+            keyPoints[0].Secret));
+        active.NextKeyPoint.Name.Should().Be(keyPoints[1].Name);
+        body.Should().NotContain(keyPoints[1].Secret!);
+        body.Should().NotContain(keyPoints[2].Secret!);
     }
 }
