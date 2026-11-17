@@ -1,6 +1,10 @@
 using AutoMapper;
+using Games.Application.LocationChallengeAuthoring;
 using Games.Application.QuizAuthoring;
+using Games.Application.Quizzes;
 using Games.Application.SocialChallengeAuthoring;
+using Games.Application.UploadedImages;
+using Games.Domain.LocationChallenges;
 using Games.Domain.Quizzes;
 using Games.Domain.SocialChallenges;
 
@@ -16,5 +20,8 @@ public sealed class GamesMapperProfile : Profile
         CreateMap<Location, LocationDto>();
         CreateMap<Question, QuestionDto>();
         CreateMap<Answer, AnswerDto>();
+        CreateMap<LocationChallenge, LocationChallengeDto>();
+        CreateMap<HiddenPoint, HiddenPointDto>()
+            .ForCtorParam(nameof(HiddenPointDto.ImageUrl), option => option.MapFrom(point => ImageAddress.For(point.ImageId)));
     }
 }

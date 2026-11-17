@@ -1,0 +1,48 @@
+<div class="card stack">
+  <h1>Create location challenge</h1>
+
+  <form class="stack" (submit)="submit($event)">
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" [formField]="form.name" />
+      @if (form.name().touched()) {
+        @for (message of form.name().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="xp">XP</label>
+      <input id="xp" type="number" [formField]="form.xp" />
+      @if (form.xp().touched()) {
+        @for (message of form.xp().errors(); track $index) {
+          <p class="error">{{ message.message }}</p>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <span class="label">Start location</span>
+      <app-map
+        [picking]="true"
+        [initialLocation]="startLocation()"
+        (locationPicked)="startLocation.set($event)"
+      />
+      @if (startLocation(); as picked) {
+        <p class="meta">Selected: {{ picked.latitude }}, {{ picked.longitude }}</p>
+      } @else {
+        <p class="error">Start location is not selected. Click on the map to pick it.</p>
+      }
+    </div>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <div class="actions">
+      <button class="button button--primary" type="submit" [disabled]="!canSave()">Create</button>
+      <a routerLink="/games/location-challenges">Cancel</a>
+    </div>
+  </form>
+</div>

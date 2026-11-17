@@ -66,7 +66,47 @@ export interface QuizInputDto {
   questions: QuestionDto[];
 }
 
-export type ChallengeKind = 'Quiz' | 'SocialChallenge';
+export interface HiddenPointDto {
+  id: string;
+  imageId: string;
+  imageUrl: string;
+  location: LocationDto;
+}
+
+export interface LocationChallengeSummaryDto {
+  id: string;
+  name: string;
+  xp: number;
+  hiddenPointCount: number;
+  status: ChallengeStatus;
+}
+
+export interface LocationChallengeDto {
+  id: string;
+  name: string;
+  xp: number;
+  status: ChallengeStatus;
+  startLocation: LocationDto;
+  hiddenPoints: HiddenPointDto[];
+}
+
+export interface LocationChallengeInputDto {
+  name: string;
+  xp: number;
+  startLocation: LocationDto;
+}
+
+export interface HiddenPointInputDto {
+  imageId: string;
+  location: LocationDto;
+}
+
+export interface UploadedImageDto {
+  id: string;
+  url: string;
+}
+
+export type ChallengeKind = 'Quiz' | 'SocialChallenge' | 'LocationChallenge';
 
 export interface ChallengeOverviewItemDto {
   id: string;

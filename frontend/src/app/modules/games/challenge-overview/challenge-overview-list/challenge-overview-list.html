@@ -37,6 +37,7 @@
               @switch (challenge.kind) {
                 @case ('Quiz') { Quiz }
                 @case ('SocialChallenge') { Social challenge }
+                @case ('LocationChallenge') { Location challenge }
               }
             </td>
             <td>{{ challenge.xp }}</td>
@@ -48,6 +49,9 @@
                 }
                 @case ('SocialChallenge') {
                   <a class="button" routerLink="/games/challenges">Manage</a>
+                }
+                @case ('LocationChallenge') {
+                  <a class="button" routerLink="/games/location-challenges">Manage</a>
                 }
               }
             </td>

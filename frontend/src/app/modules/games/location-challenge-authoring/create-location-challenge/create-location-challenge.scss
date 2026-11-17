@@ -1,0 +1,15 @@
+.card {
+  margin-inline: auto;
+  max-width: 40rem;
+}
+
+.label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  gap: var(--space-4);
+}
