@@ -112,12 +112,15 @@ public sealed class ShoppingService
         // Validate availability and empty-cart rules before changing any tracked purchase state.
         var checkedOutItems = cart.Checkout(publishedTourIds);
 
-        var existingWallet = await _walletRepository.GetByTouristAsync(touristId);
-        var wallet = existingWallet ?? new Wallet(touristId);
-        wallet.Purchase(calculation.WalletItems, now);
-        if (existingWallet is null)
+        if (calculation.WalletItems.Count > 0)
         {
-            _walletRepository.Add(wallet);
+            var existingWallet = await _walletRepository.GetByTouristAsync(touristId);
+            var wallet = existingWallet ?? new Wallet(touristId);
+            wallet.Purchase(calculation.WalletItems, now);
+            if (existingWallet is null)
+            {
+                _walletRepository.Add(wallet);
+            }
         }
 
         if (calculation.GiftCardId is not null)
