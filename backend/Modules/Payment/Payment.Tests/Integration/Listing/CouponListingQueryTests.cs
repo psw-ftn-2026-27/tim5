@@ -24,7 +24,8 @@ public class CouponListingQueryTests : BaseIntegrationTest
         {
             ProductSeed.PaidTour.EntityId,
             ProductSeed.FreeTour.EntityId,
-            ProductSeed.SecondPaidTour.EntityId
+            ProductSeed.SecondPaidTour.EntityId,
+            ProductSeed.ArchivedPaidTour.EntityId
         });
         products.Should().NotContain(product => product.ProductId == ProductSeed.OtherOwnersTour.EntityId);
     }

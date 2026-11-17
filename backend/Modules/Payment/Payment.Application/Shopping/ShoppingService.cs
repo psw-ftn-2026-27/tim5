@@ -1,3 +1,4 @@
+using Exploration.Contracts;
 using Payment.Application.Products;
 using Payment.Application.ShoppingCarts;
 using Payment.Application.TourPurchaseTokens;
@@ -15,6 +16,7 @@ public sealed class ShoppingService
     private readonly IProductRepository _productRepository;
     private readonly IWalletRepository _walletRepository;
     private readonly ITourPurchaseTokenRepository _tourPurchaseTokenRepository;
+    private readonly IExplorationApi _explorationApi;
     private readonly IUnitOfWork _unitOfWork;
 
     public ShoppingService(
@@ -22,12 +24,14 @@ public sealed class ShoppingService
         IProductRepository productRepository,
         IWalletRepository walletRepository,
         ITourPurchaseTokenRepository tourPurchaseTokenRepository,
+        IExplorationApi explorationApi,
         IUnitOfWork unitOfWork)
     {
         _shoppingCartRepository = shoppingCartRepository;
         _productRepository = productRepository;
         _walletRepository = walletRepository;
         _tourPurchaseTokenRepository = tourPurchaseTokenRepository;
+        _explorationApi = explorationApi;
         _unitOfWork = unitOfWork;
     }
 
@@ -61,10 +65,12 @@ public sealed class ShoppingService
     public async Task CheckoutAsync(Guid touristId)
     {
         var cart = await _shoppingCartRepository.GetByTouristAsync(touristId) ?? new ShoppingCart(touristId);
-        var wallet = await _walletRepository.GetByTouristAsync(touristId) ?? new Wallet(touristId);
         var now = DateTime.UtcNow;
 
-        var items = cart.Checkout();
+        var tourIds = cart.Items.Select(item => item.EntityId).ToList();
+        var publishedTourIds = await _explorationApi.GetPublishedAsync(tourIds);
+        var items = cart.Checkout(publishedTourIds);
+        var wallet = await _walletRepository.GetByTouristAsync(touristId) ?? new Wallet(touristId);
         var purchaseItems = items
             .Select(item => new PurchaseItem(item.EntityId, item.Name, new Amount(item.Price.Value)))
             .ToList();
