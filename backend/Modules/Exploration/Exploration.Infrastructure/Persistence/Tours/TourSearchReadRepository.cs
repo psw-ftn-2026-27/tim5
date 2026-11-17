@@ -29,6 +29,22 @@ internal sealed class TourSearchReadRepository : ITourSearchReadRepository
         return new PageResult<TourDto>(items, totalCount);
     }
 
+    public Task<List<Guid>> GetPublishedIdsAsync(TourSearchCriteriaDto criteria)
+    {
+        var published = _dbContext.Tours.Where(tour => tour.Status == TourStatus.Published);
+
+        return Sort(Filter(published, criteria), criteria.Sort)
+            .Select(tour => tour.Id)
+            .ToListAsync();
+    }
+
+    public Task<List<TourDto>> GetByIdsAsync(IReadOnlyCollection<Guid> tourIds)
+    {
+        var tours = _dbContext.Tours.Where(tour => tourIds.Contains(tour.Id));
+
+        return TourDtoProjection.ProjectToDtos(tours).ToListAsync();
+    }
+
     private static IQueryable<Tour> Filter(IQueryable<Tour> tours, TourSearchCriteriaDto criteria)
     {
         if (!string.IsNullOrWhiteSpace(criteria.Name))
@@ -57,6 +73,7 @@ internal sealed class TourSearchReadRepository : ITourSearchReadRepository
     private static IQueryable<Tour> Sort(IQueryable<Tour> tours, TourSortOrder sort)
     {
         // Difficulty is stored as text, so the order Easy < Moderate < Hard is spelled out here.
+        // Price sorts fall through to newest first; the price order is applied in TourBrowsingQueries.
         return sort switch
         {
             TourSortOrder.DifficultyAscending => tours

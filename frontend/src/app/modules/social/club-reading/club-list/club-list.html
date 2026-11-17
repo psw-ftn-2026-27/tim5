@@ -6,7 +6,7 @@
   <p><a class="button button--primary" routerLink="/social/clubs/create">Create club</a></p>
 
   @if (clubs.isLoading()) {
-    <p>Loading clubs...</p>
+    <p class="meta">Loading clubs...</p>
   } @else if (clubs.error()) {
     <p class="error">Could not load clubs. Log in and try again.</p>
   } @else {
@@ -14,7 +14,7 @@
       @for (club of clubs.value()?.items ?? []; track club.id) {
         <app-club-card [club]="club" />
       } @empty {
-        <p>No clubs yet.</p>
+        <p class="meta">No clubs yet.</p>
       }
     </div>
   }

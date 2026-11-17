@@ -21,6 +21,10 @@ internal static class WalletSeed
 
     public static readonly Wallet AnotherTouristsWalletWithOnePurchase = new(Guid.Parse("00000000-0000-0000-0002-000000000007"));
 
+    public static readonly Wallet BuyersWalletWithArchivedTourInCart = new(Guid.Parse("00000000-0000-0000-0002-000000000008"));
+
+    public static readonly Wallet GiftCardBuyerWallet = new(GiftCardSeed.GiftCardBuyerId);
+
     static WalletSeed()
     {
         WalletWithTwoDeposits.Deposit(new Amount(100), WellKnownUsers.Administrator);
@@ -42,9 +46,15 @@ internal static class WalletSeed
         AnotherTouristsWalletWithOnePurchase.Purchase(
             [new PurchaseItem(ProductSeed.PaidTour.EntityId, "Petrovaradin Fortress", new Amount(150))],
             new DateTime(2026, 11, 11, 9, 0, 0, DateTimeKind.Utc));
+        BuyersWalletWithArchivedTourInCart.Deposit(new Amount(500), WellKnownUsers.Administrator);
+        GiftCardBuyerWallet.Deposit(new Amount(500), WellKnownUsers.Administrator);
+        GiftCardBuyerWallet.PurchaseGiftCard(
+            GiftCardSeed.GiftCardBuyerSentToSecondExplorer.Id,
+            GiftCardSeed.GiftCardBuyerSentToSecondExplorer.Amount,
+            new DateTime(2026, 11, 16, 10, 0, 0, DateTimeKind.Utc));
     }
 
     public static Wallet[] All =>
         [ExplorersEmptyWallet, WalletWithTwoDeposits, WalletWithOneDeposit, WalletWithOneReversedDeposit, BuyersWalletWithEnoughEC, BuyersWalletShortOfEC,
-            WalletWithTwoPurchases, AnotherTouristsWalletWithOnePurchase];
+            WalletWithTwoPurchases, AnotherTouristsWalletWithOnePurchase, BuyersWalletWithArchivedTourInCart, GiftCardBuyerWallet];
 }

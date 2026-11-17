@@ -4,5 +4,7 @@ public enum TourSortOrder
 {
     Newest,
     DifficultyAscending,
-    DifficultyDescending
+    DifficultyDescending,
+    PriceAscending,
+    PriceDescending
 }

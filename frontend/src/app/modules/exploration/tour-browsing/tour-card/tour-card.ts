@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TourDto } from '../../api/exploration-api-types';
+import { PublishedTourDto } from '../../api/exploration-api-types';
 
 @Component({
   imports: [RouterLink],
@@ -9,5 +9,5 @@ import { TourDto } from '../../api/exploration-api-types';
   templateUrl: './tour-card.html',
 })
 export class TourCard {
-  readonly tour = input.required<TourDto>();
+  readonly tour = input.required<PublishedTourDto>();
 }

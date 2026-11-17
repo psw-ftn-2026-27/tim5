@@ -30,12 +30,25 @@ internal sealed class TourPurchaseTokenReadRepository : ITourPurchaseTokenReadRe
         return _dbContext.TourPurchaseTokens
             .Where(token => token.TouristId == touristId)
             .Join(
+                _dbContext.Products,
+                token => token.EntityId,
+                product => product.EntityId,
+                (token, product) => new { Token = token, Product = product })
+            .GroupJoin(
                 purchaseTransactions,
-                token => (Guid?)token.EntityId,
+                tokenProduct => (Guid?)tokenProduct.Token.EntityId,
                 transaction => transaction.EntityId,
-                (token, transaction) => new { token.EntityId, transaction.Name, token.PurchasedAt })
+                (tokenProduct, transactions) => new { tokenProduct.Token, tokenProduct.Product, Transactions = transactions })
+            .SelectMany(
+                tokenProduct => tokenProduct.Transactions.DefaultIfEmpty(),
+                (tokenProduct, transaction) => new
+                {
+                    tokenProduct.Token.EntityId,
+                    Name = transaction == null ? tokenProduct.Product.Name : transaction.Name!,
+                    tokenProduct.Token.PurchasedAt
+                })
             .OrderByDescending(purchase => purchase.PurchasedAt)
-            .Select(purchase => new PurchasedTourDto(purchase.EntityId, purchase.Name!, purchase.PurchasedAt))
+            .Select(purchase => new PurchasedTourDto(purchase.EntityId, purchase.Name, purchase.PurchasedAt))
             .ToListAsync();
     }
 }

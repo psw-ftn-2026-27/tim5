@@ -1,5 +1,4 @@
 using Exploration.Application.TourBrowsing;
-using Exploration.Application.Tours;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Domain;
@@ -19,7 +18,7 @@ public sealed class TourBrowsingController : ControllerBase
     }
 
     [HttpGet("published")]
-    public async Task<ActionResult<PageResult<TourDto>>> GetPublished(
+    public async Task<ActionResult<PageResult<PublishedTourDto>>> GetPublished(
         [FromQuery] TourSearchCriteriaDto criteria,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)

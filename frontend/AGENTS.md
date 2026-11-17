@@ -142,6 +142,11 @@ Where a style goes, in order:
 3. Everything else: the component's own `.scss`, under default (emulated) encapsulation.
    Never `::ng-deep`.
 
+Which global class to use for what is described in `src/styles/README.md`; read it before
+writing a local style. A module with its own accent (Exploration, Games) sets it on the
+`:host` of every page component, pointing `--color-accent` and `--color-accent-text` at the
+module's tokens; components inside the page inherit it, so they never set it themselves.
+
 Do not hand-roll a design system, do not add utility-class frameworks, do not introduce
 `shared/ui` wrappers unprompted. Visual consistency across modules is an open problem
 assigned to the platform team, and misalignment is an accepted learning experience.

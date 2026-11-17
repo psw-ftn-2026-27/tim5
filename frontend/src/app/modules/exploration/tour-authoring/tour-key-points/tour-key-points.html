@@ -2,7 +2,7 @@
   <p><a routerLink="/exploration/mine">Back to my tours</a></p>
 
   @if (tour.isLoading() && !tour.value()) {
-    <p>Loading the tour...</p>
+    <p class="meta">Loading the tour...</p>
   } @else if (tour.error()) {
     <p class="error">Could not load the tour. Log in and try again.</p>
   } @else if (tour.value(); as current) {
@@ -37,7 +37,7 @@
                 Edit
               </button>
               <button
-                class="button"
+                class="button button--danger"
                 type="button"
                 [disabled]="editingKeyPointId() !== null || pending()"
                 (click)="remove(keyPoint.id)"
@@ -91,10 +91,12 @@
                 <textarea id="key-point-secret" rows="2" [formField]="form.secret"></textarea>
               </div>
 
-              <label>
-                <input type="checkbox" [formField]="form.isPublic" />
-                Visible without purchase
-              </label>
+              <div class="field">
+                <label>
+                  <input type="checkbox" [formField]="form.isPublic" />
+                  Visible without purchase
+                </label>
+              </div>
 
               <div class="field">
                 <label for="key-point-latitude">Latitude</label>
@@ -137,13 +139,13 @@
     @if (lengthText(); as length) {
       <p>Tour length: {{ length }} km</p>
     } @else {
-      <p class="meta">Dužina ture trenutno ne može da se izračuna.</p>
+      <p class="meta">The tour length cannot be calculated right now.</p>
     }
 
     <app-map [pins]="pins()" [showPath]="true" (routeLength)="recordLength($event)" />
 
     @if (editingKeyPointId() === null) {
-      <form class="card stack" (submit)="save($event)">
+      <form class="card card--narrow stack" (submit)="save($event)">
         <h2>Add key point</h2>
 
         <div class="field">
@@ -182,10 +184,12 @@
           <textarea id="key-point-secret" rows="2" [formField]="form.secret"></textarea>
         </div>
 
-        <label>
-          <input type="checkbox" [formField]="form.isPublic" />
-          Visible without purchase
-        </label>
+        <div class="field">
+          <label>
+            <input type="checkbox" [formField]="form.isPublic" />
+            Visible without purchase
+          </label>
+        </div>
 
         <div class="field">
           <label for="key-point-latitude">Latitude</label>

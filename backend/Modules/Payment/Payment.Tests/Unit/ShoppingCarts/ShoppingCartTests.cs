@@ -101,7 +101,7 @@ public class ShoppingCartTests
     {
         var cart = new ShoppingCart(WellKnownUsers.Explorer);
 
-        var checkout = () => cart.Checkout();
+        var checkout = () => cart.Checkout([FirstTour, SecondTour]);
 
         checkout.Should().Throw<DomainException>();
     }
@@ -112,9 +112,21 @@ public class ShoppingCartTests
         var cart = CreateCartWithOneTour();
         cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), Author, false);
 
-        var items = cart.Checkout();
+        var items = cart.Checkout([FirstTour, SecondTour]);
 
         items.Select(item => item.EntityId).Should().BeEquivalentTo([FirstTour, SecondTour]);
         cart.Items.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Paying_a_cart_whose_second_tour_is_no_longer_published_is_rejected_and_the_cart_keeps_both_tours()
+    {
+        var cart = CreateCartWithOneTour();
+        cart.AddItem(SecondTour, "Novosadska sinagoga", new Price(200), Author, false);
+
+        var checkout = () => cart.Checkout([FirstTour]);
+
+        checkout.Should().Throw<DomainException>();
+        cart.Items.Select(item => item.EntityId).Should().BeEquivalentTo([FirstTour, SecondTour]);
     }
 }

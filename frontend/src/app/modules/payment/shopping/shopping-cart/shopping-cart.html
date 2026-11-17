@@ -2,12 +2,27 @@
   <h1>Cart</h1>
 
   @if (cart.isLoading()) {
-    <p>Loading your cart...</p>
+    <p class="meta">Loading your cart...</p>
   } @else if (cart.error()) {
     <p class="error">Could not load your cart. Log in as a tourist and try again.</p>
   } @else if (cart.value(); as current) {
     @if (paid()) {
-      <p>Payment successful. <a routerLink="/payment/wallet">My wallet</a></p>
+      <p class="success" role="status">Payment successful. <a routerLink="/payment/wallet">My wallet</a></p>
+      @if (purchaseId()) {
+        @if (purchase.isLoading()) {
+          <p>Loading purchase confirmation...</p>
+        } @else if (purchase.error()) {
+          <p class="error" role="alert">Payment succeeded, but purchase details could not be loaded.</p>
+        } @else if (purchase.value(); as completedPurchase) {
+          <p>Purchase total: {{ completedPurchase.total }} EC</p>
+          @if (completedPurchase.couponId) {
+            <p>Coupon discount: {{ completedPurchase.couponDiscount }} EC</p>
+          }
+          @if (completedPurchase.giftCardId) {
+            <p>Gift card reduction: {{ completedPurchase.giftCardDiscount }} EC</p>
+          }
+        }
+      }
     }
 
     @if (error()) {
@@ -35,7 +50,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="3">Your cart is empty.</td>
+            <td colspan="3" class="meta">Your cart is empty.</td>
           </tr>
         }
       </tbody>
@@ -43,8 +58,77 @@
 
     <p class="total">Total: {{ current.total }} EC</p>
 
+    @if (current.items.length > 0) {
+      <section class="card stack benefits" aria-labelledby="benefits-heading">
+        <h2 id="benefits-heading">Benefits</h2>
+
+        <form class="coupon-entry" (submit)="applyCoupon($event)">
+          <div class="field">
+            <label for="cart-coupon-code">Coupon code</label>
+            <input id="cart-coupon-code" type="text" autocomplete="off" [formField]="form.couponCode" />
+          </div>
+          <button class="button" type="submit" [disabled]="pending()">Apply coupon</button>
+        </form>
+
+        @if (activeCouponCode()) {
+          <p>Active coupon: <strong>{{ activeCouponCode() }}</strong></p>
+          @if (preview.value()?.couponMessage; as couponMessage) {
+            <p class="error" role="alert">{{ couponMessage }}</p>
+          }
+          <button class="button" type="button" [disabled]="pending()" (click)="removeCoupon()">
+            Remove coupon
+          </button>
+        }
+
+        <div class="field">
+          <label for="cart-gift-card">Gift card</label>
+          <select id="cart-gift-card" [formField]="form.giftCardId">
+            <option value="">Do not use a gift card</option>
+            @for (card of validGiftCards(); track card.id) {
+              <option [value]="card.id">{{ card.amount }} EC · expires {{ localDate(card.expiresAt) }}</option>
+            }
+          </select>
+        </div>
+        @if (received.isLoading()) {
+          <p>Loading your available gift cards...</p>
+        } @else if (received.error()) {
+          <p class="error" role="alert">Could not load your received gift cards.</p>
+        } @else if (received.value(); as cards) {
+          @if (validGiftCards().length === 0) {
+            <p class="meta">No valid gift cards are available on this page.</p>
+          }
+          @if (cards.totalCount > giftCardPageSize) {
+            <div class="paging">
+              <button class="button" type="button" [disabled]="receivedPage() === 1" (click)="previousGiftCards()">Previous cards</button>
+              <span class="meta">Page {{ receivedPage() }} · {{ cards.totalCount }} received</span>
+              <button class="button" type="button" [disabled]="isLastGiftCardPage(receivedPage(), cards.totalCount)" (click)="nextGiftCards()">Next cards</button>
+            </div>
+          }
+        }
+
+        @if (preview.isLoading()) {
+          <p>Recalculating checkout total...</p>
+        } @else if (preview.error()) {
+          <p class="error" role="alert">Could not calculate the benefit preview. Checkout will verify your selections.</p>
+        } @else if (preview.value(); as calculation) {
+          @if (calculation.couponMessage && !activeCouponCode()) {
+            <p class="error" role="alert">{{ calculation.couponMessage }}</p>
+          }
+          @if (calculation.giftCardMessage) {
+            <p class="error" role="alert">{{ calculation.giftCardMessage }}</p>
+          }
+          <dl class="benefit-summary">
+            <div><dt>Initial total</dt><dd>{{ calculation.cartTotal }} EC</dd></div>
+            <div><dt>Coupon discount</dt><dd>{{ calculation.couponDiscount }} EC</dd></div>
+            <div><dt>Gift card reduction</dt><dd>{{ calculation.giftCardDiscount }} EC</dd></div>
+            <div class="total"><dt>Final total</dt><dd>{{ calculation.total }} EC</dd></div>
+          </dl>
+        }
+      </section>
+    }
+
     @if (wallet.isLoading()) {
-      <p>Loading your balance...</p>
+      <p class="meta">Loading your balance...</p>
     } @else if (wallet.error()) {
       <p class="error">Could not load your balance.</p>
     } @else if (wallet.value(); as currentWallet) {

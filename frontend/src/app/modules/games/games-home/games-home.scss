@@ -1,0 +1,5 @@
+// Pages of the Games module use the module's own accent.
+:host {
+  --color-accent: var(--color-accent-games);
+  --color-accent-text: var(--color-accent-games-text);
+}

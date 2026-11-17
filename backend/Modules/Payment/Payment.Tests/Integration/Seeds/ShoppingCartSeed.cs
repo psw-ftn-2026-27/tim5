@@ -13,6 +13,8 @@ internal static class ShoppingCartSeed
 
     public static readonly ShoppingCart BuyersCartShortOfEC = new(WalletSeed.BuyersWalletShortOfEC.TouristId);
 
+    public static readonly ShoppingCart BuyersCartWithArchivedTour = new(WalletSeed.BuyersWalletWithArchivedTourInCart.TouristId);
+
     static ShoppingCartSeed()
     {
         SecondExplorersCartWithPaidTour.AddItem(
@@ -29,7 +31,9 @@ internal static class ShoppingCartSeed
             ProductSeed.PaidTour.EntityId, ProductSeed.PaidTour.Name, ProductSeed.PaidTour.Price, ProductSeed.PaidTour.OwnerId, false);
         BuyersCartShortOfEC.AddItem(
             ProductSeed.SecondPaidTour.EntityId, ProductSeed.SecondPaidTour.Name, ProductSeed.SecondPaidTour.Price, ProductSeed.SecondPaidTour.OwnerId, false);
+        BuyersCartWithArchivedTour.AddItem(
+            ProductSeed.ArchivedPaidTour.EntityId, ProductSeed.ArchivedPaidTour.Name, ProductSeed.ArchivedPaidTour.Price, ProductSeed.ArchivedPaidTour.OwnerId, false);
     }
 
-    public static ShoppingCart[] All => [SecondExplorersCartWithPaidTour, CartWithTwoTours, BuyersCartWithEnoughEC, BuyersCartShortOfEC];
+    public static ShoppingCart[] All => [SecondExplorersCartWithPaidTour, CartWithTwoTours, BuyersCartWithEnoughEC, BuyersCartShortOfEC, BuyersCartWithArchivedTour];
 }

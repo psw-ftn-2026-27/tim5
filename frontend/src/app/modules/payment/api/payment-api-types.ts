@@ -1,4 +1,6 @@
-export type TransactionType = 'Deposit' | 'Purchase';
+export type TransactionType = 'Deposit' | 'Purchase' | 'GiftCardPurchase';
+
+export type GiftCardStatus = 'Valid' | 'Redeemed' | 'Expired';
 
 export interface TransactionDto {
   type: TransactionType;
@@ -7,6 +9,7 @@ export interface TransactionDto {
   occurredAt: string;
   isReversed: boolean;
   reversedAt: string | null;
+  giftCardId: string | null;
 }
 
 export interface WalletDto {
@@ -54,6 +57,33 @@ export interface ShoppingCartDto {
   total: number;
 }
 
+export interface CheckoutBenefitsDto {
+  couponCode: string | null;
+  giftCardId: string | null;
+}
+
+export interface CheckoutPreviewDto {
+  cartTotal: number;
+  couponId: string | null;
+  couponCode: string | null;
+  couponDiscount: number;
+  giftCardId: string | null;
+  giftCardDiscount: number;
+  total: number;
+  couponMessage: string | null;
+  giftCardMessage: string | null;
+}
+
+export interface PurchaseDto {
+  id: string;
+  total: number;
+  couponId: string | null;
+  couponDiscount: number;
+  giftCardId: string | null;
+  giftCardDiscount: number;
+  purchasedAt: string;
+}
+
 export interface AddToCartDto {
   entityId: string;
 }
@@ -62,4 +92,43 @@ export interface PurchasedTourDto {
   entityId: string;
   name: string;
   purchasedAt: string;
+}
+
+export interface MyProductDto {
+  productId: string;
+  name: string;
+}
+
+export interface CreateCouponDto {
+  discountPercentage: number;
+  expiresAt: string;
+  productId: string | null;
+}
+
+export interface CreatedCouponDto {
+  id: string;
+}
+
+export interface CouponDto {
+  id: string;
+  code: string;
+  discountPercentage: number;
+  expiresAt: string;
+  productId: string | null;
+}
+
+export interface PurchaseGiftCardDto {
+  recipientUsername: string;
+  amount: number;
+  message: string;
+}
+
+export interface GiftCardDto {
+  id: string;
+  otherPartyUsername: string | null;
+  amount: number;
+  message: string;
+  createdAt: string;
+  expiresAt: string;
+  status: GiftCardStatus;
 }

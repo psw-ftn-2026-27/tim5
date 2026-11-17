@@ -43,11 +43,21 @@ public sealed class ShoppingCart : AggregateRoot
         _items.Add(new OrderItem(entityId, name, price));
     }
 
-    public IReadOnlyList<OrderItem> Checkout()
+    public IReadOnlyList<OrderItem> Checkout(IReadOnlyCollection<Guid> publishedTourIds)
     {
         if (_items.Count == 0)
         {
             throw new DomainException("An empty cart cannot be paid.");
+        }
+
+        var unpublishedNames = _items
+            .Where(item => !publishedTourIds.Contains(item.EntityId))
+            .Select(item => item.Name)
+            .ToList();
+        if (unpublishedNames.Count > 0)
+        {
+            throw new DomainException(
+                $"These tours are no longer available: {string.Join(", ", unpublishedNames)}. Remove them from the cart.");
         }
 
         var items = _items.ToList();

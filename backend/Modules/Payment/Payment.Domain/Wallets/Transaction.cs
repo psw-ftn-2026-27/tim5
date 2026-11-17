@@ -11,6 +11,7 @@ public sealed class Transaction : Entity
     public Amount Amount { get; private set; } = null!;
     public Guid? AdministratorId { get; private set; }
     public Guid? EntityId { get; private set; }
+    public Guid? GiftCardId { get; private set; }
     public string? Name { get; private set; }
     public DateTime OccurredAt { get; private set; }
     public DateTime? ReversedAt { get; private set; }
@@ -19,7 +20,14 @@ public sealed class Transaction : Entity
 
     private Transaction() { }
 
-    public Transaction(TransactionType type, Amount amount, Guid? administratorId, Guid? entityId, string? name, DateTime occurredAt)
+    public Transaction(
+        TransactionType type,
+        Amount amount,
+        Guid? administratorId,
+        Guid? entityId,
+        string? name,
+        DateTime occurredAt,
+        Guid? giftCardId = null)
         : base(Guid.NewGuid())
     {
         if (type == TransactionType.Deposit && administratorId is null)
@@ -32,10 +40,22 @@ public sealed class Transaction : Entity
             throw new DomainException("A purchase must record the purchased tour and its name.");
         }
 
+        if (type == TransactionType.GiftCardPurchase
+            && (giftCardId is null || entityId is not null || name is not null))
+        {
+            throw new DomainException("A gift card purchase must record only its gift card reference.");
+        }
+
+        if (type != TransactionType.GiftCardPurchase && giftCardId is not null)
+        {
+            throw new DomainException("Only a gift card purchase can record a gift card reference.");
+        }
+
         Type = type;
         Amount = amount;
         AdministratorId = administratorId;
         EntityId = entityId;
+        GiftCardId = giftCardId;
         Name = name;
         OccurredAt = occurredAt;
     }

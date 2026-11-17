@@ -1,4 +1,4 @@
-<div class="card stack">
+<div class="card card--narrow stack">
   <h1>Create quiz</h1>
 
   <form class="stack" (submit)="submit($event)">
@@ -57,7 +57,7 @@
     <h2>Questions</h2>
 
     @for (question of form.questions; track $index; let questionIndex = $index) {
-      <div class="question stack">
+      <div class="card stack">
         <div class="field">
           <label [for]="'question-' + questionIndex">Question {{ questionIndex + 1 }}</label>
           <input [id]="'question-' + questionIndex" type="text" [formField]="question.text" />
@@ -102,7 +102,7 @@
       <button class="button button--primary" type="submit" [disabled]="!form().valid() || pending()">
         Create
       </button>
-      <a routerLink="/games/quizzes">Cancel</a>
+      <a class="button" routerLink="/games/quizzes">Cancel</a>
     </div>
   </form>
 </div>

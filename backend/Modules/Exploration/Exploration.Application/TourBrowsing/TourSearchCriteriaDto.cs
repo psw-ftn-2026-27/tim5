@@ -7,4 +7,6 @@ public sealed record TourSearchCriteriaDto(
     List<TourDifficulty>? Difficulties,
     List<string>? Tags,
     List<TransportMode>? Transports,
+    int? MinPrice = null,
+    int? MaxPrice = null,
     TourSortOrder Sort = TourSortOrder.Newest);

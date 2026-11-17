@@ -42,6 +42,25 @@ public sealed class Wallet : AggregateRoot
         Balance -= total;
     }
 
+    public void PurchaseGiftCard(Guid giftCardId, Amount amount, DateTime now)
+    {
+        if (Balance < amount.Value)
+        {
+            throw new DomainException("The wallet does not have enough EC for the gift card.");
+        }
+
+        _transactions.Add(new Transaction(
+            TransactionType.GiftCardPurchase,
+            amount,
+            null,
+            null,
+            null,
+            now,
+            giftCardId));
+
+        Balance -= amount.Value;
+    }
+
     public void Reverse(Guid transactionId, Guid administratorId, DateTime now)
     {
         var transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionId)
