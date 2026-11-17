@@ -61,6 +61,20 @@ public class PurchasingQueryTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task Tourist_sees_zero_cost_purchased_tour_without_wallet_purchase_transaction()
+    {
+        var token = TourPurchaseTokenSeed.ZeroCostTourPurchasedWithoutWalletTransaction;
+        var client = Factory.CreateClientFor(token.TouristId, "explorer");
+
+        var purchases = await client.GetFromJsonAsync<List<PurchasedTourDto>>("/api/payment/purchases", JsonOptions);
+
+        purchases.Should().ContainSingle(purchase =>
+            purchase.EntityId == token.EntityId &&
+            purchase.Name == ProductSeed.SecondPaidTour.Name &&
+            purchase.PurchasedAt == token.PurchasedAt);
+    }
+
+    [Fact]
     public async Task Anonymous_user_cannot_see_purchased_tours()
     {
         var client = Factory.CreateClient();

@@ -58,6 +58,44 @@ internal static class GiftCardSeed
         "A gift for an unavailable user",
         new DateTime(2026, 11, 15, 10, 0, 0, DateTimeKind.Utc));
 
+    private static readonly Guid CheckoutBuyerId = Guid.Parse("00000000-0000-0000-0002-000000000004");
+    private static readonly Guid ArchivedCheckoutBuyerId = Guid.Parse("00000000-0000-0000-0002-000000000008");
+
+    public static readonly GiftCard CheckoutCardForBuyer = new(
+        WellKnownUsers.SecondExplorer,
+        CheckoutBuyerId,
+        new Amount(100),
+        "Checkout benefit",
+        new DateTime(2026, 11, 17, 10, 0, 0, DateTimeKind.Utc));
+
+    public static readonly GiftCard CheckoutCardForAnotherBuyer = new(
+        WellKnownUsers.SecondExplorer,
+        GiftCardBuyerId,
+        new Amount(100),
+        "Belongs to another buyer",
+        new DateTime(2026, 11, 17, 10, 0, 0, DateTimeKind.Utc));
+
+    public static readonly GiftCard OversizedCheckoutCardForBuyer = new(
+        WellKnownUsers.SecondExplorer,
+        CheckoutBuyerId,
+        new Amount(300),
+        "Covers the full cart",
+        new DateTime(2026, 11, 17, 10, 0, 0, DateTimeKind.Utc));
+
+    public static readonly GiftCard ExpiredCheckoutCardForBuyer = new(
+        WellKnownUsers.SecondExplorer,
+        CheckoutBuyerId,
+        new Amount(100),
+        "Expired checkout card",
+        new DateTime(2020, 11, 17, 10, 0, 0, DateTimeKind.Utc));
+
+    public static readonly GiftCard CheckoutCardForArchivedCartBuyer = new(
+        WellKnownUsers.SecondExplorer,
+        ArchivedCheckoutBuyerId,
+        new Amount(100),
+        "Checkout card for archived tour test",
+        new DateTime(2026, 11, 17, 10, 0, 0, DateTimeKind.Utc));
+
     static GiftCardSeed()
     {
         RedeemedCardReceivedByExplorer.Redeem(
@@ -66,5 +104,5 @@ internal static class GiftCardSeed
     }
 
     public static GiftCard[] All =>
-        [RecentValidCardReceivedByExplorer, ExpiredCardReceivedByExplorer, RedeemedCardReceivedByExplorer, CardSentByExplorer, AnotherCardSentByExplorer, GiftCardBuyerSentToSecondExplorer, GiftCardSentToUserMissingFromIdentity];
+        [RecentValidCardReceivedByExplorer, ExpiredCardReceivedByExplorer, RedeemedCardReceivedByExplorer, CardSentByExplorer, AnotherCardSentByExplorer, GiftCardBuyerSentToSecondExplorer, GiftCardSentToUserMissingFromIdentity, CheckoutCardForBuyer, CheckoutCardForAnotherBuyer, OversizedCheckoutCardForBuyer, ExpiredCheckoutCardForBuyer, CheckoutCardForArchivedCartBuyer];
 }

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { AddToCartDto } from '../api/payment-api-types';
+import { AddToCartDto, CheckoutBenefitsDto } from '../api/payment-api-types';
 
 const BASE_URL = '/api/payment/cart/items';
 const CHECKOUT_URL = '/api/payment/cart/checkout';
@@ -18,7 +18,7 @@ export class Shopping {
     await firstValueFrom(this.http.delete<void>(`${BASE_URL}/${entityId}`));
   }
 
-  async checkout(): Promise<void> {
-    await firstValueFrom(this.http.post<void>(CHECKOUT_URL, null));
+  async checkout(benefits: CheckoutBenefitsDto | null): Promise<string | null> {
+    return await firstValueFrom(this.http.post<string | null>(CHECKOUT_URL, benefits));
   }
 }
