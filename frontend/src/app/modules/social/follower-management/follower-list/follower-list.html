@@ -6,7 +6,7 @@
   }
 
   @if (followers.isLoading()) {
-    <p>Loading...</p>
+    <p class="meta">Loading...</p>
   } @else if (followers.error()) {
     <p class="error">Followers could not be loaded. Sign in and try again.</p>
   } @else {
@@ -36,7 +36,7 @@
             </span>
           </li>
         } @empty {
-          <li>No pending requests.</li>
+          <li><p class="meta">No pending requests.</p></li>
         }
       </ul>
     </section>
@@ -48,7 +48,7 @@
           <li>
             <span>{{ follower.username ?? 'unknown user' }}</span>
             <button
-              class="button"
+              class="button button--danger"
               type="button"
               [disabled]="pending()"
               (click)="remove(follower.userId)"
@@ -57,7 +57,7 @@
             </button>
           </li>
         } @empty {
-          <li>No one is following you yet.</li>
+          <li><p class="meta">No one is following you yet.</p></li>
         }
       </ul>
     </section>

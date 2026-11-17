@@ -13,7 +13,7 @@
   }
 
   @if (blogs.isLoading()) {
-    <p>Loading blogs...</p>
+    <p class="meta">Loading blogs...</p>
   } @else if (blogs.error()) {
     <p class="error">Could not load blogs. Log in and try again.</p>
   } @else {
@@ -21,7 +21,7 @@
       @for (blog of blogs.value()?.items ?? []; track blog.id) {
         <app-blog-card [blog]="blog" />
       } @empty {
-        <p>No blogs published yet.</p>
+        <p class="meta">No blogs published yet.</p>
       }
     </div>
   }

@@ -1,7 +1,7 @@
 <div class="stack">
   <h1>Find users</h1>
 
-  <form class="search" (submit)="search($event)">
+  <form class="toolbar" (submit)="search($event)">
     <div class="field">
       <label for="username">Username</label>
       <input id="username" type="search" [formField]="form.username" />
@@ -17,7 +17,7 @@
   }
 
   @if (users.isLoading()) {
-    <p>Searching users...</p>
+    <p class="meta">Searching users...</p>
   } @else if (users.error()) {
     <p class="error">Search failed. Sign in and try again.</p>
   } @else if (users.hasValue()) {
@@ -35,7 +35,7 @@
           </button>
         </li>
       } @empty {
-        <li>No users with that username.</li>
+        <li><p class="meta">No users with that username.</p></li>
       }
     </ul>
   }

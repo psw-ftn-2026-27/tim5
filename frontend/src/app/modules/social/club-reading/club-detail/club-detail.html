@@ -2,7 +2,7 @@
   <p><a routerLink="/social/clubs">Back to clubs</a></p>
 
   @if (detail.isLoading()) {
-    <p>Loading club...</p>
+    <p class="meta">Loading club...</p>
   } @else if (detail.error()) {
     <p class="error">Could not load the club. Log in and try again.</p>
   } @else {
@@ -18,18 +18,18 @@
       </div>
 
       @if (isOwner()) {
-        <p class="actions">
+        <div class="actions">
           <button class="button" type="button" (click)="startEdit(club)">Edit</button>
           <button class="button" type="button" (click)="startDelete()">Delete</button>
-        </p>
+        </div>
       }
 
       @if (confirmingDelete()) {
         <section class="card stack">
           <p>Are you sure you want to delete this club?</p>
-          <p class="actions">
+          <div class="actions">
             <button
-              class="button button--primary"
+              class="button button--danger"
               type="button"
               [disabled]="pending()"
               (click)="confirmDelete()"
@@ -37,12 +37,12 @@
               Confirm
             </button>
             <button class="button" type="button" (click)="cancelDelete()">Cancel</button>
-          </p>
+          </div>
         </section>
       }
 
       @if (editing()) {
-        <form class="card stack" (submit)="save($event)">
+        <form class="card card--narrow stack" (submit)="save($event)">
           <h2>Edit club</h2>
 
           <div class="field">
@@ -76,7 +76,7 @@
             <p class="error">{{ error() }}</p>
           }
 
-          <p class="actions">
+          <div class="actions">
             <button
               class="button button--primary"
               type="submit"
@@ -85,7 +85,7 @@
               Save
             </button>
             <button class="button" type="button" (click)="cancelEdit()">Cancel</button>
-          </p>
+          </div>
         </form>
       }
 
