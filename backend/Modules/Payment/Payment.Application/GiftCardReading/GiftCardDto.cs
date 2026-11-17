@@ -4,7 +4,7 @@ namespace Payment.Application.GiftCardReading;
 
 public sealed record GiftCardDto(
     Guid Id,
-    string OtherPartyUsername,
+    string? OtherPartyUsername,
     int Amount,
     string Message,
     DateTime CreatedAt,

@@ -75,7 +75,7 @@ export interface PurchaseGiftCardDto {
 
 export interface GiftCardDto {
   id: string;
-  otherPartyUsername: string;
+  otherPartyUsername: string | null;
   amount: number;
   message: string;
   createdAt: string;

@@ -43,7 +43,7 @@ public sealed class GiftCardReadingQueries
 
         var items = pageResult.Items.Select(item => new GiftCardDto(
             item.Id,
-            usernamesById[item.OtherUserId],
+            usernamesById.GetValueOrDefault(item.OtherUserId),
             item.Amount,
             item.Message,
             item.CreatedAt,

@@ -111,6 +111,19 @@ public class GiftCardReadingQueryTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task A_missing_identity_user_does_not_fail_gift_card_reading()
+    {
+        var client = Factory.CreateClientFor(GiftCardSeed.GiftCardBuyerId, "explorer");
+
+        var page = await client.GetFromJsonAsync<PageResult<GiftCardDto>>(
+            "/api/payment/gift-cards/sent?page=1&pageSize=10",
+            JsonOptions);
+
+        page!.Items.Single(card => card.Id == GiftCardSeed.GiftCardSentToUserMissingFromIdentity.Id)
+            .OtherPartyUsername.Should().BeNull();
+    }
+
+    [Fact]
     public async Task An_anonymous_user_cannot_read_gift_cards()
     {
         var client = Factory.CreateClient();

@@ -7,6 +7,7 @@ namespace Payment.Tests.Integration.Seeds;
 internal static class GiftCardSeed
 {
     public static readonly Guid GiftCardBuyerId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+    public static readonly Guid MissingIdentityRecipientId = Guid.Parse("00000000-0000-0000-0000-000000000098");
 
     public static readonly GiftCard RecentValidCardReceivedByExplorer = new(
         WellKnownUsers.SecondExplorer,
@@ -50,6 +51,13 @@ internal static class GiftCardSeed
         "A gift from the test buyer",
         new DateTime(2026, 11, 16, 10, 0, 0, DateTimeKind.Utc));
 
+    public static readonly GiftCard GiftCardSentToUserMissingFromIdentity = new(
+        GiftCardBuyerId,
+        MissingIdentityRecipientId,
+        new Amount(50),
+        "A gift for an unavailable user",
+        new DateTime(2026, 11, 15, 10, 0, 0, DateTimeKind.Utc));
+
     static GiftCardSeed()
     {
         RedeemedCardReceivedByExplorer.Redeem(
@@ -58,5 +66,5 @@ internal static class GiftCardSeed
     }
 
     public static GiftCard[] All =>
-        [RecentValidCardReceivedByExplorer, ExpiredCardReceivedByExplorer, RedeemedCardReceivedByExplorer, CardSentByExplorer, AnotherCardSentByExplorer, GiftCardBuyerSentToSecondExplorer];
+        [RecentValidCardReceivedByExplorer, ExpiredCardReceivedByExplorer, RedeemedCardReceivedByExplorer, CardSentByExplorer, AnotherCardSentByExplorer, GiftCardBuyerSentToSecondExplorer, GiftCardSentToUserMissingFromIdentity];
 }
