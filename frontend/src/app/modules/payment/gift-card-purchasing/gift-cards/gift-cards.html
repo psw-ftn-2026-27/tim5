@@ -3,7 +3,7 @@
   <h1>Gift cards</h1>
 
   @if (success()) {
-    <p role="status">{{ success() }}</p>
+    <p class="success" role="status">{{ success() }}</p>
   }
   @if (error()) {
     <p class="error" role="alert">{{ error() }}</p>
@@ -14,7 +14,7 @@
   </button>
 
   @if (showForm()) {
-    <form class="card stack purchase-form" (submit)="purchase($event)">
+    <form class="card card--narrow stack" (submit)="purchase($event)">
       <h2>Buy a gift card</h2>
 
       <div class="field">
@@ -56,24 +56,24 @@
   <section class="stack" aria-labelledby="sent-heading">
     <h2 id="sent-heading">Sent cards</h2>
     @if (sent.isLoading()) {
-      <p>Loading sent cards...</p>
+      <p class="meta">Loading sent cards...</p>
     } @else if (sent.error()) {
       <p class="error">Could not load sent cards. Log in as an explorer and try again.</p>
     } @else if (sent.value(); as cards) {
       @if (cards.items.length === 0) {
-        <p>You have not sent any gift cards yet.</p>
+        <p class="meta">You have not sent any gift cards yet.</p>
       } @else {
-        <div class="table-wrap">
+        <div class="table-wrapper">
           <table class="table">
             <thead><tr><th scope="col">Recipient</th><th scope="col">Amount</th><th scope="col">Message</th><th scope="col">Created</th><th scope="col">Expires</th><th scope="col">Status</th></tr></thead>
             <tbody>
               @for (card of cards.items; track card.id) {
-                <tr><td>{{ card.otherPartyUsername }}</td><td>{{ card.amount }} EC</td><td>{{ card.message }}</td><td>{{ localDate(card.createdAt) }}</td><td>{{ localDate(card.expiresAt) }}</td><td>{{ card.status }}</td></tr>
+                <tr><td>{{ card.otherPartyUsername }}</td><td>{{ card.amount }} EC</td><td>{{ card.message }}</td><td>{{ localDate(card.createdAt) }}</td><td>{{ localDate(card.expiresAt) }}</td><td><span class="badge">{{ card.status }}</span></td></tr>
               }
             </tbody>
           </table>
         </div>
-        <div class="paging">
+        <div class="actions">
           <button class="button" type="button" [disabled]="sentPage() === 1" (click)="previousSent()">Previous</button>
           <span class="meta">Page {{ sentPage() }} · {{ cards.totalCount }} cards</span>
           <button class="button" type="button" [disabled]="isLastPage(sentPage(), cards.totalCount)" (click)="nextSent()">Next</button>
@@ -85,24 +85,24 @@
   <section class="stack" aria-labelledby="received-heading">
     <h2 id="received-heading">Received cards</h2>
     @if (received.isLoading()) {
-      <p>Loading received cards...</p>
+      <p class="meta">Loading received cards...</p>
     } @else if (received.error()) {
       <p class="error">Could not load received cards. Log in as an explorer and try again.</p>
     } @else if (received.value(); as cards) {
       @if (cards.items.length === 0) {
-        <p>You have not received any gift cards yet.</p>
+        <p class="meta">You have not received any gift cards yet.</p>
       } @else {
-        <div class="table-wrap">
+        <div class="table-wrapper">
           <table class="table">
             <thead><tr><th scope="col">Sender</th><th scope="col">Amount</th><th scope="col">Message</th><th scope="col">Created</th><th scope="col">Expires</th><th scope="col">Status</th></tr></thead>
             <tbody>
               @for (card of cards.items; track card.id) {
-                <tr><td>{{ card.otherPartyUsername }}</td><td>{{ card.amount }} EC</td><td>{{ card.message }}</td><td>{{ localDate(card.createdAt) }}</td><td>{{ localDate(card.expiresAt) }}</td><td>{{ card.status }}</td></tr>
+                <tr><td>{{ card.otherPartyUsername }}</td><td>{{ card.amount }} EC</td><td>{{ card.message }}</td><td>{{ localDate(card.createdAt) }}</td><td>{{ localDate(card.expiresAt) }}</td><td><span class="badge">{{ card.status }}</span></td></tr>
               }
             </tbody>
           </table>
         </div>
-        <div class="paging">
+        <div class="actions">
           <button class="button" type="button" [disabled]="receivedPage() === 1" (click)="previousReceived()">Previous</button>
           <span class="meta">Page {{ receivedPage() }} · {{ cards.totalCount }} cards</span>
           <button class="button" type="button" [disabled]="isLastPage(receivedPage(), cards.totalCount)" (click)="nextReceived()">Next</button>
