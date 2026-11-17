@@ -239,7 +239,7 @@ public class ShoppingCommandTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task Paying_for_a_tourist_without_a_wallet_is_rejected_and_creates_no_wallet()
+    public async Task Paying_paid_tours_for_a_tourist_without_a_wallet_is_rejected_and_creates_no_wallet()
     {
         var seededCart = ShoppingCartSeed.CartWithTwoTours;
         var client = Factory.CreateClientFor(seededCart.TouristId, "explorer");
@@ -253,6 +253,31 @@ public class ShoppingCommandTests : BaseIntegrationTest
         assertContext.Wallets.Count().Should().Be(walletCountBefore);
         assertContext.Wallets.Should().NotContain(wallet => wallet.TouristId == seededCart.TouristId);
         assertContext.ShoppingCarts.Single(cart => cart.Id == seededCart.Id).Items.Should().HaveSameCount(seededCart.Items);
+    }
+
+    [Fact]
+    public async Task Tourist_without_a_wallet_pays_a_cart_with_only_a_free_tour_and_gets_a_wallet_with_zero_balance_a_zero_EC_purchase_and_a_token()
+    {
+        var seededCart = ShoppingCartSeed.CartWithOnlyFreeTourOfTouristWithoutWallet;
+        var product = ProductSeed.PublishedFreeTour;
+        var client = Factory.CreateClientFor(seededCart.TouristId, "explorer");
+
+        var response = await client.PostAsync("/api/payment/cart/checkout", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        using var assertContext = Factory.CreateContext<PaymentDbContext>();
+        assertContext.ShoppingCarts.Single(cart => cart.Id == seededCart.Id).Items.Should().BeEmpty();
+        var storedWallet = assertContext.Wallets.Single(wallet => wallet.TouristId == seededCart.TouristId);
+        storedWallet.Balance.Should().Be(0);
+        storedWallet.Transactions.Should().ContainSingle(transaction =>
+            transaction.Type == TransactionType.Purchase
+            && transaction.EntityId == product.EntityId
+            && transaction.Name == product.Name
+            && transaction.Amount.Value == 0);
+        assertContext.TourPurchaseTokens
+            .Where(token => token.TouristId == seededCart.TouristId)
+            .Select(token => token.EntityId)
+            .Should().BeEquivalentTo([product.EntityId]);
     }
 
     [Fact]

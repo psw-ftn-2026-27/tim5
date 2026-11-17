@@ -24,7 +24,10 @@
             <td>{{ transaction.type }}</td>
             <td>{{ transaction.type === 'GiftCardPurchase' ? 'Gift card' : transaction.name }}</td>
             <td>
-              @if (transaction.type === 'Purchase' || transaction.type === 'GiftCardPurchase') {
+              @if (
+                (transaction.type === 'Purchase' || transaction.type === 'GiftCardPurchase') &&
+                transaction.amount !== 0
+              ) {
                 -{{ transaction.amount }} EC
               } @else {
                 {{ transaction.amount }} EC

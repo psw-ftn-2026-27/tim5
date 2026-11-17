@@ -92,6 +92,7 @@ public sealed class ShoppingService
 
         var tourIds = cart.Items.Select(item => item.EntityId).ToList();
         var publishedTourIds = await _explorationApi.GetPublishedAsync(tourIds);
+
         if (benefits?.GiftCardId is not null && giftCard is null)
         {
             throw new Shared.Domain.Exceptions.DomainException("The selected gift card does not exist.");
@@ -111,11 +112,15 @@ public sealed class ShoppingService
         // Validate availability and empty-cart rules before changing any tracked purchase state.
         var checkedOutItems = cart.Checkout(publishedTourIds);
 
-        if (calculation.Total > 0)
+        if (calculation.WalletItems.Count > 0)
         {
-            var wallet = await _walletRepository.GetByTouristAsync(touristId)
-                ?? throw new Shared.Domain.Exceptions.DomainException("The wallet does not have enough EC for the purchase.");
+            var existingWallet = await _walletRepository.GetByTouristAsync(touristId);
+            var wallet = existingWallet ?? new Wallet(touristId);
             wallet.Purchase(calculation.WalletItems, now);
+            if (existingWallet is null)
+            {
+                _walletRepository.Add(wallet);
+            }
         }
 
         if (calculation.GiftCardId is not null)

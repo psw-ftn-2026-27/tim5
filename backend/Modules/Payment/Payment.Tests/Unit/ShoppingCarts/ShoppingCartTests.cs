@@ -21,14 +21,15 @@ public class ShoppingCartTests
     }
 
     [Fact]
-    public void A_free_tour_is_rejected_and_the_cart_stays_the_same()
+    public void A_free_tour_is_added_to_the_cart_and_the_total_stays_the_same()
     {
         var cart = CreateCartWithOneTour();
+        var totalBefore = cart.Total;
 
-        var add = () => cart.AddItem(SecondTour, "Dunavski kej", new Price(0), Author, false);
+        cart.AddItem(SecondTour, "Dunavski kej", new Price(0), Author, false);
 
-        add.Should().Throw<DomainException>();
-        cart.Items.Should().ContainSingle(item => item.EntityId == FirstTour);
+        cart.Items.Select(item => item.EntityId).Should().BeEquivalentTo([FirstTour, SecondTour]);
+        cart.Total.Should().Be(totalBefore);
     }
 
     [Fact]

@@ -20,6 +20,11 @@ public sealed class Wallet : AggregateRoot
 
     public void Deposit(Amount amount, Guid administratorId)
     {
+        if (amount.Value == 0)
+        {
+            throw new DomainException("A deposit must be a positive whole number of EC.");
+        }
+
         var transaction = new Transaction(TransactionType.Deposit, amount, administratorId, null, null, DateTime.UtcNow);
 
         _transactions.Add(transaction);
