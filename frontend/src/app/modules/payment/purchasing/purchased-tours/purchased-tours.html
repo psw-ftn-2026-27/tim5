@@ -2,12 +2,12 @@
   <h1>Purchased tours</h1>
 
   @if (purchases.isLoading()) {
-    <p>Loading your purchased tours...</p>
+    <p class="meta">Loading your purchased tours...</p>
   } @else if (purchases.error()) {
     <p class="error">Could not load your purchased tours. Log in as a tourist and try again.</p>
   } @else if (purchases.value(); as current) {
     @if (current.length === 0) {
-      <p>You have not purchased any tours yet. <a routerLink="/exploration">Browse tours</a></p>
+      <p class="meta">You have not purchased any tours yet. <a routerLink="/exploration">Browse tours</a></p>
     } @else {
       <table class="table">
         <thead>

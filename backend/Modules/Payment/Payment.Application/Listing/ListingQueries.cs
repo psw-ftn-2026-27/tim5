@@ -15,4 +15,9 @@ public sealed class ListingQueries
     {
         return await _productReadRepository.GetPricesAsync(tourIds);
     }
+
+    public async Task<IReadOnlyList<MyProductDto>> GetMyProductsAsync(Guid ownerId)
+    {
+        return await _productReadRepository.GetMyProductsAsync(ownerId);
+    }
 }

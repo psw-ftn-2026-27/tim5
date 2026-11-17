@@ -15,7 +15,7 @@
   </div>
 
   @if (challenges.isLoading()) {
-    <p>Loading challenges...</p>
+    <p class="meta">Loading challenges...</p>
   } @else if (challenges.error()) {
     <p class="error">Could not load challenges. Log in as an administrator and try again.</p>
   } @else {
@@ -40,7 +40,7 @@
               }
             </td>
             <td>{{ challenge.xp }}</td>
-            <td>{{ challenge.status }}</td>
+            <td><span class="badge">{{ challenge.status }}</span></td>
             <td>
               @switch (challenge.kind) {
                 @case ('Quiz') {
@@ -54,7 +54,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="5">No challenges to show.</td>
+            <td colspan="5" class="meta">No challenges to show.</td>
           </tr>
         }
       </tbody>

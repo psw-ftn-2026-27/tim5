@@ -10,7 +10,7 @@
   }
 
   @if (quizzes.isLoading()) {
-    <p>Loading quizzes...</p>
+    <p class="meta">Loading quizzes...</p>
   } @else if (quizzes.error()) {
     <p class="error">Could not load quizzes. Log in as an administrator and try again.</p>
   } @else {
@@ -30,16 +30,16 @@
             <td>{{ quiz.name }}</td>
             <td>{{ quiz.xp }}</td>
             <td>{{ quiz.questionCount }}</td>
-            <td>{{ quiz.status }}</td>
+            <td><span class="badge">{{ quiz.status }}</span></td>
             <td>
               <div class="actions">
                 @switch (quiz.status) {
                   @case ('Draft') {
                     <a class="button" [routerLink]="['/games/quizzes', quiz.id, 'edit']">Edit</a>
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="publish(quiz.id)">
+                    <button class="button button--primary" type="button" [disabled]="actionPending()" (click)="publish(quiz.id)">
                       Publish
                     </button>
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="delete(quiz.id)">
+                    <button class="button button--danger" type="button" [disabled]="actionPending()" (click)="delete(quiz.id)">
                       Delete
                     </button>
                   }
@@ -52,7 +52,7 @@
                     </button>
                   }
                   @case ('Retired') {
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="publish(quiz.id)">
+                    <button class="button button--primary" type="button" [disabled]="actionPending()" (click)="publish(quiz.id)">
                       Republish
                     </button>
                     <button class="button" type="button" [disabled]="actionPending()" (click)="archive(quiz.id)">
@@ -60,10 +60,10 @@
                     </button>
                   }
                   @case ('Archived') {
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="publish(quiz.id)">
+                    <button class="button button--primary" type="button" [disabled]="actionPending()" (click)="publish(quiz.id)">
                       Republish
                     </button>
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="delete(quiz.id)">
+                    <button class="button button--danger" type="button" [disabled]="actionPending()" (click)="delete(quiz.id)">
                       Delete
                     </button>
                   }
@@ -73,7 +73,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="5">No quizzes to show.</td>
+            <td colspan="5" class="meta">No quizzes to show.</td>
           </tr>
         }
       </tbody>

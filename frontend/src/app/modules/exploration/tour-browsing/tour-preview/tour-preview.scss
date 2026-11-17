@@ -1,3 +1,9 @@
+// Pages of the Exploration module use the module's own accent.
+:host {
+  --color-accent: var(--color-accent-exploration);
+  --color-accent-text: var(--color-accent-exploration-text);
+}
+
 .tags,
 .times,
 .key-points {

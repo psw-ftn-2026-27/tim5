@@ -6,7 +6,7 @@
   }
 
   @if (detail.isLoading()) {
-    <p>Loading blog...</p>
+    <p class="meta">Loading blog...</p>
   } @else if (detail.error()) {
     <p class="error">Could not load the blog. Log in and try again.</p>
   } @else {
@@ -16,7 +16,7 @@
       <p>{{ blog.description }}</p>
 
       @if (blog.images.length > 0) {
-        <div class="images">
+        <div class="grid">
           @for (image of blog.images; track $index) {
             <img [src]="image" alt="Image {{ $index + 1 }} of {{ blog.title }}" />
           }

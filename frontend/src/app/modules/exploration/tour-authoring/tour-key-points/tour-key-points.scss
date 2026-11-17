@@ -1,3 +1,9 @@
+// Pages of the Exploration module use the module's own accent.
+:host {
+  --color-accent: var(--color-accent-exploration);
+  --color-accent-text: var(--color-accent-exploration-text);
+}
+
 .key-points {
   display: flex;
   flex-direction: column;
@@ -32,13 +38,5 @@
 
 .key-point form {
   margin-top: var(--space-4);
-}
-
-.actions {
-  display: flex;
-  gap: var(--space-2);
-}
-
-form {
   max-width: 32rem;
 }

@@ -15,8 +15,3 @@
 .users > li + li {
   border-top: 1px solid var(--color-border);
 }
-
-.actions {
-  display: flex;
-  gap: var(--space-2);
-}

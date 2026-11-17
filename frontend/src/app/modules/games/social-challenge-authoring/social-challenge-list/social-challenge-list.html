@@ -21,82 +21,84 @@
   }
 
   @if (challenges.isLoading()) {
-    <p>Loading challenges...</p>
+    <p class="meta">Loading challenges...</p>
   } @else if (challenges.error()) {
     <p class="error">Could not load challenges. Log in as an administrator and try again.</p>
   } @else {
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Time window</th>
-          <th scope="col">Required people</th>
-          <th scope="col">Range (m)</th>
-          <th scope="col">XP</th>
-          <th scope="col">Status</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (challenge of challenges.value() ?? []; track challenge.id) {
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
           <tr>
-            <td>{{ challenge.name }}</td>
-            <td>{{ challenge.window.start.slice(0, 5) }}–{{ challenge.window.end.slice(0, 5) }}</td>
-            <td>{{ challenge.requiredPeople }}</td>
-            <td>{{ challenge.rangeInMeters }}</td>
-            <td>{{ challenge.xp }}</td>
-            <td>{{ challenge.status }}</td>
-            <td>
-              <div class="actions">
-                @switch (challenge.status) {
-                  @case ('Draft') {
-                    <button class="button" type="button" (click)="selectForEdit(challenge)">Edit</button>
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="publish(challenge.id)">
-                      Publish
-                    </button>
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="delete(challenge.id)">
-                      Delete
-                    </button>
-                  }
-                  @case ('Published') {
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="retire(challenge.id)">
-                      Retire
-                    </button>
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="archive(challenge.id)">
-                      Archive
-                    </button>
-                  }
-                  @case ('Retired') {
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="publish(challenge.id)">
-                      Republish
-                    </button>
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="archive(challenge.id)">
-                      Archive
-                    </button>
-                  }
-                  @case ('Archived') {
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="publish(challenge.id)">
-                      Republish
-                    </button>
-                    <button class="button" type="button" [disabled]="actionPending()" (click)="delete(challenge.id)">
-                      Delete
-                    </button>
-                  }
-                }
-              </div>
-            </td>
+            <th scope="col">Name</th>
+            <th scope="col">Time window</th>
+            <th scope="col">Required people</th>
+            <th scope="col">Range (m)</th>
+            <th scope="col">XP</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
           </tr>
-        } @empty {
-          <tr>
-            <td colspan="7">No challenges to show.</td>
-          </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (challenge of challenges.value() ?? []; track challenge.id) {
+            <tr>
+              <td>{{ challenge.name }}</td>
+              <td>{{ challenge.window.start.slice(0, 5) }}–{{ challenge.window.end.slice(0, 5) }}</td>
+              <td>{{ challenge.requiredPeople }}</td>
+              <td>{{ challenge.rangeInMeters }}</td>
+              <td>{{ challenge.xp }}</td>
+              <td><span class="badge">{{ challenge.status }}</span></td>
+              <td>
+                <div class="actions">
+                  @switch (challenge.status) {
+                    @case ('Draft') {
+                      <button class="button" type="button" [disabled]="actionPending()" (click)="selectForEdit(challenge)">Edit</button>
+                      <button class="button button--primary" type="button" [disabled]="actionPending()" (click)="publish(challenge.id)">
+                        Publish
+                      </button>
+                      <button class="button button--danger" type="button" [disabled]="actionPending()" (click)="delete(challenge.id)">
+                        Delete
+                      </button>
+                    }
+                    @case ('Published') {
+                      <button class="button" type="button" [disabled]="actionPending()" (click)="retire(challenge.id)">
+                        Retire
+                      </button>
+                      <button class="button" type="button" [disabled]="actionPending()" (click)="archive(challenge.id)">
+                        Archive
+                      </button>
+                    }
+                    @case ('Retired') {
+                      <button class="button button--primary" type="button" [disabled]="actionPending()" (click)="publish(challenge.id)">
+                        Republish
+                      </button>
+                      <button class="button" type="button" [disabled]="actionPending()" (click)="archive(challenge.id)">
+                        Archive
+                      </button>
+                    }
+                    @case ('Archived') {
+                      <button class="button button--primary" type="button" [disabled]="actionPending()" (click)="publish(challenge.id)">
+                        Republish
+                      </button>
+                      <button class="button button--danger" type="button" [disabled]="actionPending()" (click)="delete(challenge.id)">
+                        Delete
+                      </button>
+                    }
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="meta">No challenges to show.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
 
   @if (editedChallengeId()) {
-    <form class="card stack" (submit)="update($event)">
+    <form class="card card--narrow stack" (submit)="update($event)">
       <h2>Edit challenge</h2>
 
       <div class="field">
