@@ -6,6 +6,9 @@
       <a routerLink="/exploration/mine">My tours</a>
       <a routerLink="/exploration/create">Create tour</a>
       <a routerLink="/exploration/simulator">Simulator</a>
+      @if (activeExecution.hasValue()) {
+        <a routerLink="/exploration/execution">My active tour</a>
+      }
     </p>
   }
 

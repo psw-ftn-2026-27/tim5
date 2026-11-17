@@ -1,6 +1,7 @@
 using Exploration.Application.TourBrowsing;
 using Exploration.Application.Tours;
 using Exploration.Application.UploadedImages;
+using Exploration.Domain.TourExecutions;
 using Exploration.Domain.Tours;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,10 +16,11 @@ internal sealed class TourPreviewReadRepository : ITourPreviewReadRepository
         _dbContext = dbContext;
     }
 
-    public Task<TourPreviewDto?> GetPublishedPreviewAsync(Guid tourId)
+    public Task<TourPreviewDto?> GetPreviewAsync(Guid tourId, Guid userId, bool isPurchased)
     {
         return _dbContext.Tours
-            .Where(tour => tour.Id == tourId && tour.Status == TourStatus.Published)
+            .Where(tour => tour.Id == tourId)
+            .Where(tour => tour.Status == TourStatus.Published || (isPurchased && tour.Status == TourStatus.Archived))
             .Select(tour => new TourPreviewDto(
                 tour.Id,
                 tour.Name,
@@ -38,7 +40,10 @@ internal sealed class TourPreviewReadRepository : ITourPreviewReadRepository
                         keyPoint.Description,
                         ImageAddress.For(keyPoint.ImageId),
                         new LocationDto(keyPoint.Location.Latitude, keyPoint.Location.Longitude)))
-                    .ToList()))
+                    .ToList(),
+                isPurchased,
+                _dbContext.TourExecutions.Any(execution =>
+                    execution.TouristId == userId && execution.Status == TourExecutionStatus.Active)))
             .FirstOrDefaultAsync();
     }
 }

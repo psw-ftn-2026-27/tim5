@@ -27,6 +27,6 @@ public abstract class BaseIntegrationTest
     {
         Factory = factory;
         Factory.Reseed<ExplorationDbContext>(ExplorationSeed.All);
-        Factory.Reseed<PaymentDbContext>(TourProductSeed.All);
+        Factory.Reseed<PaymentDbContext>([.. TourProductSeed.All, .. TourPurchaseSeed.All]);
     }
 }

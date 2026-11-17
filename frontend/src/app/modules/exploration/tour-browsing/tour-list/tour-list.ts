@@ -1,10 +1,11 @@
 import { httpResource } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormField, form, min, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { Auth } from '../../../../core/auth/auth';
 import { PageResult } from '../../../../shared/api/page-result';
 import {
+  ActiveTourExecutionDto,
   PublishedTourDto,
   TourDifficulty,
   TourSearchCriteriaDto,
@@ -23,6 +24,13 @@ const pageSize = 20;
 })
 export class TourList {
   protected readonly auth = inject(Auth);
+
+  private readonly isExplorer = computed(() => this.auth.user()?.roles.includes('explorer') ?? false);
+
+  // Only an explorer can have an active tour. Any error, including 404 (no active tour), hides the link.
+  protected readonly activeExecution = httpResource<ActiveTourExecutionDto>(() =>
+    this.isExplorer() ? '/api/exploration/executions/active' : undefined,
+  );
 
   protected readonly form = form(
     signal({

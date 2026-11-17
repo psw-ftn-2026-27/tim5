@@ -1,0 +1,32 @@
+<div class="stack">
+  @if (execution.isLoading() && !execution.hasValue()) {
+    <p class="meta">Loading the active tour...</p>
+  } @else if (hasNoActiveTour()) {
+    <h1>Active tour</h1>
+    <p class="meta">You have no active tour.</p>
+    <p><a routerLink="/payment/purchases">Your purchased tours</a></p>
+  } @else if (execution.error()) {
+    <p class="error">The active tour could not be loaded. Sign in as an explorer and try again.</p>
+  } @else if (execution.value(); as current) {
+    <h1>{{ current.tourName }}</h1>
+
+    <p>Next key point: {{ current.nextKeyPoint.name }}</p>
+
+    <app-map [pins]="pins()" [showPath]="true" />
+
+    <div class="actions">
+      <button
+        class="button"
+        type="button"
+        [disabled]="pending()"
+        (click)="abandon(current.tourId)"
+      >
+        Abandon tour
+      </button>
+    </div>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+  }
+</div>

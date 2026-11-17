@@ -301,6 +301,17 @@ public class TourBrowsingQueryTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task Buyer_sees_the_preview_of_an_archived_tour_marked_as_purchased()
+    {
+        var client = Factory.CreateClientFor(TourPurchaseSeed.ArchivedSalasiBoughtByBuyerWithPosition.TouristId, "explorer");
+
+        var preview = await client.GetFromJsonAsync<TourPreviewDto>($"/api/exploration/tours/published/{TourSeed.ArchivedSalasi.Id}", JsonOptions);
+
+        preview!.Id.Should().Be(TourSeed.ArchivedSalasi.Id);
+        preview.IsPurchased.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task Anonymous_user_cannot_preview_a_tour()
     {
         var client = Factory.CreateClient();
