@@ -24,7 +24,13 @@ internal static class TourPurchaseTokenSeed
         ProductSeed.PaidTour.EntityId,
         new DateTime(2026, 11, 11, 9, 0, 0, DateTimeKind.Utc));
 
+    public static readonly TourPurchaseToken ZeroCostTourPurchasedWithoutWalletTransaction = new(
+        Guid.Parse("00000000-0000-0000-0005-000000000098"),
+        ProductSeed.SecondPaidTour.EntityId,
+        new DateTime(2026, 11, 13, 9, 0, 0, DateTimeKind.Utc));
+
     public static TourPurchaseToken[] All =>
         [PaidTourPurchasedByTouristWithoutCart, PaidTourPurchasedFirstByTouristWithTwoPurchases,
-            SecondPaidTourPurchasedLaterByTouristWithTwoPurchases, PaidTourPurchasedByAnotherTourist];
+            SecondPaidTourPurchasedLaterByTouristWithTwoPurchases, PaidTourPurchasedByAnotherTourist,
+            ZeroCostTourPurchasedWithoutWalletTransaction];
 }

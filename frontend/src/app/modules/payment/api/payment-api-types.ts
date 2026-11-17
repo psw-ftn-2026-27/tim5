@@ -57,6 +57,33 @@ export interface ShoppingCartDto {
   total: number;
 }
 
+export interface CheckoutBenefitsDto {
+  couponCode: string | null;
+  giftCardId: string | null;
+}
+
+export interface CheckoutPreviewDto {
+  cartTotal: number;
+  couponId: string | null;
+  couponCode: string | null;
+  couponDiscount: number;
+  giftCardId: string | null;
+  giftCardDiscount: number;
+  total: number;
+  couponMessage: string | null;
+  giftCardMessage: string | null;
+}
+
+export interface PurchaseDto {
+  id: string;
+  total: number;
+  couponId: string | null;
+  couponDiscount: number;
+  giftCardId: string | null;
+  giftCardDiscount: number;
+  purchasedAt: string;
+}
+
 export interface AddToCartDto {
   entityId: string;
 }

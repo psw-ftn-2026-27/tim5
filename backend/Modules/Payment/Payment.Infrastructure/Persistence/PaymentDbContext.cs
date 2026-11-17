@@ -6,6 +6,8 @@ using Payment.Domain.GiftCards;
 using Payment.Domain.ShoppingCarts;
 using Payment.Domain.TourPurchaseTokens;
 using Payment.Domain.Wallets;
+using Payment.Domain.Purchases;
+using Payment.Infrastructure.Persistence.Purchases;
 using Payment.Infrastructure.Persistence.Products;
 using Payment.Infrastructure.Persistence.Coupons;
 using Payment.Infrastructure.Persistence.GiftCards;
@@ -25,6 +27,7 @@ internal sealed class PaymentDbContext : DbContext, IUnitOfWork
     public DbSet<Coupon> Coupons => Set<Coupon>();
     public DbSet<ShoppingCart> ShoppingCarts => Set<ShoppingCart>();
     public DbSet<TourPurchaseToken> TourPurchaseTokens => Set<TourPurchaseToken>();
+    public DbSet<Purchase> Purchases => Set<Purchase>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -35,5 +38,6 @@ internal sealed class PaymentDbContext : DbContext, IUnitOfWork
         builder.ConfigureCoupons();
         builder.ConfigureShoppingCarts();
         builder.ConfigureTourPurchaseTokens();
+        builder.ConfigurePurchases();
     }
 }
