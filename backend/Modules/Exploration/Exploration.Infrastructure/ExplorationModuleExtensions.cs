@@ -4,6 +4,7 @@ using Exploration.Application.KeyPointAuthoring;
 using Exploration.Application.PositionSimulator;
 using Exploration.Application.TourAuthoring;
 using Exploration.Application.TourBrowsing;
+using Exploration.Application.TourPublishing;
 using Exploration.Application.TouristPositions;
 using Exploration.Application.Tours;
 using Exploration.Application.UploadedImages;
@@ -29,6 +30,9 @@ public static class ExplorationModuleExtensions
         services.AddScoped<ITourRepository, TourRepository>();
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ExplorationDbContext>());
         services.AddScoped<ITourReadRepository, TourReadRepository>();
+        services.AddScoped<ITourAuthoringReadRepository, TourAuthoringReadRepository>();
+        services.AddScoped<ITourSearchReadRepository, TourSearchReadRepository>();
+        services.AddScoped<ITourPreviewReadRepository, TourPreviewReadRepository>();
         services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();
         services.AddScoped<IUploadedImageReadRepository, UploadedImageReadRepository>();
         services.AddScoped<ITouristPositionRepository, TouristPositionRepository>();
@@ -36,6 +40,7 @@ public static class ExplorationModuleExtensions
 
         services.AddScoped<TourAuthoringService>();
         services.AddScoped<TourAuthoringQueries>();
+        services.AddScoped<TourPublishingService>();
         services.AddScoped<KeyPointAuthoringService>();
         services.AddScoped<TourBrowsingQueries>();
         services.AddScoped<ImageViewingQueries>();

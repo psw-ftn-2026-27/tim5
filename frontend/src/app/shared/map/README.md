@@ -63,6 +63,12 @@ export interface MapPin {
 - Van režima biranja klik ne postavlja pin i ništa ne javlja.
 - Lokacija se menja samo klikom, ne prevlačenjem. Poruku „lokacija nije izabrana”, validaciju
   i čuvanje radi forma koja koristi komponentu.
+- U `pins` stavi samo **ostale** tačke (npr. druge ključne tačke ture). Lokaciju koja se bira ne
+  dodaj u `pins`, nego je predaj kao `initialLocation`. Inače se posle svakog klika promene
+  pinovi, pa pogled skoči na izabranu tačku, a ona se nacrta dvaput.
+- `pins` neka bude stabilan niz: signal ili `computed` koji vraća nov niz samo kada se tačke
+  zaista promene. Komponenta promenu prepoznaje po referenci, pa svaki nov niz, i sa istim
+  sadržajem, ponovo podešava pogled (i ponovo računa putanju, ako je uključena).
 
 ## Primer bez putanje
 

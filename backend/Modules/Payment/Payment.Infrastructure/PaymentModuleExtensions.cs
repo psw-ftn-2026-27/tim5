@@ -2,6 +2,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Payment.Application;
 using Payment.Application.Depositing;
+using Payment.Application.GiftCardPurchasing;
+using Payment.Application.GiftCardReading;
+using Payment.Application.GiftCards;
 using Payment.Application.Listing;
 using Payment.Application.Products;
 using Payment.Application.Purchasing;
@@ -14,6 +17,7 @@ using Payment.Application.Wallets;
 using Payment.Contracts;
 using Payment.Infrastructure.Persistence;
 using Payment.Infrastructure.Persistence.Products;
+using Payment.Infrastructure.Persistence.GiftCards;
 using Payment.Infrastructure.Persistence.ShoppingCarts;
 using Payment.Infrastructure.Persistence.TourPurchaseTokens;
 using Payment.Infrastructure.Persistence.Wallets;
@@ -32,6 +36,8 @@ public static class PaymentModuleExtensions
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<PaymentDbContext>());
         services.AddScoped<IWalletRepository, WalletRepository>();
         services.AddScoped<IWalletReadRepository, WalletReadRepository>();
+        services.AddScoped<IGiftCardRepository, GiftCardRepository>();
+        services.AddScoped<IGiftCardReadRepository, GiftCardReadRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductReadRepository, ProductReadRepository>();
         services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
@@ -40,6 +46,8 @@ public static class PaymentModuleExtensions
         services.AddScoped<ITourPurchaseTokenReadRepository, TourPurchaseTokenReadRepository>();
 
         services.AddScoped<WalletReadingQueries>();
+        services.AddScoped<GiftCardPurchasingService>();
+        services.AddScoped<GiftCardReadingQueries>();
         services.AddScoped<DepositingService>();
         services.AddScoped<DepositingQueries>();
         services.AddScoped<ReversingService>();
