@@ -6,7 +6,7 @@
   }
 
   @if (followings.isLoading()) {
-    <p>Loading...</p>
+    <p class="meta">Loading...</p>
   } @else if (followings.error()) {
     <p class="error">Following list could not be loaded. Sign in and try again.</p>
   } @else {
@@ -25,13 +25,13 @@
             <td>
               @switch (item.status) {
                 @case ('Accepted') {
-                  following
+                  <span class="badge">following</span>
                 }
                 @case ('Pending') {
-                  pending
+                  <span class="badge">pending</span>
                 }
                 @case ('Rejected') {
-                  rejected
+                  <span class="badge">rejected</span>
                 }
               }
             </td>
@@ -47,7 +47,7 @@
                 </button>
               } @else if (item.status === 'Accepted') {
                 <button
-                  class="button"
+                  class="button button--danger"
                   type="button"
                   [disabled]="pending()"
                   (click)="unfollow(item.userId)"
@@ -59,7 +59,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="3">You are not following anyone yet.</td>
+            <td class="meta" colspan="3">You are not following anyone yet.</td>
           </tr>
         }
       </tbody>

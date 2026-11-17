@@ -1,8 +1,15 @@
+.card {
+  height: 100%;
+}
+
 .card > a {
   align-self: flex-start;
 }
 
-img {
+.cover {
   border-radius: var(--radius);
-  max-width: 100%;
+  display: block;
+  height: 10rem;
+  object-fit: cover;
+  width: 100%;
 }
