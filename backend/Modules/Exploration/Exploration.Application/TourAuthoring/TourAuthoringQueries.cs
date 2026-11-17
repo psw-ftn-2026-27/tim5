@@ -5,21 +5,21 @@ namespace Exploration.Application.TourAuthoring;
 
 public sealed class TourAuthoringQueries
 {
-    private readonly ITourReadRepository _tourReadRepository;
+    private readonly ITourAuthoringReadRepository _tourAuthoringReadRepository;
 
-    public TourAuthoringQueries(ITourReadRepository tourReadRepository)
+    public TourAuthoringQueries(ITourAuthoringReadRepository tourAuthoringReadRepository)
     {
-        _tourReadRepository = tourReadRepository;
+        _tourAuthoringReadRepository = tourAuthoringReadRepository;
     }
 
     public Task<List<TourDto>> GetByAuthorAsync(Guid authorId)
     {
-        return _tourReadRepository.GetByAuthorAsync(authorId);
+        return _tourAuthoringReadRepository.GetByAuthorAsync(authorId);
     }
 
     public async Task<TourWithKeyPointsDto> GetOwnedTourWithKeyPointsAsync(Guid tourId, Guid authorId)
     {
-        var tour = await _tourReadRepository.GetOwnedWithKeyPointsAsync(tourId, authorId);
+        var tour = await _tourAuthoringReadRepository.GetOwnedWithKeyPointsAsync(tourId, authorId);
         if (tour is null)
         {
             throw new NotFoundException($"Tour {tourId} does not exist.");

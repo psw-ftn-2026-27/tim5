@@ -29,6 +29,9 @@ public static class ExplorationModuleExtensions
         services.AddScoped<ITourRepository, TourRepository>();
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ExplorationDbContext>());
         services.AddScoped<ITourReadRepository, TourReadRepository>();
+        services.AddScoped<ITourAuthoringReadRepository, TourAuthoringReadRepository>();
+        services.AddScoped<ITourSearchReadRepository, TourSearchReadRepository>();
+        services.AddScoped<ITourPreviewReadRepository, TourPreviewReadRepository>();
         services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();
         services.AddScoped<IUploadedImageReadRepository, UploadedImageReadRepository>();
         services.AddScoped<ITouristPositionRepository, TouristPositionRepository>();
