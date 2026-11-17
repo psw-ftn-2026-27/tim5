@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Payment.Application.Products;
+using Payment.Application.Listing;
 using Payment.Application.Shopping;
 
 namespace Payment.Infrastructure.Persistence.Products;
@@ -27,5 +28,14 @@ internal sealed class ProductReadRepository : IProductReadRepository
             .Where(product => product.EntityId == entityId)
             .Select(product => new ProductDto(product.Name, product.Price.Value))
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<IReadOnlyList<MyProductDto>> GetMyProductsAsync(Guid ownerId)
+    {
+        return await _dbContext.Products
+            .Where(product => product.OwnerId == ownerId)
+            .OrderBy(product => product.Name)
+            .Select(product => new MyProductDto(product.EntityId, product.Name))
+            .ToListAsync();
     }
 }

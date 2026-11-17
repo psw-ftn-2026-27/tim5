@@ -14,5 +14,8 @@ internal static class ProductSeed
     public static readonly Product SecondPaidTour = new(
         Guid.Parse("00000000-0000-0000-0004-000000000004"), "Novosadska sinagoga", WellKnownUsers.Explorer, new Price(200));
 
-    public static Product[] All => [PaidTour, FreeTour, SecondPaidTour];
+    public static readonly Product OtherOwnersTour = new(
+        Guid.Parse("00000000-0000-0000-0004-000000000005"), "Sremski Karlovci", WellKnownUsers.SecondExplorer, new Price(180));
+
+    public static Product[] All => [PaidTour, FreeTour, SecondPaidTour, OtherOwnersTour];
 }
