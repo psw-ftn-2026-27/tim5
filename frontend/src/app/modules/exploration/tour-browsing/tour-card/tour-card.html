@@ -6,6 +6,17 @@
   <p class="meta">Difficulty: {{ tour().difficulty }}</p>
 
   <p class="meta">
+    Price:
+    @if (tour().price === null) {
+      Not for sale
+    } @else if (tour().price === 0) {
+      Free
+    } @else {
+      {{ tour().price }} EC
+    }
+  </p>
+
+  <p class="meta">
     Recommended group size:
     @if (tour().recommendedGroupSize) {
       {{ tour().recommendedGroupSize?.min }}–{{ tour().recommendedGroupSize?.max }}

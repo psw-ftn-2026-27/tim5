@@ -93,14 +93,37 @@ export interface UploadedImageDto {
   url: string;
 }
 
-export type TourSortOrder = 'Newest' | 'DifficultyAscending' | 'DifficultyDescending';
+export type TourSortOrder =
+  | 'Newest'
+  | 'DifficultyAscending'
+  | 'DifficultyDescending'
+  | 'PriceAscending'
+  | 'PriceDescending';
 
 export interface TourSearchCriteriaDto {
   name: string | null;
   difficulties: TourDifficulty[] | null;
   tags: string[] | null;
   transports: TransportMode[] | null;
+  minPrice: number | null;
+  maxPrice: number | null;
   sort: TourSortOrder;
+}
+
+// Price comes from the Payment module: null means the tour is not for sale, 0 means it is free.
+export interface PublishedTourDto {
+  id: string;
+  authorId: string;
+  name: string;
+  description: string;
+  difficulty: TourDifficulty;
+  tags: string[];
+  status: TourStatus;
+  publishedAt: string | null;
+  archivedAt: string | null;
+  recommendedGroupSize: GroupSizeDto | null;
+  transportTimes: TransportTimeDto[];
+  price: number | null;
 }
 
 export interface TouristPositionDto {
