@@ -33,4 +33,38 @@ public class ExplorationContractTests : BaseIntegrationTest
 
         position.Should().BeNull();
     }
+
+    [Fact]
+    public async Task Only_published_tours_are_confirmed_among_the_requested_ones()
+    {
+        using var scope = Factory.Services.CreateScope();
+        var explorationApi = scope.ServiceProvider.GetRequiredService<IExplorationApi>();
+
+        var published = await explorationApi.GetPublishedAsync(
+            [TourSeed.PublishedVineyards.Id, TourSeed.CityStroll.Id, TourSeed.ArchivedSalasi.Id, Guid.NewGuid()]);
+
+        published.Should().BeEquivalentTo([TourSeed.PublishedVineyards.Id]);
+    }
+
+    [Fact]
+    public async Task A_published_tour_requested_twice_is_confirmed_once()
+    {
+        using var scope = Factory.Services.CreateScope();
+        var explorationApi = scope.ServiceProvider.GetRequiredService<IExplorationApi>();
+
+        var published = await explorationApi.GetPublishedAsync([TourSeed.PublishedVineyards.Id, TourSeed.PublishedVineyards.Id]);
+
+        published.Should().BeEquivalentTo([TourSeed.PublishedVineyards.Id]);
+    }
+
+    [Fact]
+    public async Task No_requested_tours_confirm_no_published_tours()
+    {
+        using var scope = Factory.Services.CreateScope();
+        var explorationApi = scope.ServiceProvider.GetRequiredService<IExplorationApi>();
+
+        var published = await explorationApi.GetPublishedAsync([]);
+
+        published.Should().BeEmpty();
+    }
 }
