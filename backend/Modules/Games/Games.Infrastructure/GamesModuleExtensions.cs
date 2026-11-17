@@ -3,6 +3,7 @@ using Games.Application.ChallengeOverview;
 using Games.Application.HiddenPointAuthoring;
 using Games.Application.ImageViewing;
 using Games.Application.LocationChallengeAuthoring;
+using Games.Application.LocationChallengeLifecycle;
 using Games.Application.LocationChallenges;
 using Games.Application.QuizAuthoring;
 using Games.Application.QuizLifecycle;
@@ -49,6 +50,7 @@ public static class GamesModuleExtensions
         services.AddScoped<ChallengeOverviewQueries>();
         services.AddScoped<LocationChallengeAuthoringService>();
         services.AddScoped<LocationChallengeAuthoringQueries>();
+        services.AddScoped<LocationChallengeLifecycleService>();
         services.AddScoped<HiddenPointAuthoringService>();
         services.AddScoped<ImageViewingQueries>();
 

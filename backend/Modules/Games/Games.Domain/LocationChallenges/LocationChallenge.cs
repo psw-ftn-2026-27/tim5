@@ -75,6 +75,48 @@ public sealed class LocationChallenge : AggregateRoot
         _hiddenPoints.Remove(GetHiddenPoint(pointId));
     }
 
+    public void Publish()
+    {
+        if (Status == ChallengeStatus.Published)
+        {
+            throw new DomainException("The location challenge is already published.");
+        }
+        if (_hiddenPoints.Count == 0)
+        {
+            throw new DomainException("A location challenge requires at least one hidden point to be published.");
+        }
+
+        Status = ChallengeStatus.Published;
+    }
+
+    public void Retire()
+    {
+        if (Status != ChallengeStatus.Published)
+        {
+            throw new DomainException("Only a published location challenge can be retired.");
+        }
+
+        Status = ChallengeStatus.Retired;
+    }
+
+    public void Archive()
+    {
+        if (Status != ChallengeStatus.Published && Status != ChallengeStatus.Retired)
+        {
+            throw new DomainException("Only a published or retired location challenge can be archived.");
+        }
+
+        Status = ChallengeStatus.Archived;
+    }
+
+    public void Delete()
+    {
+        if (Status != ChallengeStatus.Draft && Status != ChallengeStatus.Archived)
+        {
+            throw new DomainException("Only a draft or archived location challenge can be deleted.");
+        }
+    }
+
     private bool CanModify()
     {
         return Status == ChallengeStatus.Draft;

@@ -35,6 +35,22 @@ export class LocationChallengeAuthoring {
     await firstValueFrom(this.http.delete<void>(`${BASE_URL}/${id}/hidden-points/${pointId}`));
   }
 
+  async publish(id: string): Promise<void> {
+    await firstValueFrom(this.http.post<void>(`${BASE_URL}/${id}/publish`, null));
+  }
+
+  async retire(id: string): Promise<void> {
+    await firstValueFrom(this.http.post<void>(`${BASE_URL}/${id}/retire`, null));
+  }
+
+  async archive(id: string): Promise<void> {
+    await firstValueFrom(this.http.post<void>(`${BASE_URL}/${id}/archive`, null));
+  }
+
+  async delete(id: string): Promise<void> {
+    await firstValueFrom(this.http.delete<void>(`${BASE_URL}/${id}`));
+  }
+
   async uploadImage(file: File): Promise<UploadedImageDto> {
     const body = new FormData();
     body.append('file', file);

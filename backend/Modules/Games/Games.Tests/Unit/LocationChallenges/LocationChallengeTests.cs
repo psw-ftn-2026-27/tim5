@@ -20,6 +20,26 @@ public class LocationChallengeTests
         return challenge;
     }
 
+    private static LocationChallenge CreateChallengeWithOnePointIn(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePoint(Guid.NewGuid(), new Location(45.2522, 19.8615));
+        switch (status)
+        {
+            case ChallengeStatus.Published:
+                challenge.Publish();
+                break;
+            case ChallengeStatus.Retired:
+                challenge.Publish();
+                challenge.Retire();
+                break;
+            case ChallengeStatus.Archived:
+                challenge.Publish();
+                challenge.Archive();
+                break;
+        }
+        return challenge;
+    }
+
     [Fact]
     public void New_challenge_starts_as_a_draft_without_hidden_points()
     {
@@ -158,6 +178,176 @@ public class LocationChallengeTests
         var removal = () => challenge.RemoveHiddenPoint(Guid.NewGuid());
 
         removal.Should().Throw<NotFoundException>();
+        challenge.HiddenPoints.Should().HaveCount(1);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Draft)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Draft_retired_or_archived_challenge_becomes_published(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        challenge.Publish();
+
+        challenge.Status.Should().Be(ChallengeStatus.Published);
+    }
+
+    [Fact]
+    public void Published_challenge_cannot_be_published_again()
+    {
+        var challenge = CreateChallengeWithOnePointIn(ChallengeStatus.Published);
+
+        var publishing = () => challenge.Publish();
+
+        publishing.Should().Throw<DomainException>();
+        challenge.Status.Should().Be(ChallengeStatus.Published);
+    }
+
+    [Fact]
+    public void Draft_without_hidden_points_cannot_be_published()
+    {
+        var challenge = CreateChallenge();
+
+        var publishing = () => challenge.Publish();
+
+        publishing.Should().Throw<DomainException>();
+        challenge.Status.Should().Be(ChallengeStatus.Draft);
+    }
+
+    [Fact]
+    public void Published_challenge_becomes_retired()
+    {
+        var challenge = CreateChallengeWithOnePointIn(ChallengeStatus.Published);
+
+        challenge.Retire();
+
+        challenge.Status.Should().Be(ChallengeStatus.Retired);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Draft)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Only_a_published_challenge_can_be_retired(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        var retiring = () => challenge.Retire();
+
+        retiring.Should().Throw<DomainException>();
+        challenge.Status.Should().Be(status);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Published)]
+    [InlineData(ChallengeStatus.Retired)]
+    public void Published_or_retired_challenge_becomes_archived(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        challenge.Archive();
+
+        challenge.Status.Should().Be(ChallengeStatus.Archived);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Draft)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Only_a_published_or_retired_challenge_can_be_archived(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        var archiving = () => challenge.Archive();
+
+        archiving.Should().Throw<DomainException>();
+        challenge.Status.Should().Be(status);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Draft)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Draft_or_archived_challenge_can_be_deleted(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        var deletion = () => challenge.Delete();
+
+        deletion.Should().NotThrow();
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Published)]
+    [InlineData(ChallengeStatus.Retired)]
+    public void Published_or_retired_challenge_cannot_be_deleted(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        var deletion = () => challenge.Delete();
+
+        deletion.Should().Throw<DomainException>();
+        challenge.Status.Should().Be(status);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Published)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Challenge_that_is_not_a_draft_cannot_be_changed(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        var update = () => challenge.Update("Novo ime", 30, new Location(45.0, 19.0));
+
+        update.Should().Throw<DomainException>();
+        challenge.Name.Should().Be("Skrivena mesta tvrđave");
+        challenge.Xp.Should().Be(70);
+        challenge.StartLocation.Should().Be(CreateStartLocation());
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Published)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Hidden_point_cannot_be_added_to_a_challenge_that_is_not_a_draft(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        var adding = () => challenge.AddHiddenPoint(Guid.NewGuid(), new Location(45.2509, 19.8641));
+
+        adding.Should().Throw<DomainException>();
+        challenge.HiddenPoints.Should().HaveCount(1);
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Published)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Hidden_point_of_a_challenge_that_is_not_a_draft_cannot_be_changed(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+        var point = challenge.HiddenPoints[0];
+        var imageId = point.ImageId;
+
+        var change = () => challenge.ChangeHiddenPoint(point.Id, Guid.NewGuid(), new Location(45.2509, 19.8641));
+
+        change.Should().Throw<DomainException>();
+        point.ImageId.Should().Be(imageId);
+        point.Location.Should().Be(new Location(45.2522, 19.8615));
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Published)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Hidden_point_of_a_challenge_that_is_not_a_draft_cannot_be_removed(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        var removal = () => challenge.RemoveHiddenPoint(challenge.HiddenPoints[0].Id);
+
+        removal.Should().Throw<DomainException>();
         challenge.HiddenPoints.Should().HaveCount(1);
     }
 }
