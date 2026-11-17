@@ -31,6 +31,12 @@ const PIN_SETS: PinSet[] = [
 // The location the "Izmena postojeće lokacije" button pretends a key point already has.
 const EXISTING_LOCATION: MapPin = { latitude: 45.2517, longitude: 19.8369 };
 
+// The location the "Izmena udaljene lokacije" button pretends a key point already has,
+// far enough from the existing points that the map has to move to show it.
+const REMOTE_LOCATION: MapPin = { latitude: 44.8176, longitude: 20.4569 };
+
+const PICKING_PINS = [TRG_SLOBODE, DUNAVSKI_PARK, TVRDJAVA];
+
 @Component({
   selector: 'app-map-demo',
   imports: [MapView],
@@ -43,9 +49,11 @@ export class MapDemo {
   protected readonly showPath = signal(false);
   protected readonly routeLength = signal<number | null>(null);
 
-  protected readonly pickingPins = [TRG_SLOBODE, DUNAVSKI_PARK, TVRDJAVA];
-  protected readonly editing = signal(false);
-  protected readonly initialLocation = computed(() => (this.editing() ? EXISTING_LOCATION : null));
+  protected readonly existingLocation = EXISTING_LOCATION;
+  protected readonly remoteLocation = REMOTE_LOCATION;
+  protected readonly showPickingPins = signal(true);
+  protected readonly pickingPins = computed(() => (this.showPickingPins() ? PICKING_PINS : []));
+  protected readonly initialLocation = signal<MapPin | null>(null);
   protected readonly location = signal<MapPin | null>(null);
   protected readonly lastReceived = signal<MapPin | null>(null);
 
@@ -62,13 +70,17 @@ export class MapDemo {
     this.routeLength.set(null);
   }
 
-  protected setEditing(editing: boolean) {
-    if (editing === this.editing()) {
+  protected setInitialLocation(initialLocation: MapPin | null) {
+    if (initialLocation === this.initialLocation()) {
       return;
     }
-    this.editing.set(editing);
-    this.location.set(editing ? EXISTING_LOCATION : null);
+    this.initialLocation.set(initialLocation);
+    this.location.set(initialLocation);
     this.lastReceived.set(null);
+  }
+
+  protected togglePickingPins() {
+    this.showPickingPins.set(!this.showPickingPins());
   }
 
   protected receiveLocation(location: MapPin) {

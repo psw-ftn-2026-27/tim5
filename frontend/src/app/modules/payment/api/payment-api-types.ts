@@ -1,4 +1,6 @@
-export type TransactionType = 'Deposit' | 'Purchase';
+export type TransactionType = 'Deposit' | 'Purchase' | 'GiftCardPurchase';
+
+export type GiftCardStatus = 'Valid' | 'Redeemed' | 'Expired';
 
 export interface TransactionDto {
   type: TransactionType;
@@ -7,6 +9,7 @@ export interface TransactionDto {
   occurredAt: string;
   isReversed: boolean;
   reversedAt: string | null;
+  giftCardId: string | null;
 }
 
 export interface WalletDto {
@@ -85,4 +88,20 @@ export interface CouponDto {
   discountPercentage: number;
   expiresAt: string;
   productId: string | null;
+}
+
+export interface PurchaseGiftCardDto {
+  recipientUsername: string;
+  amount: number;
+  message: string;
+}
+
+export interface GiftCardDto {
+  id: string;
+  otherPartyUsername: string | null;
+  amount: number;
+  message: string;
+  createdAt: string;
+  expiresAt: string;
+  status: GiftCardStatus;
 }

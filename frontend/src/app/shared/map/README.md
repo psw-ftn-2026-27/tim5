@@ -34,6 +34,12 @@ export interface MapPin {
 ## Ponašanje
 
 - Pogled se podešava tako da se svi pinovi vide. Bez pinova mapa je centrirana na Novi Sad.
+- U režimu biranja pogled obuhvata i `initialLocation`. Kada je ona jedina tačka, mapa je
+  centrirana na nju, sa istim najvećim uvećanjem kao kod pinova. Van režima biranja
+  `initialLocation` ne utiče na pogled.
+- Dok korisnik ne klikne na mapu, pogled se ponovo podešava svaki put kad stigne nova
+  `initialLocation` (na primer kad se sačuvana lokacija učita sa servera). Posle prvog klika
+  promena `initialLocation` ne pomera pogled, pa korisnik vidi mapu kako ju je ostavio.
 - Putanja je **pešačka ruta po ulicama** od prvog do poslednjeg pina, redom kojim su
   predati, bez povratka na prvi. Računa je spoljni servis (javni OSRM server sa pešačkim
   profilom, `routing.openstreetmap.de`), pa je za nju potreban internet.
@@ -57,6 +63,12 @@ export interface MapPin {
 - Van režima biranja klik ne postavlja pin i ništa ne javlja.
 - Lokacija se menja samo klikom, ne prevlačenjem. Poruku „lokacija nije izabrana”, validaciju
   i čuvanje radi forma koja koristi komponentu.
+- U `pins` stavi samo **ostale** tačke (npr. druge ključne tačke ture). Lokaciju koja se bira ne
+  dodaj u `pins`, nego je predaj kao `initialLocation`. Inače se posle svakog klika promene
+  pinovi, pa pogled skoči na izabranu tačku, a ona se nacrta dvaput.
+- `pins` neka bude stabilan niz: signal ili `computed` koji vraća nov niz samo kada se tačke
+  zaista promene. Komponenta promenu prepoznaje po referenci, pa svaki nov niz, i sa istim
+  sadržajem, ponovo podešava pogled (i ponovo računa putanju, ako je uključena).
 
 ## Primer bez putanje
 

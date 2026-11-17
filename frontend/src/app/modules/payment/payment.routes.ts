@@ -7,6 +7,7 @@ import { ProductDetails } from './shopping/product-details/product-details';
 import { ShoppingCart } from './shopping/shopping-cart/shopping-cart';
 import { MyWallet } from './wallet-reading/my-wallet/my-wallet';
 import { CouponCreation } from './coupon-creating/coupon-creation/coupon-creation';
+import { GiftCards } from './gift-card-purchasing/gift-cards/gift-cards';
 
 export const paymentRoutes: Routes = [
   { path: '', component: PaymentHome },
@@ -17,4 +18,5 @@ export const paymentRoutes: Routes = [
   { path: 'cart', component: ShoppingCart },
   { path: 'purchases', component: PurchasedTours },
   { path: 'coupons', component: CouponCreation },
+  { path: 'gift-cards', component: GiftCards },
 ];

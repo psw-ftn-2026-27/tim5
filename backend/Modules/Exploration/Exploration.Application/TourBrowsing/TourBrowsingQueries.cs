@@ -6,11 +6,15 @@ namespace Exploration.Application.TourBrowsing;
 
 public sealed class TourBrowsingQueries
 {
-    private readonly ITourReadRepository _tourReadRepository;
+    private readonly ITourSearchReadRepository _tourSearchReadRepository;
+    private readonly ITourPreviewReadRepository _tourPreviewReadRepository;
 
-    public TourBrowsingQueries(ITourReadRepository tourReadRepository)
+    public TourBrowsingQueries(
+        ITourSearchReadRepository tourSearchReadRepository,
+        ITourPreviewReadRepository tourPreviewReadRepository)
     {
-        _tourReadRepository = tourReadRepository;
+        _tourSearchReadRepository = tourSearchReadRepository;
+        _tourPreviewReadRepository = tourPreviewReadRepository;
     }
 
     public Task<PageResult<TourDto>> GetPublishedAsync(TourSearchCriteriaDto criteria, int page, int pageSize)
@@ -18,12 +22,12 @@ public sealed class TourBrowsingQueries
         page = Math.Max(page, 1);
         pageSize = Math.Clamp(pageSize, 1, 100);
 
-        return _tourReadRepository.GetPublishedAsync(criteria, page, pageSize);
+        return _tourSearchReadRepository.GetPublishedAsync(criteria, page, pageSize);
     }
 
     public async Task<TourPreviewDto> GetPublishedTourPreviewAsync(Guid tourId)
     {
-        var preview = await _tourReadRepository.GetPublishedPreviewAsync(tourId);
+        var preview = await _tourPreviewReadRepository.GetPublishedPreviewAsync(tourId);
         if (preview is null)
         {
             throw new NotFoundException($"Tour {tourId} does not exist.");
