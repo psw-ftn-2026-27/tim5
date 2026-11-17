@@ -1,5 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Exploration.Infrastructure.Persistence;
+using Exploration.Tests.Integration.Seeds;
 using Identity.Infrastructure;
 using Identity.Tests.Integration.Seeds;
 using Payment.Infrastructure.Persistence;
@@ -29,5 +31,6 @@ public abstract class BaseIntegrationTest
         Factory = factory;
         Factory.Reseed<PaymentDbContext>(PaymentSeed.All);
         Factory.Reseed<IdentityModuleDbContext>(IdentitySeed.All);
+        Factory.Reseed<ExplorationDbContext>(ExplorationSeed.All);
     }
 }

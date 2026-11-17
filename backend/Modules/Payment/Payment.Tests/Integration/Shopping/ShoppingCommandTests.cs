@@ -216,6 +216,29 @@ public class ShoppingCommandTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task Paying_a_cart_with_a_tour_archived_in_exploration_is_rejected_and_leaves_the_cart_the_wallet_and_the_tokens_unchanged()
+    {
+        var seededCart = ShoppingCartSeed.BuyersCartWithArchivedTour;
+        var seededWallet = WalletSeed.BuyersWalletWithArchivedTourInCart;
+        var client = Factory.CreateClientFor(seededCart.TouristId, "explorer");
+        using var arrangeContext = Factory.CreateContext<PaymentDbContext>();
+        var transactionCountBefore = arrangeContext.Wallets.Single(wallet => wallet.Id == seededWallet.Id).Transactions.Count;
+        var tokenCountBefore = arrangeContext.TourPurchaseTokens.Count();
+
+        var response = await client.PostAsync("/api/payment/cart/checkout", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        using var assertContext = Factory.CreateContext<PaymentDbContext>();
+        assertContext.ShoppingCarts.Single(cart => cart.Id == seededCart.Id).Items
+            .Select(item => item.EntityId)
+            .Should().BeEquivalentTo(seededCart.Items.Select(item => item.EntityId));
+        var storedWallet = assertContext.Wallets.Single(wallet => wallet.Id == seededWallet.Id);
+        storedWallet.Balance.Should().Be(seededWallet.Balance);
+        storedWallet.Transactions.Should().HaveCount(transactionCountBefore);
+        assertContext.TourPurchaseTokens.Count().Should().Be(tokenCountBefore);
+    }
+
+    [Fact]
     public async Task Paying_for_a_tourist_without_a_wallet_is_rejected_and_creates_no_wallet()
     {
         var seededCart = ShoppingCartSeed.CartWithTwoTours;
