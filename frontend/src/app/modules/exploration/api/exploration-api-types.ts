@@ -148,4 +148,18 @@ export interface TourPreviewDto {
   lengthInKm: number | null;
   transportTimes: TransportTimeDto[];
   publicKeyPoints: PublicKeyPointDto[];
+  isPurchased: boolean;
+  hasActiveExecution: boolean;
+}
+
+export interface NextKeyPointDto {
+  name: string;
+  location: LocationDto;
+}
+
+export interface ActiveTourExecutionDto {
+  tourId: string;
+  tourName: string;
+  currentPosition: LocationDto;
+  nextKeyPoint: NextKeyPointDto;
 }

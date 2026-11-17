@@ -155,6 +155,17 @@ public sealed class Tour : AggregateRoot
         LengthInKm = km;
     }
 
+    // A buyer keeps the right to walk a tour after the author archives it.
+    public bool IsAvailableForExecution()
+    {
+        return Status is TourStatus.Published or TourStatus.Archived;
+    }
+
+    public KeyPoint? FirstKeyPoint()
+    {
+        return _keyPoints.MinBy(keyPoint => keyPoint.Order);
+    }
+
     private void EnsureKeyPointsCanChange()
     {
         if (Status != TourStatus.Draft)

@@ -39,7 +39,31 @@
       </ul>
     }
 
-    <p><a class="button button--primary" [routerLink]="['/payment/products', current.id]">Buy</a></p>
+    @if (current.hasActiveExecution) {
+      <p class="meta">
+        You already have an active tour. <a routerLink="/exploration/execution">Go to the active tour</a>
+      </p>
+    } @else if (current.isPurchased) {
+      <div class="actions">
+        <button
+          class="button button--primary"
+          type="button"
+          [disabled]="pending()"
+          (click)="start(current.id)"
+        >
+          Start tour
+        </button>
+      </div>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+        @if (needsPosition()) {
+          <p><a routerLink="/exploration/simulator">Set your position</a></p>
+        }
+      }
+    } @else {
+      <p><a class="button button--primary" [routerLink]="['/payment/products', current.id]">Buy</a></p>
+    }
 
     <h2>Key points</h2>
 

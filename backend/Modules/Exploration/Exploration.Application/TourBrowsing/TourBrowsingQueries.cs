@@ -33,9 +33,11 @@ public sealed class TourBrowsingQueries
         return await GetPricesThenPageAsync(criteria, page, pageSize);
     }
 
-    public async Task<TourPreviewDto> GetPublishedTourPreviewAsync(Guid tourId)
+    // An archived tour stays visible to a tourist who bought it, so they can still start it.
+    public async Task<TourPreviewDto> GetTourPreviewAsync(Guid tourId, Guid userId)
     {
-        var preview = await _tourPreviewReadRepository.GetPublishedPreviewAsync(tourId);
+        var isPurchased = await _paymentApi.HasPurchasedAsync(userId, tourId);
+        var preview = await _tourPreviewReadRepository.GetPreviewAsync(tourId, userId, isPurchased);
         if (preview is null)
         {
             throw new NotFoundException($"Tour {tourId} does not exist.");

@@ -349,4 +349,48 @@ public class TourTests
         tour.Status.Should().Be(TourStatus.Published);
         tour.LengthInKm.Should().BeNull();
     }
+
+    [Fact]
+    public void Archived_tour_is_available_for_execution()
+    {
+        var tour = CreatePublishedTour();
+        tour.Archive();
+
+        var isAvailable = tour.IsAvailableForExecution();
+
+        isAvailable.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Draft_tour_is_not_available_for_execution()
+    {
+        var tour = CreateMeasuredDraftWithThreeKeyPoints();
+
+        var isAvailable = tour.IsAvailableForExecution();
+
+        isAvailable.Should().BeFalse();
+    }
+
+    [Fact]
+    public void First_key_point_is_the_one_with_the_lowest_order()
+    {
+        var tour = CreateMeasuredDraftWithThreeKeyPoints();
+        var lowestOrder = tour.KeyPoints.MinBy(keyPoint => keyPoint.Order)!;
+
+        var first = tour.FirstKeyPoint();
+
+        first.Should().BeSameAs(lowestOrder);
+    }
+
+    [Fact]
+    public void First_key_point_follows_the_order_after_the_first_one_is_removed()
+    {
+        var tour = CreateMeasuredDraftWithThreeKeyPoints();
+        var second = tour.KeyPoints[1];
+        tour.RemoveKeyPoint(tour.KeyPoints[0].Id);
+
+        var first = tour.FirstKeyPoint();
+
+        first.Should().BeSameAs(second);
+    }
 }

@@ -11,4 +11,6 @@ public sealed record TourPreviewDto(
     List<string> Tags,
     decimal? LengthInKm,
     List<TransportTimeDto> TransportTimes,
-    List<PublicKeyPointDto> PublicKeyPoints);
+    List<PublicKeyPointDto> PublicKeyPoints,
+    bool IsPurchased,
+    bool HasActiveExecution);

@@ -1,6 +1,8 @@
 ﻿using Exploration.Application;
+using Exploration.Domain.TourExecutions;
 using Exploration.Domain.TouristPositions;
 using Exploration.Domain.Tours;
+using Exploration.Infrastructure.Persistence.TourExecutions;
 using Exploration.Infrastructure.Persistence.TouristPositions;
 using Exploration.Infrastructure.Persistence.Tours;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +18,7 @@ internal sealed class ExplorationDbContext : DbContext, IUnitOfWork
     public DbSet<Tour> Tours => Set<Tour>();
     public DbSet<UploadedImage> UploadedImages => Set<UploadedImage>();
     public DbSet<TouristPosition> TouristPositions => Set<TouristPosition>();
+    public DbSet<TourExecution> TourExecutions => Set<TourExecution>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -23,5 +26,6 @@ internal sealed class ExplorationDbContext : DbContext, IUnitOfWork
         builder.ConfigureTours();
         builder.ConfigureUploadedImages();
         builder.ConfigureTouristPositions();
+        builder.ConfigureTourExecutions();
     }
 }
