@@ -1,3 +1,4 @@
+using Exploration.Contracts;
 using Exploration.Domain.Tours;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,7 +62,7 @@ internal sealed class ExplorationModuleInitializer : IHostedService
 
     private static List<Tour> CreateDemoTours(List<UploadedImage> images)
     {
-        var fortress = new Tour(FirstExplorer, "Šetnja Petrovaradinskom tvrđavom",
+        var fortress = new Tour(WellKnownTours.PetrovaradinFortressWalk, FirstExplorer, "Šetnja Petrovaradinskom tvrđavom",
             "Šetnja počinje na Gornjem platou Petrovaradinske tvrđave, vodi pored Sahat kule i podzemnih vojnih galerija, a završava se pogledom na Dunav i stari deo Novog Sada.",
             TourDifficulty.Easy, ["istorija", "priroda"], new GroupSize(1, 10));
         fortress.AddTransportTime(TransportMode.Walking, 120);
@@ -69,9 +70,9 @@ internal sealed class ExplorationModuleInitializer : IHostedService
             images[0].Id, "Ispod kule počinje ulaz u podzemne vojne galerije.", true, new Location(45.2527, 19.8619));
         fortress.AddKeyPoint("Vidikovac nad Dunavom", "Sa ivice Gornjeg platoa pruža se pogled na Dunav, Varadinski most i stari deo Novog Sada.",
             images[1].Id, null, false, new Location(45.2533, 19.8608));
-        fortress.Publish(new Price(true, 0));
+        fortress.Publish(new Price(false, 300));
 
-        var fruskaGora = new Tour(FirstExplorer, "Biciklom preko Fruške gore",
+        var fruskaGora = new Tour(WellKnownTours.FruskaGoraBikeRide, FirstExplorer, "Biciklom preko Fruške gore",
             "Ruta vodi od Sremske Kamenice preko Popovice do Iriškog venca, pored manastira Beočin i vidikovaca sa kojih se vidi ceo Srem, uz nekoliko dužih uspona.",
             TourDifficulty.Hard, ["biciklizam", "planina"], new GroupSize(2, 6));
         fruskaGora.AddTransportTime(TransportMode.Bicycle, 240);
@@ -81,7 +82,7 @@ internal sealed class ExplorationModuleInitializer : IHostedService
             images[3].Id, "Sa vidikovca se po vedrom danu vidi i Avala.", false, new Location(45.1466, 19.8547));
         fruskaGora.Publish(new Price(true, 0));
 
-        var cityCenter = new Tour(FirstExplorer, "Obilazak centra grada",
+        var cityCenter = new Tour(WellKnownTours.CityCenterWalk, FirstExplorer, "Obilazak centra grada",
             "Kratak obilazak Trga slobode, Dunavske ulice i Dunavskog parka.",
             TourDifficulty.Moderate, ["grad"], new GroupSize(1, 20));
 

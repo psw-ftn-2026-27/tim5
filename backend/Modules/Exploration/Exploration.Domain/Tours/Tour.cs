@@ -32,7 +32,16 @@ public sealed class Tour : AggregateRoot
     }
 
     public Tour(Guid authorId, string name, string description, TourDifficulty difficulty, List<string> tags, GroupSize groupSize)
-        : base(Guid.NewGuid())
+        : this(Guid.NewGuid(), authorId, name, description, difficulty, tags, groupSize)
+    {
+    }
+
+    /// <summary>
+    /// Only for the development seed, whose demo tours have fixed IDs that other modules
+    /// refer to. Everywhere else the tour generates its own ID.
+    /// </summary>
+    public Tour(Guid id, Guid authorId, string name, string description, TourDifficulty difficulty, List<string> tags, GroupSize groupSize)
+        : base(id)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
