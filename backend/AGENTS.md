@@ -130,7 +130,8 @@ Related use cases form a group with its own folder and use-case-named classes:
   injects `I<Aggregate>Repository` and `IUnitOfWork`. A command method loads the
   aggregate, calls a method on it, and saves once.
 - `<UseCaseGroup>Queries` for reads. Public sealed class, no interface. Constructor
-  injects `I<Aggregate>ReadRepository`, plus `I<Aggregate>Repository` when a read needs a
+  injects `I<Aggregate>ReadRepository` (or its group's read repositories once that one is
+  split, see **Read side**), plus `I<Aggregate>Repository` when a read needs a
   domain-computed value, plus other modules' contracts when it composes data across
   modules. Returns DTOs, never mutates, never saves (an architecture test forbids a
   `*Queries` class from depending on `IUnitOfWork`).
@@ -158,12 +159,14 @@ Interfaces that do belong, all declared in `Application` and implemented in
 `Infrastructure`:
 
 - `I<Aggregate>Repository` for the write side, returning aggregates
-- `I<Aggregate>ReadRepository` for the read side, returning DTOs
+- `I<Aggregate>ReadRepository` for the read side, returning DTOs (split by use case once it
+  outgrows itself, see **Read side**)
 - `IUnitOfWork`
 
 Plus `I<Name>Api` in `Contracts`, implemented in `Application`.
 
-**Repositories.** One per aggregate root, concrete and named. No `IRepository<T>`, no
+**Repositories.** One per aggregate root, concrete and named, with its interface in the
+aggregate-named folder. The write repository is never split. No `IRepository<T>`, no
 `Find(Expression<Func<T, bool>>)`, no `IQueryable` crossing out of `Infrastructure`. Methods
 are named after what the module actually needs and return aggregates.
 
@@ -175,6 +178,20 @@ Commands call it exactly once, at the end. This is the transaction boundary.
 projecting directly to DTOs. Aggregates may also expose side-effect-free
 query methods that return values derived from their own state; commands use them as guards,
 and a read use case may reuse them instead of duplicating the derivation in SQL.
+
+By default there is one `I<Aggregate>ReadRepository` per aggregate, in the aggregate-named
+folder. When it outgrows itself (the maintainability analyzer flags a metric such as CBO on
+it or its implementation), it may be split by use case:
+
+- Each new interface serves the reads of one use-case group and lives in that group's
+  folder. It is named after the group (`ITourAuthoringReadRepository`) or, when a group
+  needs more than one, after the use case it serves (`ITourPreviewReadRepository`,
+  `ITourSearchReadRepository` in `TourBrowsing/`).
+- Reads that belong to no single group, such as those behind the module's contract, stay
+  in `I<Aggregate>ReadRepository` in the aggregate-named folder.
+- Implementations stay in `Infrastructure/Persistence/<Aggregate>/`, one class per interface.
+- Split only when the analyzer flags it, not in advance. The platform team approves the
+  split in the pull request.
 
 Deciding how to answer a request, in order:
 
