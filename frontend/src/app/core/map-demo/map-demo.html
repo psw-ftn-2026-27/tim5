@@ -51,25 +51,40 @@
     <button
       class="button"
       type="button"
-      [class.button--primary]="!editing()"
-      (click)="setEditing(false)"
+      [class.button--primary]="initialLocation() === null"
+      (click)="setInitialLocation(null)"
     >
       Nova lokacija
     </button>
     <button
       class="button"
       type="button"
-      [class.button--primary]="editing()"
-      (click)="setEditing(true)"
+      [class.button--primary]="initialLocation() === existingLocation"
+      (click)="setInitialLocation(existingLocation)"
     >
       Izmena postojeće lokacije
+    </button>
+    <button
+      class="button"
+      type="button"
+      [class.button--primary]="initialLocation() === remoteLocation"
+      (click)="setInitialLocation(remoteLocation)"
+    >
+      Izmena udaljene lokacije
+    </button>
+    <button class="button" type="button" (click)="togglePickingPins()">
+      @if (showPickingPins()) {
+        Sakrij postojeće tačke
+      } @else {
+        Prikaži postojeće tačke
+      }
     </button>
   </div>
 
   <div class="picking-layout">
     <app-map
       class="picking-map"
-      [pins]="pickingPins"
+      [pins]="pickingPins()"
       [picking]="true"
       [initialLocation]="initialLocation()"
       (locationPicked)="receiveLocation($event)"

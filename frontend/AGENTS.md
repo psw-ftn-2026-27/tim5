@@ -33,6 +33,7 @@ frontend/src/
                              app.routes.ts                                    [platform]
     shared/
       analytics/             the Analytics service and its event catalog         [platform]
+      map/                   MapView: OpenStreetMap with pins, route, location picking [platform]
       util/
       api/                   shared types (PageResult, ProblemDetails),
                              mirror the server, no client-only fields          [platform]
@@ -162,5 +163,8 @@ assigned to the platform team, and misalignment is an accepted learning experien
   components, which take `input()`s and raise `output()`s and inject nothing.
 - Analytics events are recorded only through `shared/analytics`, never by calling GA
   directly; see the guide in `src/app/shared/analytics/README.md`.
+- Maps are shown and locations picked only through the shared `MapView` in
+  `shared/map/`, never by using Leaflet directly; see the guide in
+  `src/app/shared/map/README.md`.
 - Do not produce Vitest tests unless specifically instructed. Frontend testing is not
   taught; it is a platform-team assignment.
