@@ -1,6 +1,7 @@
-.actions {
-  display: flex;
-  gap: var(--space-2);
+// Pages of the Exploration module use the module's own accent.
+:host {
+  --color-accent: var(--color-accent-exploration);
+  --color-accent-text: var(--color-accent-exploration-text);
 }
 
 .actions .button {
@@ -10,8 +11,4 @@
 .time {
   margin-right: var(--space-2);
   white-space: nowrap;
-}
-
-form.card {
-  max-width: 24rem;
 }

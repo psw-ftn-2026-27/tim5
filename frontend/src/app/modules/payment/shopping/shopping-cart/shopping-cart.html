@@ -2,12 +2,12 @@
   <h1>Cart</h1>
 
   @if (cart.isLoading()) {
-    <p>Loading your cart...</p>
+    <p class="meta">Loading your cart...</p>
   } @else if (cart.error()) {
     <p class="error">Could not load your cart. Log in as a tourist and try again.</p>
   } @else if (cart.value(); as current) {
     @if (paid()) {
-      <p>Payment successful. <a routerLink="/payment/wallet">My wallet</a></p>
+      <p class="success">Payment successful. <a routerLink="/payment/wallet">My wallet</a></p>
     }
 
     @if (error()) {
@@ -35,7 +35,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="3">Your cart is empty.</td>
+            <td colspan="3" class="meta">Your cart is empty.</td>
           </tr>
         }
       </tbody>
@@ -44,7 +44,7 @@
     <p class="total">Total: {{ current.total }} EC</p>
 
     @if (wallet.isLoading()) {
-      <p>Loading your balance...</p>
+      <p class="meta">Loading your balance...</p>
     } @else if (wallet.error()) {
       <p class="error">Could not load your balance.</p>
     } @else if (wallet.value(); as currentWallet) {

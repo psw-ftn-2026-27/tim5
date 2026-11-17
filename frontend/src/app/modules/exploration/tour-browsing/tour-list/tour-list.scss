@@ -1,7 +1,7 @@
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
+// Pages of the Exploration module use the module's own accent.
+:host {
+  --color-accent: var(--color-accent-exploration);
+  --color-accent-text: var(--color-accent-exploration-text);
 }
 
 fieldset {
@@ -17,14 +17,4 @@ fieldset {
 legend {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-}
-
-.links,
-.paging {
-  display: flex;
-  gap: var(--space-4);
-}
-
-.paging {
-  align-items: center;
 }

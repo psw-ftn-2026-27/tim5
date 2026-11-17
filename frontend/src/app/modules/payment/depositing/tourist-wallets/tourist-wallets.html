@@ -1,7 +1,7 @@
 <div class="stack">
   <h1>Tourist wallets</h1>
 
-  <form class="search" (submit)="search($event)">
+  <form class="toolbar" (submit)="search($event)">
     <div class="field">
       <label for="username">Username</label>
       <input id="username" type="search" [formField]="form.username" />
@@ -13,7 +13,7 @@
   </form>
 
   @if (success()) {
-    <p>{{ success() }}</p>
+    <p class="success">{{ success() }}</p>
   }
 
   @if (error()) {
@@ -21,12 +21,12 @@
   }
 
   @if (tourists.isLoading()) {
-    <p>Searching users...</p>
+    <p class="meta">Searching users...</p>
   } @else if (tourists.error()) {
     <p class="error">Search failed. Sign in as an administrator and try again.</p>
   } @else if (tourists.hasValue()) {
     @if (tourists.value().length === 0) {
-      <p>No users with that username.</p>
+      <p class="meta">No users with that username.</p>
     } @else {
       <table class="table">
         <thead>

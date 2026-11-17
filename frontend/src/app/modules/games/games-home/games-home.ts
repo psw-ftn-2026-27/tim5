@@ -4,10 +4,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   imports: [RouterLink],
   selector: 'app-games-home',
-  template: `
-    <h1>Games</h1>
-    <p><a routerLink="/games/quizzes">Quizzes</a></p>
-    <p><a routerLink="/games/overview">All challenges</a></p>
-  `,
+  styleUrl: './games-home.scss',
+  templateUrl: './games-home.html',
 })
 export class GamesHome {}

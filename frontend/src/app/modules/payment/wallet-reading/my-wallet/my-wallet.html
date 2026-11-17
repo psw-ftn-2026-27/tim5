@@ -2,7 +2,7 @@
   <h1>My wallet</h1>
 
   @if (wallet.isLoading()) {
-    <p>Loading your wallet...</p>
+    <p class="meta">Loading your wallet...</p>
   } @else if (wallet.error()) {
     <p class="error">Could not load your wallet. Log in and try again.</p>
   } @else if (wallet.value(); as current) {
@@ -33,13 +33,14 @@
             <td>{{ localTime(transaction.occurredAt) }}</td>
             <td>
               @if (transaction.reversedAt) {
-                Reversed at {{ localTime(transaction.reversedAt) }}
+                <span class="badge">Reversed</span>
+                <span class="meta">{{ localTime(transaction.reversedAt) }}</span>
               }
             </td>
           </tr>
         } @empty {
           <tr>
-            <td colspan="5">You have no transactions yet.</td>
+            <td colspan="5" class="meta">You have no transactions yet.</td>
           </tr>
         }
       </tbody>
