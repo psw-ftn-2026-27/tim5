@@ -2,7 +2,7 @@
   <p><a routerLink="/payment/tourists">Back to tourists</a></p>
 
   @if (tourist.isLoading()) {
-    <p>Loading deposits...</p>
+    <p class="meta">Loading deposits...</p>
   } @else if (tourist.error()) {
     <p class="error">Could not load the deposits. Sign in as an administrator and try again.</p>
   } @else if (tourist.value(); as current) {
@@ -11,7 +11,7 @@
     <p class="balance">Balance: {{ current.balance }} EC</p>
 
     @if (success()) {
-      <p>{{ success() }}</p>
+      <p class="success">{{ success() }}</p>
     }
 
     @if (error()) {
@@ -19,7 +19,7 @@
     }
 
     @if (current.deposits.length === 0) {
-      <p>This tourist has no deposits yet.</p>
+      <p class="meta">This tourist has no deposits yet.</p>
     } @else {
       <table class="table">
         <thead>
@@ -37,21 +37,22 @@
               <td>{{ localTime(deposit.occurredAt) }}</td>
               <td>
                 @if (deposit.reversedAt) {
-                  Reversed at {{ localTime(deposit.reversedAt) }}
+                  <span class="badge">Reversed</span>
+                  <span class="meta">{{ localTime(deposit.reversedAt) }}</span>
                 } @else {
-                  Active
+                  <span class="badge">Active</span>
                 }
               </td>
               <td>
                 @if (!deposit.isReversed) {
                   @if (confirmingId() === deposit.id) {
-                    <div class="confirm">
+                    <div class="actions">
                       <span>
                         Reverse the deposit of {{ deposit.amount }} EC made at
                         {{ localTime(deposit.occurredAt) }}?
                       </span>
                       <button
-                        class="button button--primary"
+                        class="button button--danger"
                         type="button"
                         [disabled]="pending()"
                         (click)="reverse(deposit)"

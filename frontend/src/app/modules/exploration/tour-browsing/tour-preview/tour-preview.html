@@ -2,7 +2,7 @@
   <p><a routerLink="/exploration">Back to tours</a></p>
 
   @if (tour.isLoading()) {
-    <p>Loading the tour...</p>
+    <p class="meta">Loading the tour...</p>
   } @else if (tour.error()) {
     <p class="error">Tour does not exist.</p>
   } @else if (tour.value(); as current) {

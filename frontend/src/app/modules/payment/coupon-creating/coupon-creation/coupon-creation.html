@@ -7,12 +7,12 @@
 
   @if (couponId()) {
     @if (coupon.isLoading()) {
-      <p>Loading your coupon...</p>
+      <p class="meta">Loading your coupon...</p>
     } @else if (coupon.error()) {
       <p class="error" role="alert">The coupon was created, but its details could not be loaded.</p>
       <button class="button" type="button" (click)="retryLoadingCoupon()">Retry loading coupon</button>
     } @else if (coupon.value(); as createdCoupon) {
-      <section class="card coupon-result" aria-labelledby="coupon-result-title">
+      <section class="card card--narrow stack" aria-labelledby="coupon-result-title">
         <h2 id="coupon-result-title">Coupon created</h2>
         <p>Your coupon code:</p>
         <p class="coupon-code"><strong>{{ createdCoupon.code }}</strong></p>
@@ -23,10 +23,12 @@
         } @else {
           <p>Applies to: all of your products</p>
         }
-        <button class="button" type="button" (click)="copyCode(createdCoupon.code)">
-          {{ copied() ? 'Copied' : 'Copy code' }}
-        </button>
-        <button class="button" type="button" (click)="createAnother()">Create another coupon</button>
+        <div class="actions">
+          <button class="button" type="button" (click)="copyCode(createdCoupon.code)">
+            {{ copied() ? 'Copied' : 'Copy code' }}
+          </button>
+          <button class="button" type="button" (click)="createAnother()">Create another coupon</button>
+        </div>
       </section>
     }
   } @else {
@@ -37,11 +39,11 @@
         Create coupon
       </button>
     } @else {
-      <section class="card stack" aria-labelledby="create-coupon-title">
+      <section class="card card--narrow stack" aria-labelledby="create-coupon-title">
         <h2 id="create-coupon-title">Create coupon</h2>
 
         @if (products.isLoading()) {
-          <p>Loading your products...</p>
+          <p class="meta">Loading your products...</p>
         } @else if (products.error()) {
           <p class="error" role="alert">Could not load your products. Try again later.</p>
         }

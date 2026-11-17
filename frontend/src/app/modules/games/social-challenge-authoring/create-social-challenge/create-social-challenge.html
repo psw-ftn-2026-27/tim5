@@ -1,4 +1,4 @@
-<div class="card stack">
+<div class="card card--narrow stack">
   <h1>Create challenge</h1>
 
   <form class="stack" (submit)="submit($event)">
@@ -80,7 +80,7 @@
       <button class="button button--primary" type="submit" [disabled]="!form().valid() || pending()">
         Create
       </button>
-      <a routerLink="/games/challenges">Cancel</a>
+      <a class="button" routerLink="/games/challenges">Cancel</a>
     </div>
   </form>
 </div>

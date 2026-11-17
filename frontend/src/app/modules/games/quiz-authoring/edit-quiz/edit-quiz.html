@@ -1,6 +1,6 @@
-<div class="card stack">
+<div class="card card--narrow stack">
   @if (quiz.isLoading()) {
-    <p>Loading quiz...</p>
+    <p class="meta">Loading quiz...</p>
   } @else if (quiz.error()) {
     <p class="error">Could not load the quiz. It may no longer exist.</p>
     <p><a routerLink="/games/quizzes">Back to quizzes</a></p>
@@ -13,7 +13,7 @@
           <button class="button button--primary" type="button" (click)="startEdit(loadedQuiz)">
             Start editing
           </button>
-          <a routerLink="/games/quizzes">Cancel</a>
+          <a class="button" routerLink="/games/quizzes">Cancel</a>
         </div>
       } @else {
         <form class="stack" (submit)="save($event)">
@@ -72,7 +72,7 @@
           <h2>Questions</h2>
 
           @for (question of form.questions; track $index; let questionIndex = $index) {
-            <div class="question stack">
+            <div class="card stack">
               <div class="field">
                 <label [for]="'question-' + questionIndex">Question {{ questionIndex + 1 }}</label>
                 <input [id]="'question-' + questionIndex" type="text" [formField]="question.text" />
@@ -117,7 +117,7 @@
             <button class="button button--primary" type="submit" [disabled]="!form().valid() || pending()">
               Save
             </button>
-            <a routerLink="/games/quizzes">Cancel</a>
+            <a class="button" routerLink="/games/quizzes">Cancel</a>
           </div>
         </form>
       }

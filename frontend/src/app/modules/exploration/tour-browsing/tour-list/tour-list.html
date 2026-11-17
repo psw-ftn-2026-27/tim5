@@ -10,7 +10,7 @@
   }
 
   <form class="card stack" (submit)="search($event)">
-    <div class="filters">
+    <div class="toolbar">
       <div class="field">
         <label for="name-filter">Part of the name</label>
         <input id="name-filter" type="search" [formField]="form.name" />
@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <div class="filters">
+    <div class="toolbar">
       <fieldset>
         <legend>Difficulty</legend>
         <label><input type="checkbox" [formField]="form.easy" /> Easy</label>
@@ -51,12 +51,12 @@
   </form>
 
   @if (tours.isLoading()) {
-    <p>Loading tours...</p>
+    <p class="meta">Loading tours...</p>
   } @else if (tours.error()) {
     <p class="error">Could not load tours. Log in and try again.</p>
   } @else if (tours.hasValue()) {
     @if (tours.value().items.length === 0) {
-      <p>No tours match your search.</p>
+      <p class="meta">No tours match your search.</p>
     } @else {
       <div class="grid">
         @for (tour of tours.value().items; track tour.id) {
@@ -66,7 +66,7 @@
 
       <p class="meta">Tours found: {{ tours.value().totalCount }}</p>
 
-      <div class="paging">
+      <div class="actions">
         <button class="button" type="button" [disabled]="page() === 1" (click)="previousPage()">
           Previous
         </button>

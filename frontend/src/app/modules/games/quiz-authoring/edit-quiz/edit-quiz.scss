@@ -1,12 +1,12 @@
-.card {
-  margin-inline: auto;
-  max-width: 40rem;
+// Pages of the Games module use the module's own accent.
+:host {
+  --color-accent: var(--color-accent-games);
+  --color-accent-text: var(--color-accent-games-text);
 }
 
-.question {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--space-4);
+// Wider than the global .card--narrow: an answer row holds a field, a checkbox and a button.
+.card--narrow {
+  max-width: 40rem;
 }
 
 .answer {
@@ -17,10 +17,4 @@
 
 .answer .field {
   flex: 1;
-}
-
-.actions {
-  align-items: center;
-  display: flex;
-  gap: var(--space-4);
 }
