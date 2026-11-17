@@ -88,6 +88,14 @@ internal sealed class TourReadRepository : ITourReadRepository
             .FirstOrDefaultAsync();
     }
 
+    public Task<List<Guid>> GetPublishedIdsAsync(IReadOnlyCollection<Guid> tourIds)
+    {
+        return _dbContext.Tours
+            .Where(tour => tourIds.Contains(tour.Id) && tour.Status == TourStatus.Published)
+            .Select(tour => tour.Id)
+            .ToListAsync();
+    }
+
     private static IQueryable<Tour> Filter(IQueryable<Tour> tours, TourSearchCriteriaDto criteria)
     {
         if (!string.IsNullOrWhiteSpace(criteria.Name))
