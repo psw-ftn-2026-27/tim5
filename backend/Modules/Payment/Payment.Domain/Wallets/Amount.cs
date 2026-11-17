@@ -10,9 +10,9 @@ public sealed record Amount
 
     public Amount(int value)
     {
-        if (value <= 0)
+        if (value < 0)
         {
-            throw new DomainException("An amount must be a positive whole number of EC.");
+            throw new DomainException("An amount must be zero or a positive whole number of EC.");
         }
 
         Value = value;

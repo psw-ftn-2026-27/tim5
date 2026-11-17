@@ -70,7 +70,7 @@ public sealed class BenefitCalculator
         var total = adjustedPrices.Sum();
         var walletItems = items
             .Select((item, index) => new { item, price = adjustedPrices[index] })
-            .Where(line => line.price > 0)
+            .Where(line => line.price > 0 || line.item.Price == 0)
             .Select(line => new PurchaseItem(line.item.EntityId, line.item.Name, new Amount(line.price)))
             .ToList();
 

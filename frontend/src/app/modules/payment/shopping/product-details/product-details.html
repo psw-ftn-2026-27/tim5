@@ -11,9 +11,7 @@
 
     <p class="price">Price: {{ current.price }} EC</p>
 
-    @if (current.price === 0) {
-      <p>This tour is not for sale.</p>
-    } @else if (isExplorer()) {
+    @if (isExplorer()) {
       @if (error()) {
         <p class="error">{{ error() }}</p>
       }

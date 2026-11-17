@@ -122,14 +122,25 @@ public class WalletTests
         wallet.Transactions.Should().HaveCount(2);
     }
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-10)]
-    public void An_amount_that_is_not_positive_is_rejected(int value)
+    [Fact]
+    public void A_negative_amount_is_rejected()
     {
-        var create = () => new Amount(value);
+        var create = () => new Amount(-10);
 
         create.Should().Throw<DomainException>();
+    }
+
+    [Fact]
+    public void A_deposit_of_zero_EC_is_rejected_and_changes_nothing()
+    {
+        var wallet = CreateWallet();
+        wallet.Deposit(new Amount(150), WellKnownUsers.Administrator);
+
+        var deposit = () => wallet.Deposit(new Amount(0), WellKnownUsers.Administrator);
+
+        deposit.Should().Throw<DomainException>();
+        wallet.Balance.Should().Be(150);
+        wallet.Transactions.Should().ContainSingle();
     }
 
     [Fact]
@@ -155,6 +166,26 @@ public class WalletTests
         var purchases = wallet.Transactions.Where(transaction => transaction.Type == TransactionType.Purchase).ToList();
         purchases.Select(purchase => new { purchase.EntityId, purchase.Name, Amount = purchase.Amount.Value, purchase.OccurredAt })
             .Should().BeEquivalentTo(tours.Select(tour => new { EntityId = (Guid?)tour.EntityId, Name = (string?)tour.Name, Amount = tour.Price.Value, OccurredAt = PaidAt }));
+    }
+
+    [Fact]
+    public void Purchase_of_a_paid_and_a_free_tour_lowers_the_balance_only_by_the_paid_one_and_records_a_purchase_for_both()
+    {
+        var wallet = CreateWallet();
+        wallet.Deposit(new Amount(500), WellKnownUsers.Administrator);
+        List<PurchaseItem> tours =
+        [
+            new(Guid.Parse("00000000-0000-0000-0006-000000000011"), "Petrovaradinska tvrdjava", new Amount(150)),
+            new(Guid.Parse("00000000-0000-0000-0006-000000000012"), "Dunavski kej", new Amount(0))
+        ];
+
+        wallet.Purchase(tours, PaidAt);
+
+        wallet.Balance.Should().Be(350);
+        wallet.Transactions
+            .Where(transaction => transaction.Type == TransactionType.Purchase)
+            .Select(purchase => new { purchase.EntityId, purchase.Name, Amount = purchase.Amount.Value })
+            .Should().BeEquivalentTo(tours.Select(tour => new { EntityId = (Guid?)tour.EntityId, Name = (string?)tour.Name, Amount = tour.Price.Value }));
     }
 
     [Fact]
