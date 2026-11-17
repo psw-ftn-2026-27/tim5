@@ -1,0 +1,113 @@
+<div class="stack">
+  <h1>Coupons</h1>
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
+  @if (couponId()) {
+    @if (coupon.isLoading()) {
+      <p>Loading your coupon...</p>
+    } @else if (coupon.error()) {
+      <p class="error" role="alert">The coupon was created, but its details could not be loaded.</p>
+      <button class="button" type="button" (click)="retryLoadingCoupon()">Retry loading coupon</button>
+    } @else if (coupon.value(); as createdCoupon) {
+      <section class="card coupon-result" aria-labelledby="coupon-result-title">
+        <h2 id="coupon-result-title">Coupon created</h2>
+        <p>Your coupon code:</p>
+        <p class="coupon-code"><strong>{{ createdCoupon.code }}</strong></p>
+        <p>Discount: {{ createdCoupon.discountPercentage }}%</p>
+        <p>Valid through: {{ createdCoupon.expiresAt }}</p>
+        @if (createdCoupon.productId) {
+          <p>Applies to: {{ productName(createdCoupon.productId) }}</p>
+        } @else {
+          <p>Applies to: all of your products</p>
+        }
+        <button class="button" type="button" (click)="copyCode(createdCoupon.code)">
+          {{ copied() ? 'Copied' : 'Copy code' }}
+        </button>
+        <button class="button" type="button" (click)="createAnother()">Create another coupon</button>
+      </section>
+    }
+  } @else {
+    <p>Create and share a discount code for one of your products or all of your products.</p>
+
+    @if (!showForm()) {
+      <button class="button button--primary" type="button" (click)="showForm.set(true)">
+        Create coupon
+      </button>
+    } @else {
+      <section class="card stack" aria-labelledby="create-coupon-title">
+        <h2 id="create-coupon-title">Create coupon</h2>
+
+        @if (products.isLoading()) {
+          <p>Loading your products...</p>
+        } @else if (products.error()) {
+          <p class="error" role="alert">Could not load your products. Try again later.</p>
+        }
+
+        <form class="stack" (submit)="submit($event)">
+          <div class="field">
+            <label for="discount-percentage">Discount percentage</label>
+            <input
+              id="discount-percentage"
+              type="number"
+              step="1"
+              [formField]="form.discountPercentage"
+            />
+            @if (form.discountPercentage().touched()) {
+              @for (message of form.discountPercentage().errors(); track $index) {
+                <p class="error">{{ message.message }}</p>
+              }
+            }
+          </div>
+
+          <div class="field">
+            <label for="expires-at">Valid through</label>
+            <input id="expires-at" type="date" [attr.min]="utcToday" [formField]="form.expiresAt" />
+            @if (form.expiresAt().touched()) {
+              @for (message of form.expiresAt().errors(); track $index) {
+                <p class="error">{{ message.message }}</p>
+              }
+            }
+          </div>
+
+          <div class="field">
+            <label for="coupon-scope">Applies to</label>
+            <select id="coupon-scope" [formField]="form.scope">
+              <option value="all">All my products</option>
+              <option value="product">One specific product</option>
+            </select>
+          </div>
+
+          @if (form.scope().value() === 'product') {
+            <div class="field">
+              <label for="coupon-product">Product</label>
+              <select id="coupon-product" [formField]="form.productId">
+                <option value="">Choose a product</option>
+                @for (product of products.value() ?? []; track product.productId) {
+                  <option [value]="product.productId">{{ product.name }}</option>
+                }
+              </select>
+              @if (productError()) {
+                <p class="error">{{ productError() }}</p>
+              }
+              @if (products.value()?.length === 0) {
+                <p class="meta">You do not have any products to select.</p>
+              }
+            </div>
+          }
+
+          <div class="actions">
+            <button class="button button--primary" type="submit" [disabled]="!canCreate() || products.isLoading() || products.error()">
+              {{ pending() ? 'Creating...' : 'Create coupon' }}
+            </button>
+            <button class="button" type="button" [disabled]="pending()" (click)="showForm.set(false)">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+    }
+  }
+</div>

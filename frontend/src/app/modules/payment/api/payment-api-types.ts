@@ -67,6 +67,29 @@ export interface PurchasedTourDto {
   purchasedAt: string;
 }
 
+export interface MyProductDto {
+  productId: string;
+  name: string;
+}
+
+export interface CreateCouponDto {
+  discountPercentage: number;
+  expiresAt: string;
+  productId: string | null;
+}
+
+export interface CreatedCouponDto {
+  id: string;
+}
+
+export interface CouponDto {
+  id: string;
+  code: string;
+  discountPercentage: number;
+  expiresAt: string;
+  productId: string | null;
+}
+
 export interface PurchaseGiftCardDto {
   recipientUsername: string;
   amount: number;

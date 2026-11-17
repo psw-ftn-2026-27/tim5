@@ -1,4 +1,5 @@
 using Shared.Domain;
+using Shared.Domain.Exceptions;
 
 namespace Payment.Domain.Products;
 
@@ -23,5 +24,13 @@ public sealed class Product : AggregateRoot
     {
         Name = name;
         Price = price;
+    }
+
+    public void EnsureOwnedBy(Guid userId)
+    {
+        if (OwnerId != userId)
+        {
+            throw new DomainException("The product is not owned by this user.");
+        }
     }
 }
