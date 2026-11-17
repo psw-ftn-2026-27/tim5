@@ -37,6 +37,9 @@ internal sealed class PaymentModuleInitializer : IHostedService
     // Products for the demo tours seeded by Exploration. A product that already exists is
     // left as it is, so a listing published through the application is never overwritten.
     // The city center walk deliberately gets no product.
+    // The names and prices are copied from ExplorationModuleInitializer.CreateDemoTours,
+    // which is the source of truth: when a demo tour's name or price changes there, it must
+    // be changed here as well.
     private static async Task SeedDemoProductsAsync(PaymentDbContext dbContext)
     {
         var fortress = WellKnownTours.PetrovaradinFortressWalk;
