@@ -1,0 +1,168 @@
+<div class="stack">
+  <p><a routerLink="/games/location-challenges">Back to location challenges</a></p>
+
+  @if (challenge.isLoading() && !challenge.hasValue()) {
+    <p>Loading the location challenge...</p>
+  } @else if (challenge.error()) {
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+    <p class="error">Could not load the location challenge. It may no longer exist.</p>
+  } @else if (challenge.value(); as current) {
+    <h1>{{ current.name }}</h1>
+
+    <dl class="details">
+      <dt>XP</dt>
+      <dd>{{ current.xp }}</dd>
+      <dt>Status</dt>
+      <dd>{{ current.status }}</dd>
+      <dt>Start location</dt>
+      <dd>{{ current.startLocation.latitude }}, {{ current.startLocation.longitude }}</dd>
+    </dl>
+
+    @if (current.status === 'Draft') {
+      @if (!editingChallenge()) {
+        <div>
+          <button class="button" type="button" [disabled]="pending()" (click)="startEditChallenge(current)">
+            Edit
+          </button>
+        </div>
+      } @else {
+        <form class="card stack" (submit)="saveChallenge($event)">
+          <h2>Edit location challenge</h2>
+
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" type="text" [formField]="challengeForm.name" />
+            @if (challengeForm.name().touched()) {
+              @for (message of challengeForm.name().errors(); track $index) {
+                <p class="error">{{ message.message }}</p>
+              }
+            }
+          </div>
+
+          <div class="field">
+            <label for="xp">XP</label>
+            <input id="xp" type="number" [formField]="challengeForm.xp" />
+            @if (challengeForm.xp().touched()) {
+              @for (message of challengeForm.xp().errors(); track $index) {
+                <p class="error">{{ message.message }}</p>
+              }
+            }
+          </div>
+
+          <div class="field">
+            <span class="label">Start location</span>
+            <app-map
+              [pins]="hiddenPointPins()"
+              [picking]="true"
+              [initialLocation]="startLocation()"
+              (locationPicked)="startLocation.set($event)"
+            />
+            @if (startLocation(); as picked) {
+              <p class="meta">Selected: {{ picked.latitude }}, {{ picked.longitude }}</p>
+            } @else {
+              <p class="error">Start location is not selected. Click on the map to pick it.</p>
+            }
+          </div>
+
+          <div class="actions">
+            <button class="button button--primary" type="submit" [disabled]="!canSaveChallenge()">
+              Save
+            </button>
+            <button class="button" type="button" [disabled]="pending()" (click)="closeEditChallenge()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      }
+    }
+
+    <app-map [pins]="pins()" />
+
+    <h2>Hidden points</h2>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <ul class="hidden-points">
+      @for (point of current.hiddenPoints; track point.id; let index = $index) {
+        <li class="card hidden-point">
+          <img [src]="point.imageUrl" alt="Hidden point {{ index + 1 }}" />
+          <div class="hidden-point-text">
+            <h3>Point {{ index + 1 }}</h3>
+            <p class="meta">{{ point.location.latitude }}, {{ point.location.longitude }}</p>
+          </div>
+          @if (current.status === 'Draft') {
+            <div class="actions">
+              <button
+                class="button"
+                type="button"
+                [disabled]="editingPointId() !== null || pending()"
+                (click)="startEditPoint(point)"
+              >
+                Edit
+              </button>
+              <button
+                class="button"
+                type="button"
+                [disabled]="editingPointId() !== null || pending()"
+                (click)="removePoint(point.id)"
+              >
+                Remove
+              </button>
+            </div>
+          }
+        </li>
+      } @empty {
+        <li class="meta">This location challenge has no hidden points yet.</li>
+      }
+    </ul>
+
+    @if (current.status === 'Draft') {
+      <form class="card stack" (submit)="savePoint($event)">
+        @if (editingPointId() === null) {
+          <h2>Add hidden point</h2>
+        } @else {
+          <h2>Edit hidden point</h2>
+        }
+
+        <app-image-picker
+          [images]="images()"
+          [canAdd]="image() === null"
+          [serverError]="imageError()"
+          (filePicked)="upload($event)"
+          (imageRemoved)="removeImage()"
+        />
+        @if (image() === null) {
+          <p class="error">Image is required.</p>
+        }
+
+        <div class="field">
+          <span class="label">Location</span>
+          <app-map
+            [pins]="pointFormPins()"
+            [picking]="true"
+            [initialLocation]="pointLocation()"
+            (locationPicked)="pointLocation.set($event)"
+          />
+          @if (pointLocation(); as picked) {
+            <p class="meta">Selected: {{ picked.latitude }}, {{ picked.longitude }}</p>
+          } @else {
+            <p class="error">Location is not selected. Click on the map to pick it.</p>
+          }
+        </div>
+
+        <div class="actions">
+          <button class="button button--primary" type="submit" [disabled]="!canSavePoint()">Save</button>
+          @if (editingPointId() !== null) {
+            <button class="button" type="button" [disabled]="pending()" (click)="clearPointForm()">
+              Cancel
+            </button>
+          }
+        </div>
+      </form>
+    }
+  }
+</div>

@@ -23,6 +23,47 @@ namespace Games.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Games.Domain.LocationChallenges.HiddenPoint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ImageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LocationChallengeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationChallengeId");
+
+                    b.ToTable("HiddenPoints", "games");
+                });
+
+            modelBuilder.Entity("Games.Domain.LocationChallenges.LocationChallenge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("Xp")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LocationChallenges", "games");
+                });
+
             modelBuilder.Entity("Games.Domain.Quizzes.Quiz", b =>
                 {
                     b.Property<Guid>("Id")
@@ -83,11 +124,42 @@ namespace Games.Infrastructure.Persistence.Migrations
                     b.ToTable("SocialChallenges", "games");
                 });
 
-            modelBuilder.Entity("Games.Domain.Quizzes.Quiz", b =>
+            modelBuilder.Entity("Shared.Domain.Images.UploadedImage", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsLinked")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("StoredName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UploadedImages", "games");
+                });
+
+            modelBuilder.Entity("Games.Domain.LocationChallenges.HiddenPoint", b =>
+                {
+                    b.HasOne("Games.Domain.LocationChallenges.LocationChallenge", null)
+                        .WithMany("HiddenPoints")
+                        .HasForeignKey("LocationChallengeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("Games.Domain.Quizzes.Location", "Location", b1 =>
                         {
-                            b1.Property<Guid>("QuizId")
+                            b1.Property<Guid>("HiddenPointId")
                                 .HasColumnType("uuid");
 
                             b1.Property<double>("Latitude")
@@ -96,14 +168,45 @@ namespace Games.Infrastructure.Persistence.Migrations
                             b1.Property<double>("Longitude")
                                 .HasColumnType("double precision");
 
-                            b1.HasKey("QuizId");
+                            b1.HasKey("HiddenPointId");
 
-                            b1.ToTable("Quizzes", "games");
+                            b1.ToTable("HiddenPoints", "games");
 
                             b1.WithOwner()
-                                .HasForeignKey("QuizId");
+                                .HasForeignKey("HiddenPointId");
                         });
 
+                    b.Navigation("Location")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Games.Domain.LocationChallenges.LocationChallenge", b =>
+                {
+                    b.OwnsOne("Games.Domain.Quizzes.Location", "StartLocation", b1 =>
+                        {
+                            b1.Property<Guid>("LocationChallengeId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("double precision");
+
+                            b1.HasKey("LocationChallengeId");
+
+                            b1.ToTable("LocationChallenges", "games");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LocationChallengeId");
+                        });
+
+                    b.Navigation("StartLocation")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Games.Domain.Quizzes.Quiz", b =>
+                {
                     b.OwnsMany("Games.Domain.Quizzes.Question", "Questions", b1 =>
                         {
                             b1.Property<Guid>("QuizId");
@@ -150,6 +253,25 @@ namespace Games.Infrastructure.Persistence.Migrations
                             b1.Navigation("Answers");
                         });
 
+                    b.OwnsOne("Games.Domain.Quizzes.Location", "Location", b1 =>
+                        {
+                            b1.Property<Guid>("QuizId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("double precision");
+
+                            b1.HasKey("QuizId");
+
+                            b1.ToTable("Quizzes", "games");
+
+                            b1.WithOwner()
+                                .HasForeignKey("QuizId");
+                        });
+
                     b.Navigation("Location")
                         .IsRequired();
 
@@ -179,6 +301,42 @@ namespace Games.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Window")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Shared.Domain.Images.UploadedImage", b =>
+                {
+                    b.OwnsOne("Shared.Domain.Images.ImageFile", "File", b1 =>
+                        {
+                            b1.Property<Guid>("UploadedImageId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<byte[]>("Content")
+                                .IsRequired()
+                                .HasColumnType("bytea");
+
+                            b1.Property<string>("ContentType")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)");
+
+                            b1.Property<int>("Size")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("UploadedImageId");
+
+                            b1.ToTable("UploadedImages", "games");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UploadedImageId");
+                        });
+
+                    b.Navigation("File")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Games.Domain.LocationChallenges.LocationChallenge", b =>
+                {
+                    b.Navigation("HiddenPoints");
                 });
 #pragma warning restore 612, 618
         }

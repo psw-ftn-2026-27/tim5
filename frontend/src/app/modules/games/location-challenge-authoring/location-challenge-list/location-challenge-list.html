@@ -1,0 +1,42 @@
+<div class="stack">
+  <h1>Location challenges</h1>
+
+  <div class="toolbar">
+    <a class="button button--primary" routerLink="/games/location-challenges/create">
+      Create location challenge
+    </a>
+  </div>
+
+  @if (challenges.isLoading()) {
+    <p>Loading location challenges...</p>
+  } @else if (challenges.error()) {
+    <p class="error">Could not load location challenges. Log in as an administrator and try again.</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Hidden points</th>
+          <th scope="col">XP</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (challenge of challenges.value() ?? []; track challenge.id) {
+          <tr>
+            <td>
+              <a [routerLink]="['/games/location-challenges', challenge.id]">{{ challenge.name }}</a>
+            </td>
+            <td>{{ challenge.hiddenPointCount }}</td>
+            <td>{{ challenge.xp }}</td>
+            <td>{{ challenge.status }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4">No location challenges to show.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
