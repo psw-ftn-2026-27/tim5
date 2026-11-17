@@ -12,7 +12,7 @@
       <thead>
         <tr>
           <th scope="col">Type</th>
-          <th scope="col">Tour</th>
+          <th scope="col">Item</th>
           <th scope="col">Amount</th>
           <th scope="col">Time</th>
           <th scope="col">Status</th>
@@ -22,9 +22,9 @@
         @for (transaction of current.transactions; track $index) {
           <tr>
             <td>{{ transaction.type }}</td>
-            <td>{{ transaction.name }}</td>
+            <td>{{ transaction.type === 'GiftCardPurchase' ? 'Gift card' : transaction.name }}</td>
             <td>
-              @if (transaction.type === 'Purchase') {
+              @if (transaction.type === 'Purchase' || transaction.type === 'GiftCardPurchase') {
                 -{{ transaction.amount }} EC
               } @else {
                 {{ transaction.amount }} EC

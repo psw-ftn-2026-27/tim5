@@ -182,6 +182,38 @@ public class WalletTests
     }
 
     [Fact]
+    public void Gift_card_purchase_lowers_the_balance_and_records_its_reference_without_product_details()
+    {
+        var wallet = CreateWallet();
+        wallet.Deposit(new Amount(500), WellKnownUsers.Administrator);
+        var giftCardId = Guid.NewGuid();
+
+        wallet.PurchaseGiftCard(giftCardId, new Amount(100), PaidAt);
+
+        wallet.Balance.Should().Be(400);
+        wallet.Transactions.Should().ContainSingle(transaction =>
+            transaction.Type == TransactionType.GiftCardPurchase
+            && transaction.Amount.Value == 100
+            && transaction.GiftCardId == giftCardId
+            && transaction.EntityId == null
+            && transaction.Name == null
+            && transaction.OccurredAt == PaidAt);
+    }
+
+    [Fact]
+    public void Gift_card_purchase_without_enough_EC_is_rejected_without_changing_the_wallet()
+    {
+        var wallet = CreateWallet();
+        wallet.Deposit(new Amount(50), WellKnownUsers.Administrator);
+
+        var purchase = () => wallet.PurchaseGiftCard(Guid.NewGuid(), new Amount(100), PaidAt);
+
+        purchase.Should().Throw<DomainException>();
+        wallet.Balance.Should().Be(50);
+        wallet.Transactions.Should().ContainSingle();
+    }
+
+    [Fact]
     public void Reversal_of_a_deposit_that_a_purchase_has_partly_spent_is_rejected_and_keeps_the_balance()
     {
         var wallet = CreateWallet();
