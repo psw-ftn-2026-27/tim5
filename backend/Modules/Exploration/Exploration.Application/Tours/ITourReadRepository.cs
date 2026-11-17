@@ -10,4 +10,5 @@ public interface ITourReadRepository
     Task<TourWithKeyPointsDto?> GetOwnedWithKeyPointsAsync(Guid tourId, Guid authorId);
     Task<PageResult<TourDto>> GetPublishedAsync(TourSearchCriteriaDto criteria, int page, int pageSize);
     Task<TourPreviewDto?> GetPublishedPreviewAsync(Guid tourId);
+    Task<List<Guid>> GetPublishedIdsAsync(IReadOnlyCollection<Guid> tourIds);
 }
