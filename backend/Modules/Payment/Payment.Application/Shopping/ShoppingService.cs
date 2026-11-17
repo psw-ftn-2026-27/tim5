@@ -70,11 +70,17 @@ public sealed class ShoppingService
         var tourIds = cart.Items.Select(item => item.EntityId).ToList();
         var publishedTourIds = await _explorationApi.GetPublishedAsync(tourIds);
         var items = cart.Checkout(publishedTourIds);
-        var wallet = await _walletRepository.GetByTouristAsync(touristId) ?? new Wallet(touristId);
+        var existingWallet = await _walletRepository.GetByTouristAsync(touristId);
+        var wallet = existingWallet ?? new Wallet(touristId);
         var purchaseItems = items
             .Select(item => new PurchaseItem(item.EntityId, item.Name, new Amount(item.Price.Value)))
             .ToList();
         wallet.Purchase(purchaseItems, now);
+        if (existingWallet is null)
+        {
+            _walletRepository.Add(wallet);
+        }
+
         foreach (var item in items)
         {
             _tourPurchaseTokenRepository.Add(new TourPurchaseToken(touristId, item.EntityId, now));

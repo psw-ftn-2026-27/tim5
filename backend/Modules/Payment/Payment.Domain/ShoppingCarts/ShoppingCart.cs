@@ -20,11 +20,6 @@ public sealed class ShoppingCart : AggregateRoot
 
     public void AddItem(Guid entityId, string name, Price price, Guid ownerId, bool isPurchased)
     {
-        if (price.Value == 0)
-        {
-            throw new DomainException("A free tour cannot be added to the cart.");
-        }
-
         if (_items.Any(item => item.EntityId == entityId))
         {
             throw new DomainException("The tour is already in the cart.");
