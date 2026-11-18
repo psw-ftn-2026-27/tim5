@@ -35,6 +35,10 @@ namespace Games.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("ChallengeId")
                         .HasColumnType("uuid");
 
+                    b.PrimitiveCollection<Guid[]>("DiscoveredPointIds")
+                        .IsRequired()
+                        .HasColumnType("uuid[]");
+
                     b.Property<double>("Radius")
                         .HasColumnType("double precision");
 
@@ -173,6 +177,30 @@ namespace Games.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UploadedImages", "games");
+                });
+
+            modelBuilder.Entity("Games.Domain.LocationChallengeActivations.LocationChallengeActivation", b =>
+                {
+                    b.OwnsOne("Games.Domain.LocationChallengeActivations.Completion", "Completion", b1 =>
+                        {
+                            b1.Property<Guid>("LocationChallengeActivationId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("CompletedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<int>("Xp")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("LocationChallengeActivationId");
+
+                            b1.ToTable("LocationChallengeActivations", "games");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LocationChallengeActivationId");
+                        });
+
+                    b.Navigation("Completion");
                 });
 
             modelBuilder.Entity("Games.Domain.LocationChallenges.HiddenPoint", b =>

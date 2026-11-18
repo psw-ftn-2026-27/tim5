@@ -28,6 +28,13 @@ public sealed class LocationChallengeActivationController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("{id:guid}/activation/location-check")]
+    public async Task<ActionResult> CheckLocation(Guid id)
+    {
+        await _activationService.CheckLocationAsync(User.GetUserId(), id);
+        return NoContent();
+    }
+
     [HttpGet("{id:guid}/activation")]
     public async Task<ActionResult<ActiveLocationChallengeDto>> GetActive(Guid id)
     {

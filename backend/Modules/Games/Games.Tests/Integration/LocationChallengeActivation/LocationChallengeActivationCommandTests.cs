@@ -84,4 +84,71 @@ public class LocationChallengeActivationCommandTests : BaseIntegrationTest
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
+
+    [Fact]
+    public async Task Explorer_at_a_hidden_location_checks_and_the_point_is_stored_as_discovered()
+    {
+        var activation = LocationChallengeActivationSeed.FortressBuyerOnGalleriesPassageHuntWithNothingDiscovered;
+        var challenge = LocationChallengeSeed.PublishedGalleriesPassageHuntWithTwoPoints;
+        var client = Factory.CreateClientFor(activation.UserId, "explorer");
+
+        var response = await client.PostAsync($"/api/games/location-challenges/{challenge.Id}/activation/location-check", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        using var assertContext = Factory.CreateContext<GamesDbContext>();
+        var stored = assertContext.LocationChallengeActivations.Single(row => row.Id == activation.Id);
+        stored.DiscoveredPointIds.Should().Equal(challenge.HiddenPoints[0].Id);
+    }
+
+    [Fact]
+    public async Task Explorer_who_has_not_activated_the_challenge_cannot_check_and_nothing_is_stored()
+    {
+        var userId = TouristPositionSeed.SecondExplorerAtLibertySquare.UserId;
+        var client = Factory.CreateClientFor(userId, "explorer");
+        var challengeId = LocationChallengeSeed.PublishedGalleriesPassageHuntWithTwoPoints.Id;
+        using var arrangeContext = Factory.CreateContext<GamesDbContext>();
+        var activationCountBefore = arrangeContext.LocationChallengeActivations.Count();
+
+        var response = await client.PostAsync($"/api/games/location-challenges/{challengeId}/activation/location-check", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        using var assertContext = Factory.CreateContext<GamesDbContext>();
+        assertContext.LocationChallengeActivations.Count().Should().Be(activationCountBefore);
+        assertContext.LocationChallengeActivations.Should().NotContain(activation => activation.UserId == userId);
+    }
+
+    [Fact]
+    public async Task Check_far_from_all_hidden_points_is_rejected_and_the_activation_stays_the_same()
+    {
+        var activation = LocationChallengeActivationSeed.FortressBuyerOnFortressGalleriesHunt;
+        var client = Factory.CreateClientFor(activation.UserId, "explorer");
+
+        var response = await client.PostAsync($"/api/games/location-challenges/{activation.ChallengeId}/activation/location-check", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        using var assertContext = Factory.CreateContext<GamesDbContext>();
+        var stored = assertContext.LocationChallengeActivations.Single(row => row.Id == activation.Id);
+        stored.DiscoveredPointIds.Should().BeEmpty();
+        stored.Completion.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Anonymous_user_cannot_check_a_location()
+    {
+        var client = Factory.CreateClient();
+
+        var response = await client.PostAsync($"/api/games/location-challenges/{LocationChallengeSeed.PublishedGalleriesPassageHuntWithTwoPoints.Id}/activation/location-check", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Administrator_cannot_check_a_location()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.Administrator, "administrator");
+
+        var response = await client.PostAsync($"/api/games/location-challenges/{LocationChallengeSeed.PublishedGalleriesPassageHuntWithTwoPoints.Id}/activation/location-check", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
 }
