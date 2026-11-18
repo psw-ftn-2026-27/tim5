@@ -166,6 +166,13 @@ public sealed class Tour : AggregateRoot
         return _keyPoints.MinBy(keyPoint => keyPoint.Order);
     }
 
+    public KeyPoint? NextKeyPoint(IReadOnlyCollection<Guid> completedKeyPointIds)
+    {
+        return _keyPoints
+            .Where(keyPoint => !completedKeyPointIds.Contains(keyPoint.Id))
+            .MinBy(keyPoint => keyPoint.Order);
+    }
+
     private void EnsureKeyPointsCanChange()
     {
         if (Status != TourStatus.Draft)

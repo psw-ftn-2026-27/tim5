@@ -3,3 +3,22 @@
   --color-accent: var(--color-accent-exploration);
   --color-accent-text: var(--color-accent-exploration-text);
 }
+
+.completed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card h2,
+.card h3,
+.card p {
+  margin: 0;
+}
+
+.card > * + * {
+  margin-top: var(--space-2);
+}

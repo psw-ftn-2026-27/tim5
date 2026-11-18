@@ -2,9 +2,15 @@
   @if (execution.isLoading() && !execution.hasValue()) {
     <p class="meta">Loading the active tour...</p>
   } @else if (hasNoActiveTour()) {
-    <h1>Active tour</h1>
-    <p class="meta">You have no active tour.</p>
-    <p><a routerLink="/payment/purchases">Your purchased tours</a></p>
+    @if (knownTour(); as tour) {
+      <h1>{{ tour.name }}</h1>
+      <p class="meta">This tour is no longer active.</p>
+      <p><a [routerLink]="['/exploration', tour.id]">Back to tour</a></p>
+    } @else {
+      <h1>Active tour</h1>
+      <p class="meta">You have no active tour.</p>
+      <p><a routerLink="/payment/purchases">Your purchased tours</a></p>
+    }
   } @else if (execution.error()) {
     <p class="error">The active tour could not be loaded. Sign in as an explorer and try again.</p>
   } @else if (execution.value(); as current) {
@@ -12,7 +18,14 @@
 
     <p>Next key point: {{ current.nextKeyPoint.name }}</p>
 
-    <app-map [pins]="pins()" [showPath]="true" />
+    <p class="meta">Click the map to move.</p>
+
+    <app-map
+      [pins]="pins()"
+      [showPath]="true"
+      [picking]="true"
+      (locationPicked)="markPosition($event)"
+    />
 
     <div class="actions">
       <button
@@ -27,6 +40,36 @@
 
     @if (error()) {
       <p class="error">{{ error() }}</p>
+    }
+
+    @if (unlocked(); as keyPoint) {
+      <section class="card">
+        <h2>Unlocked secret</h2>
+        <h3>{{ keyPoint.name }}</h3>
+        @if (keyPoint.secret !== null) {
+          <p>{{ keyPoint.secret }}</p>
+        } @else {
+          <p class="meta">This key point has no secret.</p>
+        }
+      </section>
+    }
+
+    @if (current.completedKeyPoints.length > 0) {
+      <h2>Completed key points</h2>
+
+      <ul class="completed">
+        @for (keyPoint of current.completedKeyPoints; track keyPoint.keyPointId) {
+          <li class="card">
+            <h3>{{ keyPoint.name }}</h3>
+            <p class="meta">Reached {{ localTime(keyPoint.reachedAt) }}</p>
+            @if (keyPoint.secret !== null) {
+              <p>{{ keyPoint.secret }}</p>
+            } @else {
+              <p class="meta">This key point has no secret.</p>
+            }
+          </li>
+        }
+      </ul>
     }
   }
 </div>

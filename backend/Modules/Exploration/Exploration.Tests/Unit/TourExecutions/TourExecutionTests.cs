@@ -37,4 +37,16 @@ public class TourExecutionTests
         abandoning.Should().Throw<DomainException>();
         execution.EndedAt.Should().Be(AbandonedAt);
     }
+
+    [Fact]
+    public void Position_check_on_an_execution_that_is_no_longer_active_is_rejected()
+    {
+        var execution = CreateActiveExecution();
+        execution.Abandon(AbandonedAt);
+
+        var recording = () => execution.RecordActivity(AbandonedAt.AddMinutes(10));
+
+        recording.Should().Throw<DomainException>();
+        execution.LastActivity.Should().Be(StartedAt);
+    }
 }

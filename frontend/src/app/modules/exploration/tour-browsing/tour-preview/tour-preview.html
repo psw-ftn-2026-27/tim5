@@ -39,6 +39,10 @@
       </ul>
     }
 
+    @if (current.hasCompletedTour) {
+      <p class="success">You completed this tour.</p>
+    }
+
     @if (current.hasActiveExecution) {
       <p class="meta">
         You already have an active tour. <a routerLink="/exploration/execution">Go to the active tour</a>
@@ -81,6 +85,25 @@
       </ul>
     } @else {
       <p class="meta">No key points are visible before purchase.</p>
+    }
+
+    @if (current.completedKeyPoints.length > 0) {
+      <h2>Your completed key points</h2>
+
+      <ul class="key-points">
+        @for (keyPoint of current.completedKeyPoints; track keyPoint.keyPointId) {
+          <li class="card key-point">
+            <div class="key-point-text">
+              <h3>{{ keyPoint.name }}</h3>
+              @if (keyPoint.secret !== null) {
+                <p>{{ keyPoint.secret }}</p>
+              } @else {
+                <p class="meta">This key point has no secret.</p>
+              }
+            </div>
+          </li>
+        }
+      </ul>
     }
 
     <app-map [pins]="pins()" />

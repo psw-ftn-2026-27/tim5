@@ -16,6 +16,7 @@ internal sealed class TourPreviewReadRepository : ITourPreviewReadRepository
         _dbContext = dbContext;
     }
 
+    // A secret is shown only for a key point the user completed in any of their executions of this tour.
     public Task<TourPreviewDto?> GetPreviewAsync(Guid tourId, Guid userId, bool isPurchased)
     {
         return _dbContext.Tours
@@ -43,7 +44,19 @@ internal sealed class TourPreviewReadRepository : ITourPreviewReadRepository
                     .ToList(),
                 isPurchased,
                 _dbContext.TourExecutions.Any(execution =>
-                    execution.TouristId == userId && execution.Status == TourExecutionStatus.Active)))
+                    execution.TouristId == userId && execution.Status == TourExecutionStatus.Active),
+                tour.KeyPoints
+                    .Where(keyPoint => _dbContext.TourExecutions.Any(execution =>
+                        execution.TouristId == userId
+                        && execution.TourId == tour.Id
+                        && execution.CompletedKeyPoints.Any(completed => completed.KeyPointId == keyPoint.Id)))
+                    .OrderBy(keyPoint => keyPoint.Order)
+                    .Select(keyPoint => new CompletedKeyPointSecretDto(keyPoint.Id, keyPoint.Name, keyPoint.Secret))
+                    .ToList(),
+                _dbContext.TourExecutions.Any(execution =>
+                    execution.TouristId == userId
+                    && execution.TourId == tour.Id
+                    && execution.Status == TourExecutionStatus.Completed)))
             .FirstOrDefaultAsync();
     }
 }

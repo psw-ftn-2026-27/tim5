@@ -112,6 +112,65 @@ public class TourExecutionCommandTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task Position_check_near_the_next_key_point_stores_it_as_completed_in_the_execution()
+    {
+        var seeded = TourExecutionSeed.ActiveFortressWithClockTowerCompletedOfTouristOnFortress;
+        var client = Factory.CreateClientFor(seeded.TouristId, "explorer");
+        using var arrangeContext = Factory.CreateContext<ExplorationDbContext>();
+        var completedCountBefore = arrangeContext.TourExecutions.Single(execution => execution.Id == seeded.Id).CompletedKeyPoints.Count;
+
+        var response = await client.PostAsync("/api/exploration/executions/active/position-check", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        using var assertContext = Factory.CreateContext<ExplorationDbContext>();
+        var stored = assertContext.TourExecutions.Single(execution => execution.Id == seeded.Id);
+        stored.CompletedKeyPoints.Should().HaveCount(completedCountBefore + 1);
+        var galleries = TourSeed.PublishedFortressWithSecrets.KeyPoints[1];
+        var completed = stored.CompletedKeyPoints.Single(completedKeyPoint => completedKeyPoint.KeyPointId == galleries.Id);
+        completed.ReachedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+        stored.LastActivity.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+    }
+
+    [Fact]
+    public async Task Position_check_without_an_active_tour_reports_that_it_does_not_exist_and_changes_no_earlier_execution()
+    {
+        var abandoned = TourExecutionSeed.AbandonedFortressWithClockTowerCompletedOfBuyerWhoAbandoned;
+        var client = Factory.CreateClientFor(abandoned.TouristId, "explorer");
+        using var arrangeContext = Factory.CreateContext<ExplorationDbContext>();
+        var before = arrangeContext.TourExecutions.Single(execution => execution.Id == abandoned.Id);
+        var completedCountBefore = before.CompletedKeyPoints.Count;
+        var lastActivityBefore = before.LastActivity;
+
+        var response = await client.PostAsync("/api/exploration/executions/active/position-check", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        using var assertContext = Factory.CreateContext<ExplorationDbContext>();
+        var stored = assertContext.TourExecutions.Single(execution => execution.Id == abandoned.Id);
+        stored.CompletedKeyPoints.Should().HaveCount(completedCountBefore);
+        stored.LastActivity.Should().Be(lastActivityBefore);
+    }
+
+    [Fact]
+    public async Task Anonymous_user_cannot_check_a_position_on_a_tour()
+    {
+        var client = Factory.CreateClient();
+
+        var response = await client.PostAsync("/api/exploration/executions/active/position-check", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Administrator_cannot_check_a_position_on_a_tour()
+    {
+        var client = Factory.CreateClientFor(WellKnownUsers.Administrator, "administrator");
+
+        var response = await client.PostAsync("/api/exploration/executions/active/position-check", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
     public async Task Anonymous_user_cannot_abandon_a_tour()
     {
         var client = Factory.CreateClient();

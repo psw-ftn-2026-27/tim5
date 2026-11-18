@@ -53,6 +53,30 @@ public sealed class TourExecutionService
         await _unitOfWork.SaveChangesAsync();
     }
 
+    public async Task CheckPositionAsync(Guid touristId)
+    {
+        var execution = await _executionRepository.GetActiveByTouristAsync(touristId);
+        if (execution is null)
+        {
+            throw new NotFoundException("You have no active tour.");
+        }
+
+        var tour = await _tourRepository.GetByIdAsync(execution.TourId);
+        if (tour is null)
+        {
+            throw new NotFoundException($"Tour {execution.TourId} does not exist.");
+        }
+
+        var position = await _positionReadRepository.GetByUserAsync(touristId);
+        if (position is null)
+        {
+            throw new NotFoundException("Set your position in the position simulator.");
+        }
+
+        TourProgress.CheckPosition(execution, tour, new Location(position.Latitude, position.Longitude), DateTime.UtcNow);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
     public async Task AbandonAsync(Guid touristId)
     {
         var execution = await _executionRepository.GetActiveByTouristAsync(touristId);

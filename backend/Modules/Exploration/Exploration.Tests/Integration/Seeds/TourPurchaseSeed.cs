@@ -26,7 +26,18 @@ internal static class TourPurchaseSeed
         TourSeed.PublishedOldTown.Id,
         new DateTime(2026, 11, 15, 12, 0, 0, DateTimeKind.Utc));
 
+    public static readonly TourPurchaseToken FortressBoughtByTouristOnFortress = new(
+        TouristPositionSeed.TouristOnFortressAtGalleries.UserId,
+        TourSeed.PublishedFortressWithSecrets.Id,
+        new DateTime(2026, 11, 16, 12, 0, 0, DateTimeKind.Utc));
+
+    public static readonly TourPurchaseToken FortressBoughtByBuyerWhoAbandoned = new(
+        TouristPositionSeed.FortressBuyerWhoAbandonedAtGalleries.UserId,
+        TourSeed.PublishedFortressWithSecrets.Id,
+        new DateTime(2026, 11, 16, 12, 5, 0, DateTimeKind.Utc));
+
     public static TourPurchaseToken[] All =>
         [OldTownBoughtByBuyerWithPosition, ArchivedSalasiBoughtByBuyerWithPosition,
-            OldTownBoughtByBuyerWithoutPosition, OldTownBoughtByTouristOnOldTown];
+            OldTownBoughtByBuyerWithoutPosition, OldTownBoughtByTouristOnOldTown,
+            FortressBoughtByTouristOnFortress, FortressBoughtByBuyerWhoAbandoned];
 }

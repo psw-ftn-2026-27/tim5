@@ -32,6 +32,9 @@ internal static class UploadedImageSeed
     public static readonly UploadedImage ExplorersLinkedQuayEndPhoto;
     public static readonly UploadedImage ExplorersLinkedMarshPhoto;
     public static readonly UploadedImage ExplorersLinkedHeronColonyPhoto;
+    public static readonly UploadedImage ExplorersLinkedClockTowerPhoto;
+    public static readonly UploadedImage ExplorersLinkedGalleriesPhoto;
+    public static readonly UploadedImage ExplorersLinkedUpperPlateauPhoto;
 
     static UploadedImageSeed()
     {
@@ -79,6 +82,15 @@ internal static class UploadedImageSeed
 
         ExplorersLinkedHeronColonyPhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
         ExplorersLinkedHeronColonyPhoto.LinkTo(WellKnownUsers.Explorer);
+
+        ExplorersLinkedClockTowerPhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
+        ExplorersLinkedClockTowerPhoto.LinkTo(WellKnownUsers.Explorer);
+
+        ExplorersLinkedGalleriesPhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
+        ExplorersLinkedGalleriesPhoto.LinkTo(WellKnownUsers.Explorer);
+
+        ExplorersLinkedUpperPlateauPhoto = UploadQuota.CreateImage(WellKnownUsers.Explorer, 0, new ImageFile(OnePixelPng));
+        ExplorersLinkedUpperPlateauPhoto.LinkTo(WellKnownUsers.Explorer);
     }
 
     public static UploadedImage[] All =>
@@ -90,6 +102,7 @@ internal static class UploadedImageSeed
         ExplorersLinkedFarmhousePhoto, ExplorersLinkedWorkshopPhoto,
         ExplorersLinkedLibertySquarePhoto, ExplorersLinkedDanubeParkPhoto,
         ExplorersLinkedQuayStartPhoto, ExplorersLinkedQuayPierPhoto, ExplorersLinkedQuayEndPhoto,
-        ExplorersLinkedMarshPhoto, ExplorersLinkedHeronColonyPhoto
+        ExplorersLinkedMarshPhoto, ExplorersLinkedHeronColonyPhoto,
+        ExplorersLinkedClockTowerPhoto, ExplorersLinkedGalleriesPhoto, ExplorersLinkedUpperPlateauPhoto
     ];
 }

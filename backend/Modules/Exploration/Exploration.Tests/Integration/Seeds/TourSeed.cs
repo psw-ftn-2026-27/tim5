@@ -15,6 +15,7 @@ internal static class TourSeed
     public static readonly Tour PublishedOldTown;
     public static readonly Tour MeasuredDraftQuay;
     public static readonly Tour PublishedMarshWithPublicSecret;
+    public static readonly Tour PublishedFortressWithSecrets;
 
     static TourSeed()
     {
@@ -61,7 +62,14 @@ internal static class TourSeed
         PublishedMarshWithPublicSecret.AddKeyPoint("Kolonija čaplji", "Osmatračnica iznad kolonije sivih čaplji.", UploadedImageSeed.ExplorersLinkedHeronColonyPhoto.Id, null, false, new Location(45.1850, 20.1350));
         PublishedMarshWithPublicSecret.RecordLength(6.5m);
         PublishedMarshWithPublicSecret.Publish(new Price(true, 0));
+
+        PublishedFortressWithSecrets = new(WellKnownUsers.Explorer, "Tajne Petrovaradina", "Tura vodi od Sahat kule kroz ulaz u podzemne vojne galerije do Gornjeg platoa tvrđave, a svaka tačka čuva po jednu priču iz prošlosti utvrđenja.", TourDifficulty.Moderate, ["tvrđava"], new GroupSize(1, 10));
+        PublishedFortressWithSecrets.AddTransportTime(TransportMode.Walking, 90);
+        PublishedFortressWithSecrets.AddKeyPoint("Sahat kula", "Kula sa satom čije su kazaljke zamenjene, pa mala pokazuje minute.", UploadedImageSeed.ExplorersLinkedClockTowerPhoto.Id, "Sat je namerno obrnut, da ga ribari na Dunavu vide izdaleka.", true, new Location(45.2517, 19.8620));
+        PublishedFortressWithSecrets.AddKeyPoint("Ulaz u galerije", "Ulaz u podzemne vojne galerije duge više kilometara.", UploadedImageSeed.ExplorersLinkedGalleriesPhoto.Id, "Jedan hodnik galerija vodi ispod samog Dunava.", false, new Location(45.2530, 19.8636));
+        PublishedFortressWithSecrets.AddKeyPoint("Gornji plato", "Plato sa pogledom na grad i Most slobode.", UploadedImageSeed.ExplorersLinkedUpperPlateauPhoto.Id, "Na platou je nekada stajala srednjovekovna crkva.", false, new Location(45.2522, 19.8660));
+        PublishedFortressWithSecrets.Publish(new Price(true, 0));
     }
 
-    public static Tour[] All => [FortressWalk, CityStroll, SecondExplorersTrail, PublishableRiverside, PublishedVineyards, PublishedMonasteries, ArchivedSalasi, PublishedOldTown, MeasuredDraftQuay, PublishedMarshWithPublicSecret];
+    public static Tour[] All => [FortressWalk, CityStroll, SecondExplorersTrail, PublishableRiverside, PublishedVineyards, PublishedMonasteries, ArchivedSalasi, PublishedOldTown, MeasuredDraftQuay, PublishedMarshWithPublicSecret, PublishedFortressWithSecrets];
 }

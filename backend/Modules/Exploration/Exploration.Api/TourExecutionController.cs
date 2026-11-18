@@ -34,6 +34,13 @@ public sealed class TourExecutionController : ControllerBase
         return await _executionQueries.GetActiveAsync(User.GetUserId());
     }
 
+    [HttpPost("active/position-check")]
+    public async Task<ActionResult> CheckPosition()
+    {
+        await _executionService.CheckPositionAsync(User.GetUserId());
+        return NoContent();
+    }
+
     [HttpPost("active/abandon")]
     public async Task<ActionResult> Abandon()
     {

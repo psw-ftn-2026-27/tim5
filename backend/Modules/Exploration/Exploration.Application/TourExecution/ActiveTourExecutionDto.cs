@@ -6,4 +6,5 @@ public sealed record ActiveTourExecutionDto(
     Guid TourId,
     string TourName,
     LocationDto CurrentPosition,
-    NextKeyPointDto NextKeyPoint);
+    NextKeyPointDto NextKeyPoint,
+    List<CompletedKeyPointDto> CompletedKeyPoints);

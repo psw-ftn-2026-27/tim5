@@ -13,4 +13,6 @@ public sealed record TourPreviewDto(
     List<TransportTimeDto> TransportTimes,
     List<PublicKeyPointDto> PublicKeyPoints,
     bool IsPurchased,
-    bool HasActiveExecution);
+    bool HasActiveExecution,
+    List<CompletedKeyPointSecretDto> CompletedKeyPoints,
+    bool HasCompletedTour);
