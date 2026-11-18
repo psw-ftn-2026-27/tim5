@@ -350,4 +350,62 @@ public class LocationChallengeTests
         removal.Should().Throw<DomainException>();
         challenge.HiddenPoints.Should().HaveCount(1);
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(50)]
+    public void Published_challenge_is_activated_from_up_to_50_meters_of_its_start_location(double meters)
+    {
+        var challenge = CreateChallengeWithOnePointIn(ChallengeStatus.Published);
+        var userId = Guid.NewGuid();
+
+        var activation = challenge.Activate(userId, NorthOfStart(meters), 0);
+
+        activation.UserId.Should().Be(userId);
+        activation.ChallengeId.Should().Be(challenge.Id);
+    }
+
+    [Fact]
+    public void Challenge_is_not_activated_from_51_meters_of_its_start_location()
+    {
+        var challenge = CreateChallengeWithOnePointIn(ChallengeStatus.Published);
+
+        var activating = () => challenge.Activate(Guid.NewGuid(), NorthOfStart(51), 0);
+
+        activating.Should().Throw<DomainException>();
+    }
+
+    [Theory]
+    [InlineData(ChallengeStatus.Draft)]
+    [InlineData(ChallengeStatus.Retired)]
+    [InlineData(ChallengeStatus.Archived)]
+    public void Challenge_that_is_not_published_is_not_activated(ChallengeStatus status)
+    {
+        var challenge = CreateChallengeWithOnePointIn(status);
+
+        var activating = () => challenge.Activate(Guid.NewGuid(), CreateStartLocation(), 0);
+
+        activating.Should().Throw<DomainException>();
+    }
+
+    [Fact]
+    public void Radius_of_the_circle_is_the_distance_to_the_farthest_hidden_point_plus_the_extra_meters()
+    {
+        var challenge = CreateChallenge();
+        challenge.AddHiddenPoint(Guid.NewGuid(), NorthOfStart(30));
+        challenge.AddHiddenPoint(Guid.NewGuid(), NorthOfStart(80));
+        challenge.Publish();
+
+        var activation = challenge.Activate(Guid.NewGuid(), CreateStartLocation(), 25);
+
+        activation.Radius.Should().BeApproximately(105, 0.01);
+    }
+
+    // One degree of latitude is about 111 195 m, a little more than the haversine formula gives,
+    // so the location lands a fraction of a millimetre short of the requested distance.
+    private static Location NorthOfStart(double meters)
+    {
+        var start = CreateStartLocation();
+        return new Location(start.Latitude + meters / 111_195, start.Longitude);
+    }
 }

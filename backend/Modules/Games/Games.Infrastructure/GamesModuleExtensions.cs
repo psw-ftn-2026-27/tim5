@@ -2,7 +2,10 @@ using Games.Application;
 using Games.Application.ChallengeOverview;
 using Games.Application.HiddenPointAuthoring;
 using Games.Application.ImageViewing;
+using Games.Application.LocationChallengeActivation;
+using Games.Application.LocationChallengeActivations;
 using Games.Application.LocationChallengeAuthoring;
+using Games.Application.LocationChallengeBrowsing;
 using Games.Application.LocationChallengeLifecycle;
 using Games.Application.LocationChallenges;
 using Games.Application.QuizAuthoring;
@@ -13,6 +16,7 @@ using Games.Application.SocialChallengeLifecycle;
 using Games.Application.SocialChallenges;
 using Games.Application.UploadedImages;
 using Games.Infrastructure.Persistence;
+using Games.Infrastructure.Persistence.LocationChallengeActivations;
 using Games.Infrastructure.Persistence.LocationChallenges;
 using Games.Infrastructure.Persistence.Quizzes;
 using Games.Infrastructure.Persistence.SocialChallenges;
@@ -38,6 +42,8 @@ public static class GamesModuleExtensions
         services.AddScoped<IQuizReadRepository, QuizReadRepository>();
         services.AddScoped<ILocationChallengeRepository, LocationChallengeRepository>();
         services.AddScoped<ILocationChallengeReadRepository, LocationChallengeReadRepository>();
+        services.AddScoped<ILocationChallengeActivationRepository, LocationChallengeActivationRepository>();
+        services.AddScoped<ILocationChallengeActivationReadRepository, LocationChallengeActivationReadRepository>();
         services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();
         services.AddScoped<IUploadedImageReadRepository, UploadedImageReadRepository>();
 
@@ -53,6 +59,9 @@ public static class GamesModuleExtensions
         services.AddScoped<LocationChallengeLifecycleService>();
         services.AddScoped<HiddenPointAuthoringService>();
         services.AddScoped<ImageViewingQueries>();
+        services.AddScoped<LocationChallengeBrowsingQueries>();
+        services.AddScoped<LocationChallengeActivationService>();
+        services.AddScoped<LocationChallengeActivationQueries>();
 
         return services;
     }

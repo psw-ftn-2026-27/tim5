@@ -1,7 +1,9 @@
 using Games.Application;
+using Games.Domain.LocationChallengeActivations;
 using Games.Domain.LocationChallenges;
 using Games.Domain.Quizzes;
 using Games.Domain.SocialChallenges;
+using Games.Infrastructure.Persistence.LocationChallengeActivations;
 using Games.Infrastructure.Persistence.LocationChallenges;
 using Games.Infrastructure.Persistence.Quizzes;
 using Games.Infrastructure.Persistence.SocialChallenges;
@@ -18,6 +20,7 @@ internal sealed class GamesDbContext : DbContext, IUnitOfWork
     public DbSet<SocialChallenge> SocialChallenges => Set<SocialChallenge>();
     public DbSet<Quiz> Quizzes => Set<Quiz>();
     public DbSet<LocationChallenge> LocationChallenges => Set<LocationChallenge>();
+    public DbSet<LocationChallengeActivation> LocationChallengeActivations => Set<LocationChallengeActivation>();
     public DbSet<UploadedImage> UploadedImages => Set<UploadedImage>();
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -26,6 +29,7 @@ internal sealed class GamesDbContext : DbContext, IUnitOfWork
         builder.ConfigureSocialChallenges();
         builder.ConfigureQuizzes();
         builder.ConfigureLocationChallenges();
+        builder.ConfigureLocationChallengeActivations();
         builder.ConfigureUploadedImages();
     }
 }

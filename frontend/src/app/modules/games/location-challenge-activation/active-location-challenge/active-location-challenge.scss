@@ -1,0 +1,19 @@
+// Pages of the Games module use the module's own accent.
+:host {
+  --color-accent: var(--color-accent-games);
+  --color-accent-text: var(--color-accent-games-text);
+}
+
+.photos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.photos img {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}

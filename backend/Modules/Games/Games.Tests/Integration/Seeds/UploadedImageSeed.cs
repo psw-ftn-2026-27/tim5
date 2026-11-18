@@ -20,6 +20,8 @@ internal static class UploadedImageSeed
     public static readonly UploadedImage AdministratorsLinkedUndergroundTunnelPhoto;
     public static readonly UploadedImage AdministratorsLinkedArtistCellarPhoto;
     public static readonly UploadedImage AdministratorsLinkedQuayStairsPhoto;
+    public static readonly UploadedImage AdministratorsLinkedPowderMagazinePhoto;
+    public static readonly UploadedImage AdministratorsLinkedBastionWallPhoto;
 
     static UploadedImageSeed()
     {
@@ -34,6 +36,12 @@ internal static class UploadedImageSeed
 
         AdministratorsLinkedQuayStairsPhoto = UploadQuota.CreateImage(WellKnownUsers.Administrator, 0, new ImageFile(OnePixelPng));
         AdministratorsLinkedQuayStairsPhoto.LinkTo(WellKnownUsers.Administrator);
+
+        AdministratorsLinkedPowderMagazinePhoto = UploadQuota.CreateImage(WellKnownUsers.Administrator, 0, new ImageFile(OnePixelPng));
+        AdministratorsLinkedPowderMagazinePhoto.LinkTo(WellKnownUsers.Administrator);
+
+        AdministratorsLinkedBastionWallPhoto = UploadQuota.CreateImage(WellKnownUsers.Administrator, 0, new ImageFile(OnePixelPng));
+        AdministratorsLinkedBastionWallPhoto.LinkTo(WellKnownUsers.Administrator);
     }
 
     public static UploadedImage[] All =>
@@ -42,6 +50,8 @@ internal static class UploadedImageSeed
         AdministratorsLinkedFortressGatePhoto,
         AdministratorsLinkedUndergroundTunnelPhoto,
         AdministratorsLinkedArtistCellarPhoto,
-        AdministratorsLinkedQuayStairsPhoto
+        AdministratorsLinkedQuayStairsPhoto,
+        AdministratorsLinkedPowderMagazinePhoto,
+        AdministratorsLinkedBastionWallPhoto
     ];
 }

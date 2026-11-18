@@ -1,4 +1,5 @@
 using Games.Application.LocationChallengeAuthoring;
+using Games.Application.LocationChallengeBrowsing;
 using Games.Application.LocationChallenges;
 using Games.Application.Quizzes;
 using Games.Application.UploadedImages;
@@ -50,5 +51,20 @@ internal sealed class LocationChallengeReadRepository : ILocationChallengeReadRe
                         new LocationDto(point.Location.Latitude, point.Location.Longitude)))
                     .ToList()))
             .FirstOrDefaultAsync();
+    }
+
+    public Task<List<PublishedLocationChallengeDto>> GetPublishedAsync(Guid userId)
+    {
+        return _dbContext.LocationChallenges
+            .Where(challenge => challenge.Status == ChallengeStatus.Published)
+            .Select(challenge => new PublishedLocationChallengeDto(
+                challenge.Id,
+                challenge.Name,
+                challenge.Xp,
+                challenge.HiddenPoints.Count,
+                new LocationDto(challenge.StartLocation.Latitude, challenge.StartLocation.Longitude),
+                _dbContext.LocationChallengeActivations
+                    .Any(activation => activation.ChallengeId == challenge.Id && activation.UserId == userId)))
+            .ToListAsync();
     }
 }

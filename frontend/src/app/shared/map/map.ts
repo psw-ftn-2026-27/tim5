@@ -8,6 +8,12 @@ export interface MapPin {
   label?: string;
 }
 
+export interface MapCircle {
+  latitude: number;
+  longitude: number;
+  radiusInMeters: number;
+}
+
 const NOVI_SAD: L.LatLngTuple = [45.2551, 19.8451];
 const DEFAULT_ZOOM = 13;
 
@@ -38,6 +44,7 @@ export class MapView {
   readonly showPath = input(false);
   readonly picking = input(false);
   readonly initialLocation = input<MapPin | null>(null);
+  readonly circle = input<MapCircle | null>(null);
   readonly routeLength = output<number>();
   readonly locationPicked = output<MapPin>();
 
@@ -50,6 +57,7 @@ export class MapView {
   private readonly pinLayer = L.layerGroup();
   private readonly routeLayer = L.layerGroup();
   private readonly pickedLayer = L.layerGroup();
+  private readonly circleLayer = L.layerGroup();
   private routeRequest = 0;
   // Plain fields, not signals: the first click must not itself re-run the view effect.
   private clicked = false;
@@ -76,15 +84,22 @@ export class MapView {
         this.pinLayer.addTo(map);
         this.routeLayer.addTo(map);
         this.pickedLayer.addTo(map);
+        this.circleLayer.addTo(map);
         onCleanup(() => map.remove());
       }
     });
     effect(() => this.drawPins(this.pins(), this.picking()));
     effect(() =>
-      this.fitView(this.pins(), this.map(), this.picking() ? this.initialLocation() : null),
+      this.fitView(
+        this.pins(),
+        this.map(),
+        this.picking() ? this.initialLocation() : null,
+        this.circle(),
+      ),
     );
     effect(() => this.drawPicked(this.picking() ? this.initialLocation() : null));
     effect(() => this.drawRoute(this.pins(), this.showPath()));
+    effect(() => this.drawCircle(this.circle()));
   }
 
   private drawPins(pins: MapPin[], picking: boolean) {
@@ -100,10 +115,15 @@ export class MapView {
     }
   }
 
-  // The view fits the pins and, in picking mode, the initial location. After the user's
-  // first click the view follows only the pins: a new initial location (usually the page
-  // saving that click) must not move what the user is looking at.
-  private fitView(pins: MapPin[], map: L.Map | null, initialLocation: MapPin | null) {
+  // The view fits the pins, the circle and, in picking mode, the initial location. After
+  // the user's first click the view follows only the pins: a new initial location (usually
+  // the page saving that click) must not move what the user is looking at.
+  private fitView(
+    pins: MapPin[],
+    map: L.Map | null,
+    initialLocation: MapPin | null,
+    circle: MapCircle | null,
+  ) {
     if (this.clicked) {
       if (pins === this.fittedPins) {
         return;
@@ -113,10 +133,16 @@ export class MapView {
     this.fittedPins = pins;
 
     const points = initialLocation ? [...pins, initialLocation] : pins;
-    if (points.length === 0) {
+    if (points.length === 0 && circle === null) {
       map?.setView(NOVI_SAD, DEFAULT_ZOOM);
     } else {
       const bounds = L.latLngBounds(points.map((point) => [point.latitude, point.longitude]));
+      if (circle) {
+        // toBounds takes the side of the square around the centre, so twice the radius.
+        bounds.extend(
+          L.latLng(circle.latitude, circle.longitude).toBounds(circle.radiusInMeters * 2),
+        );
+      }
       map?.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
     }
   }
@@ -145,6 +171,17 @@ export class MapView {
         icon: PICKED_ICON,
         interactive: false,
       }).addTo(this.pickedLayer);
+    }
+  }
+
+  private drawCircle(circle: MapCircle | null) {
+    this.circleLayer.clearLayers();
+    if (circle) {
+      // In picking mode a click inside the circle must reach the map, so the circle ignores it.
+      L.circle([circle.latitude, circle.longitude], {
+        radius: circle.radiusInMeters,
+        interactive: false,
+      }).addTo(this.circleLayer);
     }
   }
 

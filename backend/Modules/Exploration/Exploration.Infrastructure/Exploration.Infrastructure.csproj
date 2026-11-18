@@ -9,6 +9,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Exploration.Tests" />
     <InternalsVisibleTo Include="Payment.Tests" />
+    <InternalsVisibleTo Include="Games.Tests" />
   </ItemGroup>
 
 </Project>
