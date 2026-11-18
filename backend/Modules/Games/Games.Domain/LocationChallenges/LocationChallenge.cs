@@ -1,3 +1,4 @@
+using Games.Domain.LocationChallengeActivations;
 using Games.Domain.Quizzes;
 using Games.Domain.SocialChallenges;
 using Shared.Domain;
@@ -7,6 +8,8 @@ namespace Games.Domain.LocationChallenges;
 
 public sealed class LocationChallenge : AggregateRoot
 {
+    private const int ActivationDistanceInMeters = 50;
+
     private readonly List<HiddenPoint> _hiddenPoints = [];
 
     public string Name { get; private set; }
@@ -107,6 +110,23 @@ public sealed class LocationChallenge : AggregateRoot
         }
 
         Status = ChallengeStatus.Archived;
+    }
+
+    // Does not change the challenge: each user's activation is a separate aggregate. A published
+    // challenge always has a hidden point, so the farthest one exists.
+    public LocationChallengeActivation Activate(Guid userId, Location userPosition, double extraMeters)
+    {
+        if (Status != ChallengeStatus.Published)
+        {
+            throw new DomainException("Only a published location challenge can be activated.");
+        }
+        if (userPosition.DistanceTo(StartLocation) > ActivationDistanceInMeters)
+        {
+            throw new DomainException($"Come within {ActivationDistanceInMeters} m of the start location to activate the challenge.");
+        }
+
+        var farthestPointDistance = _hiddenPoints.Max(point => StartLocation.DistanceTo(point.Location));
+        return new LocationChallengeActivation(userId, Id, farthestPointDistance + extraMeters);
     }
 
     public void Delete()

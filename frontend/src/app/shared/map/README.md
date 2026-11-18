@@ -1,26 +1,34 @@
 # Mapa (`app-map`)
 
 Deljena prikazna komponenta platformskog tima. Prikazuje OpenStreetMap mapu sa pinovima i,
-po želji, putanju koja ih povezuje. U režimu biranja korisnik klikom bira jednu lokaciju.
-Ne zavisi ni od jednog modula i ne poziva server aplikacije. Stranica uvozi `MapView` (i tip `MapPin`) iz `shared/map/map` i dodaje
-`MapView` u `imports` svoje komponente.
+po želji, putanju koja ih povezuje i jedan krug. U režimu biranja korisnik klikom bira jednu
+lokaciju. Ne zavisi ni od jednog modula i ne poziva server aplikacije. Stranica uvozi `MapView`
+(i tipove `MapPin` i `MapCircle`) iz `shared/map/map` i dodaje `MapView` u `imports` svoje
+komponente.
 
 ## Ulazi
 
-| Ulaz              | Tip              | Podrazumevano | Značenje                                                      |
-| ----------------- | ---------------- | ------------- | ------------------------------------------------------------- |
-| `pins`            | `MapPin[]`       | `[]`          | Pinovi, redom kojim ih putanja obilazi.                       |
-| `showPath`        | `boolean`        | `false`       | Da li se pinovi povezuju putanjom.                            |
-| `picking`         | `boolean`        | `false`       | Da li je uključen režim biranja.                              |
-| `initialLocation` | `MapPin \| null` | `null`        | Početna lokacija pina za biranje (izmena postojeće lokacije). |
+| Ulaz              | Tip                 | Podrazumevano | Značenje                                                      |
+| ----------------- | ------------------- | ------------- | ------------------------------------------------------------- |
+| `pins`            | `MapPin[]`          | `[]`          | Pinovi, redom kojim ih putanja obilazi.                       |
+| `showPath`        | `boolean`           | `false`       | Da li se pinovi povezuju putanjom.                            |
+| `picking`         | `boolean`           | `false`       | Da li je uključen režim biranja.                              |
+| `initialLocation` | `MapPin \| null`    | `null`        | Početna lokacija pina za biranje (izmena postojeće lokacije). |
+| `circle`          | `MapCircle \| null` | `null`        | Krug koji se crta na mapi, sa centrom i poluprečnikom.        |
 
-`MapPin` se izvozi iz `map.ts`:
+`MapPin` i `MapCircle` se izvoze iz `map.ts`:
 
 ```ts
 export interface MapPin {
   latitude: number; // geografska širina, decimalni stepeni
   longitude: number; // geografska dužina, decimalni stepeni
   label?: string; // kratka oznaka koja stoji uz pin
+}
+
+export interface MapCircle {
+  latitude: number; // širina centra kruga, decimalni stepeni
+  longitude: number; // dužina centra kruga, decimalni stepeni
+  radiusInMeters: number; // poluprečnik kruga u metrima
 }
 ```
 
@@ -33,7 +41,12 @@ export interface MapPin {
 
 ## Ponašanje
 
-- Pogled se podešava tako da se svi pinovi vide. Bez pinova mapa je centrirana na Novi Sad.
+- Pogled se podešava tako da se svi pinovi vide. Bez pinova (i bez kruga) mapa je centrirana
+  na Novi Sad.
+- Sa `circle` na mapi je nacrtan jedan krug, a pogled obuhvata ceo krug zajedno sa pinovima.
+  Kada se `circle` promeni, krug se ponovo crta i pogled ponovo podešava; sa `null` kruga
+  nema. Krug ne reaguje na klik, pa u režimu biranja klik unutar njega bira lokaciju kao i
+  svaki drugi klik.
 - U režimu biranja pogled obuhvata i `initialLocation`. Kada je ona jedina tačka, mapa je
   centrirana na nju, sa istim najvećim uvećanjem kao kod pinova. Van režima biranja
   `initialLocation` ne utiče na pogled.
@@ -88,6 +101,23 @@ protected readonly routeLength = signal<number | null>(null);
 
 ```html
 <app-map [pins]="pins()" [showPath]="true" (routeLength)="routeLength.set($event)" />
+```
+
+## Primer sa krugom
+
+`circle` neka bude stabilna vrednost, kao i `pins`: signal ili `computed` koji vraća nov
+objekat samo kada se krug zaista promeni, jer svaki nov objekat ponovo podešava pogled.
+
+```ts
+protected readonly circle = signal<MapCircle | null>({
+  latitude: 45.2551,
+  longitude: 19.8451,
+  radiusInMeters: 300,
+});
+```
+
+```html
+<app-map [circle]="circle()" />
 ```
 
 ## Primer biranja u formi

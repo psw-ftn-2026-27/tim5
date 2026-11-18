@@ -1,0 +1,68 @@
+<div class="stack">
+  <p><a routerLink="/games">Back to games</a></p>
+
+  <h1>Nearby challenges</h1>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (nearby.isLoading() && !nearby.hasValue()) {
+    <p class="meta">Loading nearby challenges...</p>
+  } @else if (nearby.error()) {
+    <p class="error">Could not load nearby challenges. Sign in as an explorer and try again.</p>
+  } @else if (nearby.value(); as current) {
+    @if (current.position === null) {
+      <p class="meta">Your position is not set yet, so no distances can be shown.</p>
+      <p><a routerLink="/exploration/simulator">Set your position</a></p>
+    } @else {
+      <div class="nearby">
+        <app-map [pins]="pins()" />
+
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">XP</th>
+                <th scope="col">Hidden points</th>
+                <th scope="col">Distance</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (challenge of current.challenges; track challenge.id) {
+                <tr>
+                  <td>{{ challenge.name }}</td>
+                  <td>{{ challenge.xp }}</td>
+                  <td>{{ challenge.hiddenPointCount }}</td>
+                  <td>{{ distance(challenge.distanceInMeters) }}</td>
+                  <td>
+                    @if (challenge.isActivated) {
+                      <a class="button button--primary" [routerLink]="['/games/active', challenge.id]">
+                        Continue
+                      </a>
+                    } @else {
+                      <button
+                        class="button button--primary"
+                        type="button"
+                        [disabled]="pending()"
+                        (click)="activate(challenge.id)"
+                      >
+                        Activate
+                      </button>
+                    }
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="meta">No location challenges to show.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</div>

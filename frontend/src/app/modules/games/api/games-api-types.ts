@@ -119,3 +119,26 @@ export interface ChallengeOverviewItemDto {
 export interface ChallengeOverviewFilterDto {
   status: ChallengeStatus | null;
 }
+
+export interface NearbyLocationChallengeDto {
+  id: string;
+  name: string;
+  xp: number;
+  hiddenPointCount: number;
+  startLocation: LocationDto;
+  distanceInMeters: number;
+  isActivated: boolean;
+}
+
+export interface NearbyLocationChallengesDto {
+  position: LocationDto | null;
+  challenges: NearbyLocationChallengeDto[];
+}
+
+export interface ActiveLocationChallengeDto {
+  challengeId: string;
+  name: string;
+  center: LocationDto;
+  radiusInMeters: number;
+  photoUrls: string[];
+}

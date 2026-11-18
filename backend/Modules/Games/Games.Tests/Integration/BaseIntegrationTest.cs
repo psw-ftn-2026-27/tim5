@@ -1,5 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Exploration.Infrastructure.Persistence;
+using Exploration.Tests.Integration.Seeds;
 using Games.Infrastructure.Persistence;
 using Games.Tests.Integration.Seeds;
 using Shared.Tests;
@@ -26,5 +28,6 @@ public abstract class BaseIntegrationTest
     {
         Factory = factory;
         Factory.Reseed<GamesDbContext>(GamesSeed.All);
+        Factory.Reseed<ExplorationDbContext>(ExplorationSeed.All);
     }
 }

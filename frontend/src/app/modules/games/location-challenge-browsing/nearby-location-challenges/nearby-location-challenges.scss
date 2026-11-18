@@ -1,0 +1,13 @@
+// Pages of the Games module use the module's own accent.
+:host {
+  --color-accent: var(--color-accent-games);
+  --color-accent-text: var(--color-accent-games-text);
+}
+
+// The map and the list stand side by side, and the list moves below the map when there is no room.
+.nearby {
+  align-items: start;
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+}
