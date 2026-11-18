@@ -135,10 +135,23 @@ export interface NearbyLocationChallengesDto {
   challenges: NearbyLocationChallengeDto[];
 }
 
+export interface HiddenPointPhotoDto {
+  photoUrl: string;
+  isDiscovered: boolean;
+  location: LocationDto | null;
+}
+
+export interface CompletionDto {
+  completedAt: string;
+  xp: number;
+}
+
 export interface ActiveLocationChallengeDto {
   challengeId: string;
   name: string;
   center: LocationDto;
   radiusInMeters: number;
-  photoUrls: string[];
+  photos: HiddenPointPhotoDto[];
+  discoveredPointCount: number;
+  completion: CompletionDto | null;
 }

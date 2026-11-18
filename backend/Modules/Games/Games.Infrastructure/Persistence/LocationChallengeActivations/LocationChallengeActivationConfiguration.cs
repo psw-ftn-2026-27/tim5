@@ -14,5 +14,9 @@ internal static class LocationChallengeActivationConfiguration
     private static void ConfigureLocationChallengeActivation(EntityTypeBuilder<LocationChallengeActivation> builder)
     {
         builder.HasIndex(activation => new { activation.UserId, activation.ChallengeId }).IsUnique();
+
+        builder.PrimitiveCollection(activation => activation.DiscoveredPointIds);
+
+        builder.OwnsOne(activation => activation.Completion);
     }
 }

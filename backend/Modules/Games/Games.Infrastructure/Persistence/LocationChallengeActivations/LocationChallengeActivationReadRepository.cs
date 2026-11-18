@@ -15,7 +15,7 @@ internal sealed class LocationChallengeActivationReadRepository : ILocationChall
         _dbContext = dbContext;
     }
 
-    // Projects only the photo addresses of the hidden points, never their locations.
+    // Projects the photo addresses of the hidden points, and a point's location only once the user discovered it.
     public Task<ActiveLocationChallengeDto?> GetActiveAsync(Guid challengeId, Guid userId)
     {
         return _dbContext.LocationChallengeActivations
@@ -30,8 +30,17 @@ internal sealed class LocationChallengeActivationReadRepository : ILocationChall
                     new LocationDto(challenge.StartLocation.Latitude, challenge.StartLocation.Longitude),
                     activation.Radius,
                     challenge.HiddenPoints
-                        .Select(point => ImageAddress.For(point.ImageId))
-                        .ToList()))
+                        .Select(point => new HiddenPointPhotoDto(
+                            ImageAddress.For(point.ImageId),
+                            activation.DiscoveredPointIds.Contains(point.Id),
+                            activation.DiscoveredPointIds.Contains(point.Id)
+                                ? new LocationDto(point.Location.Latitude, point.Location.Longitude)
+                                : null))
+                        .ToList(),
+                    activation.DiscoveredPointIds.Count,
+                    activation.Completion == null
+                        ? null
+                        : new CompletionDto(activation.Completion.CompletedAt, activation.Completion.Xp)))
             .FirstOrDefaultAsync();
     }
 }

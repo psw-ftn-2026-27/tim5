@@ -10,6 +10,9 @@ internal static class LocationChallengeSeed
     public static readonly LocationChallenge PublishedDanubeQuayHuntWithOnePoint;
     // Its start location is about 27 m from the Exploration seed positions at the fortress galleries.
     public static readonly LocationChallenge PublishedFortressGalleriesHuntWithTwoPoints;
+    // Its first hidden point is exactly at the Exploration seed positions at the fortress galleries,
+    // its second about 130 m from them.
+    public static readonly LocationChallenge PublishedGalleriesPassageHuntWithTwoPoints;
 
     static LocationChallengeSeed()
     {
@@ -26,8 +29,14 @@ internal static class LocationChallengeSeed
         PublishedFortressGalleriesHuntWithTwoPoints.AddHiddenPoint(UploadedImageSeed.AdministratorsLinkedPowderMagazinePhoto.Id, new Location(45.2541, 19.8649));
         PublishedFortressGalleriesHuntWithTwoPoints.AddHiddenPoint(UploadedImageSeed.AdministratorsLinkedBastionWallPhoto.Id, new Location(45.2524, 19.8627));
         PublishedFortressGalleriesHuntWithTwoPoints.Publish();
+
+        PublishedGalleriesPassageHuntWithTwoPoints = new("Prolazi galerija", 60, new Location(45.2532, 19.8638));
+        PublishedGalleriesPassageHuntWithTwoPoints.AddHiddenPoint(UploadedImageSeed.AdministratorsLinkedGalleriesPassagePhoto.Id, new Location(45.2530, 19.8636));
+        PublishedGalleriesPassageHuntWithTwoPoints.AddHiddenPoint(UploadedImageSeed.AdministratorsLinkedRavelinStepsPhoto.Id, new Location(45.2539, 19.8647));
+        PublishedGalleriesPassageHuntWithTwoPoints.Publish();
     }
 
     public static LocationChallenge[] All =>
-        [DraftQuayHuntWithoutPoints, DraftFortressHuntWithThreePoints, PublishedDanubeQuayHuntWithOnePoint, PublishedFortressGalleriesHuntWithTwoPoints];
+        [DraftQuayHuntWithoutPoints, DraftFortressHuntWithThreePoints, PublishedDanubeQuayHuntWithOnePoint, PublishedFortressGalleriesHuntWithTwoPoints,
+            PublishedGalleriesPassageHuntWithTwoPoints];
 }

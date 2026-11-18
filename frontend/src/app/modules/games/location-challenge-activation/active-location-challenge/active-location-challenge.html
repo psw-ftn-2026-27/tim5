@@ -1,7 +1,7 @@
 <div class="stack">
   <p><a routerLink="/games/nearby">Back to nearby challenges</a></p>
 
-  @if (challenge.isLoading()) {
+  @if (challenge.isLoading() && !challenge.hasValue()) {
     <p class="meta">Loading the challenge...</p>
   } @else if (challenge.error()) {
     <p class="error">This challenge is not active. Activate it from the nearby challenges first.</p>
@@ -10,14 +10,46 @@
 
     <p class="meta">The hidden points are somewhere inside the circle.</p>
 
-    <app-map [circle]="circle()" />
+    <app-map [pins]="pins()" [circle]="circle()" />
+
+    @if (current.completion; as completion) {
+      <p class="success">Challenge completed</p>
+      <p>You earned {{ completion.xp }} XP.</p>
+      <p><a routerLink="/games/nearby">Nearby challenges</a></p>
+    } @else {
+      <div class="actions">
+        <button
+          class="button button--primary"
+          type="button"
+          [disabled]="pending()"
+          (click)="checkLocation()"
+        >
+          Check location
+        </button>
+        <a routerLink="/exploration/simulator">Set your position</a>
+      </div>
+    }
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+    @if (success()) {
+      <p class="success">{{ success() }}</p>
+    }
 
     <h2>Points to find</h2>
 
+    <p class="meta">Discovered {{ current.discoveredPointCount }} of {{ current.photos.length }} points.</p>
+
     <ul class="grid photos">
-      @for (photoUrl of current.photoUrls; track $index) {
+      @for (photo of current.photos; track $index) {
         <li class="card">
-          <img [src]="photoUrl" alt="Hidden point {{ $index + 1 }}" />
+          <img [src]="photo.photoUrl" alt="Hidden point {{ $index + 1 }}" />
+          @if (photo.isDiscovered) {
+            <p><span class="badge">Discovered</span></p>
+          } @else {
+            <p class="meta">Not discovered yet</p>
+          }
         </li>
       } @empty {
         <li class="meta">This challenge has no hidden points.</li>

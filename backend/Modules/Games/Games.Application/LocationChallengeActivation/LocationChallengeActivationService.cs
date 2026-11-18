@@ -50,4 +50,29 @@ public sealed class LocationChallengeActivationService
         _activationRepository.Add(activation);
         await _unitOfWork.SaveChangesAsync();
     }
+
+    public async Task CheckLocationAsync(Guid userId, Guid challengeId)
+    {
+        var position = await _explorationApi.GetCurrentPositionAsync(userId);
+        if (position is null)
+        {
+            throw new NotFoundException("Set your position in the position simulator before checking your location.");
+        }
+
+        var challenge = await _challengeRepository.GetByIdAsync(challengeId);
+        if (challenge is null)
+        {
+            throw new NotFoundException("The location challenge no longer exists.");
+        }
+
+        var activation = await _activationRepository.GetByChallengeAndUserAsync(challengeId, userId);
+        if (activation is null)
+        {
+            throw new NotFoundException("You have not activated this location challenge.");
+        }
+
+        var userPosition = new Location(position.Latitude, position.Longitude);
+        LocationChecker.Check(challenge, activation, userPosition, DateTime.UtcNow);
+        await _unitOfWork.SaveChangesAsync();
+    }
 }
